@@ -1,0 +1,7 @@
+{
+    "/": {
+        "target": "http://alprepedu.ap-south-1.elasticbeanstalk.com/",
+        "secure": false,
+        "logLevel": "debug"
+    }
+}

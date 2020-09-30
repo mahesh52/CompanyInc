@@ -1,0 +1,7 @@
+<!-- Main Wrapper Start -->
+<div class="mainBody">
+    <app-header *ngIf="currentUrl!=='/login' && currentUrl!=='/register'"></app-header>
+<router-outlet></router-outlet>
+<app-footer></app-footer>
+</div>
+<!-- Main Wrapper End -->

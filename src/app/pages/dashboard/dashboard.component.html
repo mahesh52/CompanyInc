@@ -1,0 +1,412 @@
+<div class="bodycon pt-5 pb-5">
+  <div class="container">
+    <div class="dateRagenSection">
+      <div class="">
+        <h4>DATE RANGE</h4>
+      </div>
+      <div class="fromToDate">
+        <div>
+          <div class="row">
+            <div class="col-md-2"><span class="from">From</span></div>
+            <div class="col-md-2"><input id="datepicker" width="276" /></div>
+          </div>
+        </div>
+        <div>
+          <div class="row mt-4">
+            <div class="col-md-2"><span class="from">To</span></div>
+            <div class="col-md-2"><input id="datepicker1" width="276" /></div>
+          </div>
+        </div>
+      </div>
+      <div class="">
+        <button class="btn btn-primary loadSource">Load From Source</button>
+      </div>
+      <div class="">
+        <form class="form-inline" action="/action_page.php">
+          <label for="email"><span class="from1 mr-2">Keyword</span></label>
+          <input type="email" class="form-control mr-3" placeholder="Enter email" id="email">
+          <button type="submit" class="btn btn-primary loadSource">Submit</button>
+        </form>
+      </div>
+      <div class="">
+        <div class="fromToDate">
+          <div>
+            <div class="row">
+              <div class="col-md-4"><span class="from">Sort By</span></div>
+              <div class="col-md-8"><select class="form-control"><option></option></select></div>
+            </div>
+          </div>
+          <div>
+            <div class="row mt-4">
+              <div class="col-md-4"><span class="from">Status</span></div>
+              <div class="col-md-8"><select class="form-control"><option></option></select></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tableFixHead">
+      <table>
+        <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Style</th>
+          <th>Product Details </th>
+
+          <th>Product Type</th>
+
+          <th>Collection </th>
+          <th>Tags </th>
+          <th>Markup </th>
+          <th>Unit Price
+            <small>(Including shipping)</small> </th>
+          <th>Sale Price </th>
+          <th>Order
+            Number</th>
+          <th>Status</th>
+          <th>Action</th>
+
+
+
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td align="center" class="snoTd">1</td>
+          <td class="styleTd">
+            <div class="styleImg"><img src="images/jeans-1.png"/></div>
+            <h6 class="styleName">Jessie - 1</h6>
+          </td>
+          <td class="pdTd">
+            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.
+              LabelUnspecified</p>
+            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTags">
+            <div class="ribbonTd"><span>Women’s bottom</span></div>
+            <div class="ribbonTd"><span>Fassion</span></div>
+            <div class="ribbonTd"><span>Dennim</span></div>
+            <div class="ribbonTd1"><span>+</span></div>
+
+          </td>
+          <td><input type="text" class="form-control markupInput" value="25%"></td>
+          <td class="unitPrice"><p>23 $</p></td>
+          <td align="center"><p>25 $</p></td>
+          <td><p>MRL44CF
+            72BFA-B01</p></td>
+          <td><p>Created</p></td>
+          <td><button (click)="details()" class="btn saveBtn">Save</button></td>
+
+        </tr>
+        <tr>
+          <td align="center" class="snoTd">2</td>
+          <td class="styleTd">
+            <div class="styleImg"><img src="images/jeans-1.png"/></div>
+            <h6 class="styleName">Jessie - 1</h6>
+          </td>
+          <td class="pdTd">
+            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.
+              LabelUnspecified</p>
+            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTags">
+            <div class="ribbonTd"><span>Women’s bottom</span></div>
+            <div class="ribbonTd"><span>Fassion</span></div>
+            <div class="ribbonTd"><span>Dennim</span></div>
+            <div class="ribbonTd1"><span>+</span></div>
+
+          </td>
+          <td><input type="text" class="form-control markupInput" value="25%"></td>
+          <td class="unitPrice"><p>23 $</p></td>
+          <td align="center"><p>25 $</p></td>
+          <td><p>MRL44CF
+            72BFA-B01</p></td>
+          <td><p>Created</p></td>
+          <td><button class="btn saveBtn">Save</button></td>
+
+        </tr>
+
+        <tr>
+          <td align="center" class="snoTd">3</td>
+          <td class="styleTd">
+            <div class="styleImg"><img src="images/jeans-1.png"/></div>
+            <h6 class="styleName">Jessie - 1</h6>
+          </td>
+          <td class="pdTd">
+            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.
+              LabelUnspecified</p>
+            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTags">
+            <div class="ribbonTd"><span>Women’s bottom</span></div>
+            <div class="ribbonTd"><span>Fassion</span></div>
+            <div class="ribbonTd"><span>Dennim</span></div>
+            <div class="ribbonTd1"><span>+</span></div>
+
+          </td>
+          <td><input type="text" class="form-control markupInput" value="25%"></td>
+          <td class="unitPrice"><p>23 $</p></td>
+          <td align="center"><p>25 $</p></td>
+          <td><p>MRL44CF
+            72BFA-B01</p></td>
+          <td><p>Created</p></td>
+          <td><button class="btn saveBtn">Save</button></td>
+
+        </tr>
+
+        <tr>
+          <td align="center" class="snoTd">4</td>
+          <td class="styleTd">
+            <div class="styleImg"><img src="images/jeans-1.png"/></div>
+            <h6 class="styleName">Jessie - 1</h6>
+          </td>
+          <td class="pdTd">
+            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.
+              LabelUnspecified</p>
+            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTags">
+            <div class="ribbonTd"><span>Women’s bottom</span></div>
+            <div class="ribbonTd"><span>Fassion</span></div>
+            <div class="ribbonTd"><span>Dennim</span></div>
+            <div class="ribbonTd1"><span>+</span></div>
+
+          </td>
+          <td><input type="text" class="form-control markupInput" value="25%"></td>
+          <td class="unitPrice"><p>23 $</p></td>
+          <td align="center"><p>25 $</p></td>
+          <td><p>MRL44CF
+            72BFA-B01</p></td>
+          <td><p>Created</p></td>
+          <td><button class="btn saveBtn">Save</button></td>
+
+        </tr>
+
+        <tr>
+          <td align="center" class="snoTd">5</td>
+          <td class="styleTd">
+            <div class="styleImg"><img src="images/jeans-1.png"/></div>
+            <h6 class="styleName">Jessie - 1</h6>
+          </td>
+          <td class="pdTd">
+            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.
+              LabelUnspecified</p>
+            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTags">
+            <div class="ribbonTd"><span>Women’s bottom</span></div>
+            <div class="ribbonTd"><span>Fassion</span></div>
+            <div class="ribbonTd"><span>Dennim</span></div>
+            <div class="ribbonTd1"><span>+</span></div>
+
+          </td>
+          <td><input type="text" class="form-control markupInput" value="25%"></td>
+          <td class="unitPrice"><p>23 $</p></td>
+          <td align="center"><p>25 $</p></td>
+          <td><p>MRL44CF
+            72BFA-B01</p></td>
+          <td><p>Created</p></td>
+          <td><button class="btn saveBtn">Save</button></td>
+
+        </tr>
+
+        <tr>
+          <td align="center" class="snoTd">6</td>
+          <td class="styleTd">
+            <div class="styleImg"><img src="images/jeans-1.png"/></div>
+            <h6 class="styleName">Jessie - 1</h6>
+          </td>
+          <td class="pdTd">
+            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.
+              LabelUnspecified</p>
+            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTags">
+            <div class="ribbonTd"><span>Women’s bottom</span></div>
+            <div class="ribbonTd"><span>Fassion</span></div>
+            <div class="ribbonTd"><span>Dennim</span></div>
+            <div class="ribbonTd1"><span>+</span></div>
+
+          </td>
+          <td><input type="text" class="form-control markupInput" value="25%"></td>
+          <td class="unitPrice"><p>23 $</p></td>
+          <td align="center"><p>25 $</p></td>
+          <td><p>MRL44CF
+            72BFA-B01</p></td>
+          <td><p>Created</p></td>
+          <td><button class="btn saveBtn">Save</button></td>
+
+        </tr>
+
+        <tr>
+          <td align="center" class="snoTd">7</td>
+          <td class="styleTd">
+            <div class="styleImg"><img src="images/jeans-1.png"/></div>
+            <h6 class="styleName">Jessie - 1</h6>
+          </td>
+          <td class="pdTd">
+            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.
+              LabelUnspecified</p>
+            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTags">
+            <div class="ribbonTd"><span>Women’s bottom</span></div>
+            <div class="ribbonTd"><span>Fassion</span></div>
+            <div class="ribbonTd"><span>Dennim</span></div>
+            <div class="ribbonTd1"><span>+</span></div>
+
+          </td>
+          <td><input type="text" class="form-control markupInput" value="25%"></td>
+          <td class="unitPrice"><p>23 $</p></td>
+          <td align="center"><p>25 $</p></td>
+          <td><p>MRL44CF
+            72BFA-B01</p></td>
+          <td><p>Created</p></td>
+          <td><button class="btn saveBtn">Save</button></td>
+
+        </tr>
+
+        <tr>
+          <td align="center" class="snoTd">8</td>
+          <td class="styleTd">
+            <div class="styleImg"><img src="images/jeans-1.png"/></div>
+            <h6 class="styleName">Jessie - 1</h6>
+          </td>
+          <td class="pdTd">
+            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.
+              LabelUnspecified</p>
+            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTd">
+            <select class="form-control tableInput">
+              <option>Accessories</option>
+            </select>
+          </td>
+          <td class="ptTags">
+            <div class="ribbonTd"><span>Women’s bottom</span></div>
+            <div class="ribbonTd"><span>Fassion</span></div>
+            <div class="ribbonTd"><span>Dennim</span></div>
+            <div class="ribbonTd1"><span>+</span></div>
+
+          </td>
+          <td><input type="text" class="form-control markupInput" value="25%"></td>
+          <td class="unitPrice"><p>23 $</p></td>
+          <td align="center"><p>25 $</p></td>
+          <td><p>MRL44CF
+            72BFA-B01</p></td>
+          <td><p>Created</p></td>
+          <td><button class="btn saveBtn">Save</button></td>
+
+        </tr>
+
+        </tbody>
+      </table>
+
+
+
+    </div>
+
+
+    <div class="tablePagination mt-4 pt-1">
+      <button class="btn exportDestination">Export to Destination</button>
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+              <span class="sr-only">Previous</span>
+            </a>
+          </li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+              <span class="sr-only">Next</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+
+  </div>
+</div>
