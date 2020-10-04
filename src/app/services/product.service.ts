@@ -11,4 +11,14 @@ export class ProductService {
   getProducts(){
     return this.api.Get('api/product');
   }
+
+  updateProduct(id,data) {
+    return this.api.PutOthers('api/product/'+id, data);
+  }
+  uploadProducts(){
+    return this.api.Post('api/product/UploadProducts',{});
+  }
+  downloadProducts(){
+    return this.api.Post('api/product/DownloadStyles',{});
+  }
 }

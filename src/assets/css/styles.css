@@ -318,8 +318,8 @@ th {background: #eee;}
   border-top:14px solid transparent;
   border-bottom:10px solid transparent;
   border-left:10px solid #9190a5;}
-.ribbonTd:before{width: 0; height: 0; position:absolute; content:"x"; top:2px; left:5px;}
-.ribbonTd span{position:relative;}
+.ribbonTd:before{width: 0; height: 0; position:absolute;  top:2px; left:5px;}
+
 .ribbonTd span:after{position:absolute; content:""; width:4px; height:4px; border-radius:10px; background:#fff; right:-18px; top:8px;}
 
 .ribbonTd1{background:#9190a5; color:#fff; float:left; width:24px; height:24px; border-radius:30px; text-align:center; position:relative; top:5px;}

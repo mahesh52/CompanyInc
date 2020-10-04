@@ -26,20 +26,23 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { DetailsComponent } from './pages/details/details.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import {NgMultiSelectDropDownModule} from "ng-multiselect-dropdown";
+import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    SiteLayoutComponent,
-    HeaderComponent,
-    FooterComponent,
-    HomeComponent,
-    DashboardComponent,
-    DetailsComponent,
-    LoginComponent,
-    RegisterComponent,
-  ],
+    declarations: [
+        AppComponent,
+        SiteLayoutComponent,
+        HeaderComponent,
+        FooterComponent,
+        HomeComponent,
+        DashboardComponent,
+        DetailsComponent,
+        LoginComponent,
+        RegisterComponent,
+        LoadingComponent,
+    ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -52,6 +55,8 @@ import { RegisterComponent } from './pages/register/register.component';
     ToastNoAnimationModule,
     ToastrModule.forRoot(),
     ToastContainerModule,
+    NgMultiSelectDropDownModule,
+    NgbModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

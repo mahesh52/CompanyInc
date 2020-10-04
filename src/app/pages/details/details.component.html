@@ -5,46 +5,45 @@
     <div class="container">
       <div class="dpTopStripFlex">
         <div class="">
-          <h3>Jessie - 1</h3>
+          <h3>{{selectedProduct?.styleNumber}}</h3>
         </div>
 
         <div class="dtsText">
           <h5>
-            <span>Style Title</span> MiiM Jessie Chunky
-            Sole Chelsea Boot
+            <span>Style Title</span> {{selectedProduct?.styleTitle}}
           </h5>
         </div>
         <div class="dtsText">
           <h5>
-            <span>Vender Name</span> KKE Originals
-          </h5>
-
-        </div>
-
-        <div class="dtsText">
-          <h5>
-            <span>Style Quantity </span> 12
+            <span>Vendor Name</span> {{selectedProduct?.styleVendor}}
           </h5>
 
         </div>
 
         <div class="dtsText">
           <h5>
-            <span>Status </span> Published
+            <span>Style Quantity </span> {{selectedProduct?.styleQty}}
           </h5>
 
         </div>
 
         <div class="dtsText">
           <h5>
-            <span>Publishing Date </span> 09/25/2020
+            <span>Status </span> {{selectedProduct?.ShopifyStatus || 'NA'}}
+          </h5>
+
+        </div>
+
+        <div class="dtsText">
+          <h5>
+            <span>Publishing Date </span> {{selectedProduct?.publishingDate}}
           </h5>
 
         </div>
 
 
         <div class="dtsText">
-          <button><img src="assets/images/cancel.png" alt="cancel"></button>
+          <button (click)="back()"><img src="assets/images/cancel.png" alt="cancel"></button>
         </div>
 
       </div>
@@ -60,15 +59,13 @@
 
           <!-- The slideshow -->
           <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img src="assets/images/slide-01.png" alt="Los Angeles">
-            </div>
-            <div class="carousel-item">
-              <img src="assets/images/slide-01.png" alt="Los Angeles">
-            </div>
-            <div class="carousel-item">
-              <img src="assets/images/slide-01.png" alt="Los Angeles">
-            </div>
+            <ngb-carousel  #carousel  interval="3000" [showNavigationArrows]="true" [pauseOnHover]="pauseOnHover" (slide)="onSlide($event)" >
+              <ng-template ngbSlide *ngFor="let image of selectedProduct?.stylePhotos" >
+                  <img [src]="'data:image/jpg;base64,'+image" alt="Los Angeles">
+              </ng-template>
+            </ngb-carousel>
+
+
           </div>
 
           <!-- Left and right controls -->
@@ -88,11 +85,8 @@
             <h5 class="detailsTitleH5">Product Details</h5>
           </div>
           <div class="col-md-8">
-            <div class="pdTextBox">
-              A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the
-              JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s
-              flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.
-              LabelUnspecified
+            <div class="">
+              <textarea [(ngModel)]="selectedProduct.productDetail" rows = 5 cols=50>{{selectedProduct?.productDetail}}</textarea>
             </div>
           </div>
         </div>
@@ -142,14 +136,11 @@
             <h5 class="detailsTitleH5 text-center mt-4">Tags</h5>
           </div>
           <div class="col-md-8">
-            <div class="ribbonTd"><span>Women’s bottom</span></div>
-            <div class="ribbonTd"><span>Women’s bottom</span></div>
-            <div class="ribbonTd"><span>Women’s bottom</span></div>
-            <div class="ribbonTd"><span>Women’s bottom</span></div>
-            <br><br>
-            <div class="ribbonTd"><span>Women’s bottom</span></div>
-            <div class="ribbonTd"><span>Women’s bottom</span></div>
-            <div class="ribbonTd1 ribbonTdRight"><span>+</span></div>
+            <div class="ribbonTd" *ngFor="let tag of getTags(selectedProduct?.tags)">
+              <span style="cursor:pointer;" (click)="removeFromList(tag)">&#10060;</span>
+              <span>{{tag}}</span>
+            </div>
+            <div class="ribbonTd1 ribbonTdRight" style="cursor:pointer;" data-toggle="modal" data-target="#myModal" ><span>+</span></div>
           </div>
         </div>
       </div>
@@ -161,8 +152,8 @@
         <div>
           <div class="row mt-4">
             <div class="col-md-5 mt-2"><h4>Product Type</h4></div>
-            <div class="col-md-7"><select class="form-control">
-              <option>Accessories</option>
+            <div class="col-md-7"><select class="form-control" [(ngModel)]="selectedProduct.productType" >
+              <option *ngFor="let ptype of productTypes" [selected]="ptype === selectedProduct?.productType">{{ptype}}</option>
             </select></div>
           </div>
         </div>
@@ -170,7 +161,7 @@
           <div class="row mt-4">
             <div class="col-md-5"><h4>Unit Price
               Including shipping</h4></div>
-            <div class="col-md-7"><input class="form-control" disabled value="23.33 $"></div>
+            <div class="col-md-7"><input class="form-control" disabled [value]="selectedProduct?.price"></div>
           </div>
         </div>
       </div>
@@ -179,15 +170,15 @@
         <div>
           <div class="row mt-4">
             <div class="col-md-5 text-right mt-2"><h4>Collection</h4></div>
-            <div class="col-md-7"><select class="form-control">
-              <option>Home Page 1</option>
+            <div class="col-md-7"><select class="form-control" [(ngModel)]="selectedProduct.collections">
+              <option *ngFor="let collection of collections" [selected]="collection === selectedProduct?.collections">{{collection}}</option>
             </select></div>
           </div>
         </div>
         <div>
           <div class="row mt-4">
             <div class="col-md-5 text-right mt-2"><h4>Markup</h4></div>
-            <div class="col-md-7"><input class="form-control" value="25%"></div>
+            <div class="col-md-7"><input class="form-control" [(ngModel)]="selectedProduct.markup" ></div>
           </div>
         </div>
       </div>
@@ -197,14 +188,14 @@
         <div>
           <div class="row mt-4">
             <div class="col-md-5 text-right mt-2"><h4>Sale Price</h4></div>
-            <div class="col-md-7"><input class="form-control" disabled value="25%"></div>
+            <div class="col-md-7"><input class="form-control" disabled [value]="selectedProduct?.price"></div>
           </div>
         </div>
       </div>
 
 
       <div class="dbsMain dbsm4">
-        <button class="btn btn-primary loadSource">Save Changes</button>
+        <button class="btn btn-primary loadSource" (click)="saveData()">Save Changes</button>
       </div>
 
 
@@ -215,3 +206,30 @@
 
 
 </div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Tags</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row" >
+          <div class="col-md-6" *ngFor="let tag of tags">
+            <input type = "checkbox" class="tags" [checked]="hasValue(tag.item_text)" (click)="addToList($event.target.checked,tag.item_text)">
+            <label>{{tag.item_text}}</label>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="addListToProduct()">Add</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<app-loading *ngIf="loading"></app-loading>
