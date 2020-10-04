@@ -9,6 +9,6 @@ export class ProductService {
   constructor( private api: ApiService) { }
 
   getProducts(){
-    return this.api.Get('/api/product');
+    return this.api.Get('api/product');
   }
 }
