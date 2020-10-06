@@ -1,63 +1,94 @@
-<div class="bodycon pt-5 pb-5">
-  <div class="container">
-    <div class="dateRagenSection">
-      <div class="">
-        <h4>DATE RANGE</h4>
+<div class="bodycon pt-3 pb-3">
+  <div class="container-fluid">
+    <!--    <div class="dateRagenSection">-->
+    <!--&lt;!&ndash;      <div class="">&ndash;&gt;-->
+    <!--&lt;!&ndash;        <h4>DATE RANGE</h4>&ndash;&gt;-->
+    <!--&lt;!&ndash;      </div>&ndash;&gt;-->
+    <!--      <div class="fromToDate">-->
+    <!--        <div>-->
+    <!--          <div class="row">-->
+    <!--            <div class="col-md-2"><span class="from">From</span></div>-->
+    <!--            <div class="col-md-2"><input id="datepicker" width="276" /></div>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--        <div>-->
+    <!--          <div class="row mt-4">-->
+    <!--            <div class="col-md-2"><span class="from">To</span></div>-->
+    <!--            <div class="col-md-2"><input id="datepicker1" width="276" /></div>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--      <div class="">-->
+    <!--        <button class="btn btn-primary loadSource" (click)="loadFromSource()">Load From Source</button>-->
+    <!--      </div>-->
+    <!--      <div class="">-->
+    <!--        <form class="form-inline" name ="searchForm">-->
+    <!--          <label for="email"><span class="from1 mr-2">Keyword</span></label>-->
+    <!--          <input type="email" class="form-control mr-3" name = "orderNumber" [(ngModel)]="orderNumber" placeholder="Enter Order Number" id="email">-->
+    <!--          <button type="submit" *ngIf="!isSearched" class="btn btn-primary loadSource" (click)="filterByOrderNumber()">Submit</button>-->
+    <!--          <button type="submit" *ngIf="isSearched" class="btn btn-primary loadSource" (click)="clearTableData()">Clear</button>-->
+
+    <!--        </form>-->
+    <!--      </div>-->
+    <!--      <div class="">-->
+    <!--        <div class="fromToDate">-->
+    <!--          <div>-->
+    <!--            <div class="row">-->
+    <!--              <div class="col-md-4"><span class="from">Sort By</span></div>-->
+    <!--              <div class="col-md-8">-->
+    <!--                <select class="form-control" (change)="sortData($event.target.value)">-->
+    <!--                  <option value = "">Select</option>-->
+    <!--                  <option value="id">Order Number</option>-->
+    <!--                  <option value="price">Unit Price</option>-->
+    <!--                  <option value="styleTitle">Style</option>-->
+    <!--                  <option value="markup">Mark up</option>-->
+    <!--                </select>-->
+    <!--              </div>-->
+    <!--            </div>-->
+    <!--          </div>-->
+    <!--          <div>-->
+    <!--            <div class="row mt-4">-->
+    <!--              <div class="col-md-4"><span class="from">Status</span></div>-->
+    <!--              <div class="col-md-8">-->
+    <!--                <select class="form-control" (change)="filterData($event.target.value)">-->
+    <!--                  <option value = "">Select</option>-->
+    <!--                  <option value = "New">New</option>-->
+    <!--                  <option value="Published">Published</option>-->
+    <!--                </select></div>-->
+    <!--            </div>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
+
+    <div class="row mb-3">
+      <div class="col-md-2">
+        <strong class="from">From &nbsp;</strong>
+        <input id="datepicker" width="220"/>
       </div>
-      <div class="fromToDate">
-        <div>
-          <div class="row">
-            <div class="col-md-2"><span class="from">From</span></div>
-            <div class="col-md-2"><input id="datepicker" width="276" /></div>
-          </div>
-        </div>
-        <div>
-          <div class="row mt-4">
-            <div class="col-md-2"><span class="from">To</span></div>
-            <div class="col-md-2"><input id="datepicker1" width="276" /></div>
-          </div>
-        </div>
+      <div class="col-md-2">
+        <strong class="from">To &nbsp;</strong>
+        <input id="datepicker1" width="140"/>
       </div>
-      <div class="">
+      <div class="col-md-2">
         <button class="btn btn-primary loadSource" (click)="loadFromSource()">Load From Source</button>
       </div>
-      <div class="">
-        <form class="form-inline" name ="searchForm">
-          <label for="email"><span class="from1 mr-2">Keyword</span></label>
-          <input type="email" class="form-control mr-3" name = "orderNumber" [(ngModel)]="orderNumber" placeholder="Enter Order Number" id="email">
-          <button type="submit" *ngIf="!isSearched" class="btn btn-primary loadSource" (click)="filterByOrderNumber()">Submit</button>
-          <button type="submit" *ngIf="isSearched" class="btn btn-primary loadSource" (click)="clearTableData()">Clear</button>
+      <div class="col-2">
 
-        </form>
+        <select class="form-control" (change)="sortData($event.target.value)">
+          <option value="">Sort by</option>
+          <option value="id">Order Number</option>
+          <option value="price">Unit Price</option>
+          <option value="styleTitle">Style</option>
+          <option value="markup">Mark up</option>
+        </select>
+
       </div>
-      <div class="">
-        <div class="fromToDate">
-          <div>
-            <div class="row">
-              <div class="col-md-4"><span class="from">Sort By</span></div>
-              <div class="col-md-8">
-                <select class="form-control" (change)="sortData($event.target.value)">
-                  <option value = "">Select</option>
-                  <option value="id">Order Number</option>
-                  <option value="price">Unit Price</option>
-                  <option value="styleTitle">Style</option>
-                  <option value="markup">Mark up</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div class="row mt-4">
-              <div class="col-md-4"><span class="from">Status</span></div>
-              <div class="col-md-8">
-                <select class="form-control" (change)="filterData($event.target.value)">
-                  <option value = "">Select</option>
-                  <option value = "New">New</option>
-                  <option value="Published">Published</option>
-                </select></div>
-            </div>
-          </div>
-        </div>
+      <div class="col-md-4">
+                  <input  type="email" class="form-control mr-3 orderNumber" name = "orderNumber" [(ngModel)]="orderNumber" placeholder="Enter Order Number" id="email">
+                  <button type="submit" *ngIf="!isSearched" class="btn btn-primary loadSource" (click)="filterByOrderNumber()">Search</button>
+                  <button type="submit" *ngIf="isSearched" class="btn btn-primary loadSource" (click)="clearTableData()">Clear</button>
+
       </div>
     </div>
 
@@ -67,65 +98,79 @@
         <tr>
           <th>S.No</th>
           <th>Style</th>
-          <th>Product Details </th>
+          <th>Product Details</th>
 
           <th>Product Type</th>
 
-          <th>Collection </th>
-          <th>Tags </th>
-          <th>Markup </th>
+          <th>Collection</th>
+          <th>Tags</th>
           <th>Unit Price
-            <small>(Including shipping)</small> </th>
-          <th>Sale Price </th>
+            <small>(Inc. shipping)</small></th>
+          <th>Markup</th>
+
+          <th>Sale Price</th>
           <th>Order
-            Number</th>
+            Number
+          </th>
           <th>Status</th>
           <th>Action</th>
-
-
 
 
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let item of pagedItems;let i =index;">
-          <td align="center" class="snoTd">{{i+1}}</td>
+          <td align="center" class="snoTd">{{i + 1}}</td>
           <td class="styleTd">
-            <div class="styleImg"><img style="cursor:pointer;" (click)="details(item.id)" [src]="'data:image/jpg;base64,'+item?.stylePhotos[0]"/></div>
+            <div class="styleImg"><img style="cursor:pointer;" (click)="details(item.id)"
+                                       [src]="'data:image/jpg;base64,'+item?.stylePhotos[0]"/></div>
             <h6 style="cursor:pointer;" (click)="details(item.id)" class="styleName">{{item?.styleTitle}}</h6>
           </td>
-          <td class="pdTd">
-<!--            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.-->
-<!--              LabelUnspecified</p>-->
-            <textarea rows =5 cols =22 [(ngModel)]="item.productDetail">{{item?.productDetail}}</textarea>
-<!--            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>-->
+          <td class="pdTd" style="position: relative;">
+            <!--            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.-->
+            <!--              LabelUnspecified</p>-->
+            <textarea style="width:100%;resize: none;font-size: 10px" rows=3 cols=22 [(ngModel)]="item.productDetail">{{item?.productDetail}}</textarea>
+            <span style="    position: absolute;
+    bottom: 0;
+    text-align: center;
+    right: 10px;
+    font-weight: bold;">...</span>
+            <!--            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>-->
           </td>
           <td class="ptTd">
-            <select class="form-control tableInput" [(ngModel)]="item.productType" >
+            <select class="form-control tableInput" [(ngModel)]="item.productType">
               <option *ngFor="let ptype of productTypes" [selected]="ptype === item?.productType">{{ptype}}</option>
             </select>
           </td>
           <td class="ptTd">
             <select class="form-control tableInput" [(ngModel)]="item.collections">
-              <option *ngFor="let collection of collections" [selected]="collection === item?.collections">{{collection}}</option>
+              <option *ngFor="let collection of collections"
+                      [selected]="collection === item?.collections">{{collection}}</option>
             </select>
           </td>
           <td class="ptTags">
             <div class="ribbonTd" *ngFor="let tag of getTags(item?.tags)">
-              <span style="cursor:pointer;" (click)="removeFromList(item.id,tag)">&#10060;</span>
+              <span style="cursor:pointer;position: absolute;
+    left: 5px;" (click)="removeFromList(item.id,tag)">X</span>
               <span>  {{tag}}</span>
             </div>
+            <p>...</p>
             <div class="ribbonTd1">
-              <span style="cursor:pointer;" data-toggle="modal" data-target="#myModal" (click)="selectIndex(item.id)">+</span>
+              <span style="cursor:pointer;width: 18px;
+    height: 18px;" data-toggle="modal" data-target="#myModal"
+                    (click)="selectIndex(item.id)">+</span>
 
             </div>
           </td>
-          <td><input type="text" class="form-control markupInput"  [(ngModel)]="item.markup"></td>
-          <td class="unitPrice"><p>{{item?.price}} $</p></td>
-          <td align="center"><p>{{getSalePrice(item?.price,item?.markup)}} $</p></td>
-          <td><p>{{item?.id}}</p></td>
+          <td class="unitPrice"><p>$ {{item?.price}} </p></td>
+          <td><input type="text" class="form-control markupInput" [(ngModel)]="item.markup" ></td>
+
+          <td align="center"><p>$ {{getSalePrice(item?.price, item?.markup)}} </p></td>
+          <td><p>{{item?.orderNumber}}</p></td>
           <td><p>{{item?.ShopifyStatus || 'N/A'}}</p></td>
-          <td><button (click)="saveData(item)" class="btn saveBtn">Save</button></td>
+          <td>
+            <button (click)="saveData(item)" class="btn btn-primary loadSource">Save</button>
+          </td>
 
         </tr>
 
@@ -133,13 +178,14 @@
       </table>
 
 
-
     </div>
 
 
-    <div class="tablePagination mt-4 pt-1">
-      <button class="btn exportDestination" (click)="uploadProducts()">Export to Destination</button>
-      <ngb-pagination [collectionSize]="pager.totalItems" [pageSize]="pager.pageSize" [(page)]="pager.currentPage" [maxSize]="pager.totalPages" [rotate]="true" (pageChange)="setPage(pager.currentPage)" [boundaryLinks]="true"></ngb-pagination>
+    <div class="tablePagination mt-2 pt-1">
+      <button class="btn btn-primary loadSource" (click)="uploadProducts()">Export to Destination</button>
+      <ngb-pagination style="position: absolute;right: 0" [collectionSize]="pager.totalItems" [pageSize]="pager.pageSize" [(page)]="pager.currentPage"
+                      [maxSize]="pager.totalPages" [rotate]="true" (pageChange)="setPage(pager.currentPage)"
+                      [boundaryLinks]="true"></ngb-pagination>
     </div>
 
 
@@ -157,14 +203,20 @@
       <div class="modal-body">
         <div class="row" *ngIf="isProdSelected">
           <div class="col-md-6" *ngFor="let tag of tags">
-            <input type = "checkbox" class="tags" [checked]="hasValue(tag.item_text)" (click)="addToList($event.target.checked,tag.item_text)">
+            <input type="checkbox" class="tags" [checked]="hasValue(tag.item_text)"
+                   (click)="addToList($event.target.checked,tag.item_text)">
             <label>{{tag.item_text}}</label>
 
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="addListToProduct()">Add</button>
+        <div style="float: left">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="addListToProduct()">Add</button>
+        </div>
+        <div style="float: right">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" >Close</button>
+        </div>
       </div>
     </div>
 
