@@ -33,13 +33,24 @@
           <div>
             <div class="row">
               <div class="col-md-4"><span class="from">Sort By</span></div>
-              <div class="col-md-8"><select class="form-control"><option></option></select></div>
+              <div class="col-md-8">
+                <select class="form-control" >
+                  <option value="id">Order Number</option>
+                  <option value="price">Unit Price</option>
+                  <option value="styleTitle">Style</option>
+                </select>
+              </div>
             </div>
           </div>
           <div>
             <div class="row mt-4">
               <div class="col-md-4"><span class="from">Status</span></div>
-              <div class="col-md-8"><select class="form-control"><option></option></select></div>
+              <div class="col-md-8">
+                <select class="form-control" (change)="filterData($event.target.value)">
+                  <option value = "">Select</option>
+                  <option value = "New">New</option>
+                  <option value="Published">Published</option>
+                </select></div>
             </div>
           </div>
         </div>
@@ -109,7 +120,7 @@
           <td class="unitPrice"><p>{{item?.price}} $</p></td>
           <td align="center"><p>{{item?.price}} $</p></td>
           <td><p>{{item?.id}}</p></td>
-          <td><p>{{item?.ShopifyStatus}}</p></td>
+          <td><p>{{item?.ShopifyStatus || 'N/A'}}</p></td>
           <td><button (click)="saveData(item)" class="btn saveBtn">Save</button></td>
 
         </tr>

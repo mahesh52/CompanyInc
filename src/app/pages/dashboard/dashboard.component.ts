@@ -16,16 +16,17 @@ export class DashboardComponent implements OnInit {
   collections = [];
   tags = [];
   selectedIndex: number;
-  totalProducts:number;
+  totalProducts: number;
   pager: any = {};
   pagedItems: any[];
   error = '';
   page = 1;
+  originalList = []
 
   selectedItems = [];
   isProdSelected = false;
 
-  constructor(private router: Router,private paginationService: PaginationService, private productService: ProductService, private utils: UtilsService) {
+  constructor(private router: Router, private paginationService: PaginationService, private productService: ProductService, private utils: UtilsService) {
 
   }
 
@@ -43,7 +44,7 @@ export class DashboardComponent implements OnInit {
     });
     console.log(selectedItems);
     sessionStorage.setItem('selectedProduct', JSON.stringify(selectedItems[0]));
-   this.router.navigate(['details']);
+    this.router.navigate(['details']);
   }
 
   getProducts() {
@@ -52,7 +53,9 @@ export class DashboardComponent implements OnInit {
       .subscribe(res => {
         this.loading = false;
         console.log(res);
+        res[0].ShopifyStatus = 'Published';
         this.productDetails = res;
+        this.originalList = res;
         this.totalProducts = res.length;
         this.setPage(1);
 
@@ -80,9 +83,9 @@ export class DashboardComponent implements OnInit {
   }
 
   selectIndex(id) {
-    let index =0;
-    this.productDetails.forEach((item,i)=>{
-      if(item.id === id){
+    let index = 0;
+    this.productDetails.forEach((item, i) => {
+      if (item.id === id) {
         this.selectedIndex = i;
       }
     });
@@ -103,6 +106,35 @@ export class DashboardComponent implements OnInit {
     console.log(this.selectedItems);
   }
 
+  filterData(value) {
+    if (value) {
+      if (value === 'New') {
+        const items = this.originalList.filter(function (item) {
+          if(!item.ShopifyStatus){
+            item.ShopifyStatus = '';
+          }
+          return item.ShopifyStatus.toUpperCase() === value.toUpperCase() || item.ShopifyStatus === '' || item.ShopifyStatus === null
+
+        });
+        this.productDetails = items;
+        this.pager = {};
+        this.setPage(1);
+      } else {
+        const items = this.originalList.filter(function (item) {
+          return item.ShopifyStatus.toUpperCase() === value.toUpperCase()
+        });
+        this.productDetails = items;
+        this.pager = {};
+        this.setPage(1);
+      }
+    } else {
+      this.productDetails = this.originalList;
+      this.pager = {};
+      this.setPage(1);
+    }
+
+  }
+
   hasValue(value) {
     let hasFound = false;
     this.selectedItems.forEach((item) => {
@@ -115,11 +147,13 @@ export class DashboardComponent implements OnInit {
     }
     return false;
   }
-  addListToProduct(){
+
+  addListToProduct() {
     this.productDetails[this.selectedIndex].tags = this.selectedItems.toString();
     this.isProdSelected = false;
   }
-  saveData(item){
+
+  saveData(item) {
     let request = {
       "productDetail": item.productDetail,
       "productType": item.productType,
@@ -128,7 +162,7 @@ export class DashboardComponent implements OnInit {
       "markup": item.markup,
     }
     this.loading = true;
-    this.productService.updateProduct(item.id,request)
+    this.productService.updateProduct(item.id, request)
       .subscribe(res => {
         this.loading = false;
         console.log(res);
@@ -137,14 +171,14 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  removeFromList(id,tag){
-    let index =0;
+  removeFromList(id, tag) {
+    let index = 0;
     const item = this.productDetails.filter(function (item) {
       return item.id === id
     });
 
-    this.productDetails.forEach((item,i)=>{
-      if(item.id === id){
+    this.productDetails.forEach((item, i) => {
+      if (item.id === id) {
         index = i;
       }
     });
@@ -155,7 +189,7 @@ export class DashboardComponent implements OnInit {
     this.productDetails[index].tags = selectedItems.toString();
   }
 
-  uploadProducts(){
+  uploadProducts() {
     this.loading = true;
     this.productService.uploadProducts()
       .subscribe(res => {
@@ -166,7 +200,7 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  loadFromSource(){
+  loadFromSource() {
     this.loading = true;
     this.productService.downloadProducts()
       .subscribe(res => {
