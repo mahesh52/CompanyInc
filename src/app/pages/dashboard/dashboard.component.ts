@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {ProductService} from "../../services/product.service";
 import {UtilsService} from "../../services/utils.service";
+import {PaginationService} from "../../services/pagination.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -15,11 +16,16 @@ export class DashboardComponent implements OnInit {
   collections = [];
   tags = [];
   selectedIndex: number;
+  totalProducts:number;
+  pager: any = {};
+  pagedItems: any[];
+  error = '';
+  page = 1;
 
   selectedItems = [];
   isProdSelected = false;
 
-  constructor(private router: Router, private productService: ProductService, private utils: UtilsService) {
+  constructor(private router: Router,private paginationService: PaginationService, private productService: ProductService, private utils: UtilsService) {
 
   }
 
@@ -31,9 +37,13 @@ export class DashboardComponent implements OnInit {
     this.getProducts();
   }
 
-  details(index) {
-    sessionStorage.setItem('selectedProduct', JSON.stringify(this.productDetails[index]));
-    this.router.navigate(['details']);
+  details(id) {
+    const selectedItems = this.productDetails.filter(function (item) {
+      return item.id === id
+    });
+    console.log(selectedItems);
+    sessionStorage.setItem('selectedProduct', JSON.stringify(selectedItems[0]));
+   this.router.navigate(['details']);
   }
 
   getProducts() {
@@ -43,19 +53,42 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
         console.log(res);
         this.productDetails = res;
+        this.totalProducts = res.length;
+        this.setPage(1);
+
       }, error => {
         this.loading = false;
         console.log('Err: while getting products');
       });
   }
 
+  setPage(page: number) {
+    if (page < 1 || page > this.pager.totalPages) {
+      return;
+    }
+    if (isNaN(page)) {
+      page = 1;
+    }
+
+    this.pager = this.paginationService.getPager(this.productDetails.length, page);
+
+    this.pagedItems = this.productDetails.slice(this.pager.startIndex, this.pager.endIndex + 1);
+  }
+
   getTags(tags) {
     return tags.split(',');
   }
 
-  selectIndex(i) {
-    this.selectedIndex = i;
-    this.selectedItems = this.productDetails[i].tags.split(',');
+  selectIndex(id) {
+    let index =0;
+    this.productDetails.forEach((item,i)=>{
+      if(item.id === id){
+        this.selectedIndex = i;
+      }
+    });
+
+
+    this.selectedItems = this.productDetails[index].tags.split(',');
     this.isProdSelected = true;
   }
 
@@ -104,7 +137,18 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  removeFromList(index,tag){
+  removeFromList(id,tag){
+    let index =0;
+    const item = this.productDetails.filter(function (item) {
+      return item.id === id
+    });
+
+    this.productDetails.forEach((item,i)=>{
+      if(item.id === id){
+        index = i;
+      }
+    });
+
     const selectedItems = this.productDetails[index].tags.split(',').filter(function (item) {
       return item !== tag
     })

@@ -36,9 +36,8 @@
 
         <div class="dtsText">
           <h5>
-            <span>Publishing Date </span> {{selectedProduct?.publishingDate}}
+            <span>Publishing Date </span> {{getDate(selectedProduct?.publishingDate)}}
           </h5>
-
         </div>
 
 
@@ -59,7 +58,7 @@
 
           <!-- The slideshow -->
           <div class="carousel-inner">
-            <ngb-carousel  #carousel  interval="3000" [showNavigationArrows]="true" [pauseOnHover]="pauseOnHover" (slide)="onSlide($event)" >
+            <ngb-carousel   #carousel  [interval]="false" [keyboard]="false"  [wrap]="false" [showNavigationArrows]="true" [pauseOnHover]="pauseOnHover" (slide)="onSlide($event)" >
               <ng-template ngbSlide *ngFor="let image of selectedProduct?.stylePhotos" >
                   <img [src]="'data:image/jpg;base64,'+image" alt="Los Angeles">
               </ng-template>
@@ -95,8 +94,8 @@
           <div class="col-md-1"></div>
           <div class="col-md-3 text-center">
             <h5 class="detailsTitleH5">Style Color</h5>
-            <select class="form-control lightGray">
-              <option>Light Gray</option>
+            <select class="form-control lightGray"  (change)="getVariants($event.target.value)">
+              <option *ngFor="let item of colors">{{item}}</option>
             </select>
           </div>
           <div class="col-md-8">
@@ -105,25 +104,11 @@
                 <li class="flex-item flex1">
                   <span>Variant Size</span>
                 </li>
-                <li class="flex-item flex2">6</li>
-                <li class="flex-item flex2">6.5</li>
-                <li class="flex-item flex2">7</li>
-                <li class="flex-item flex2">7.5</li>
-                <li class="flex-item flex2">8</li>
-                <li class="flex-item flex2">8.5</li>
-                <li class="flex-item flex2">9</li>
-                <li class="flex-item flex2">10</li>
+                <li class="flex-item flex2"  *ngFor="let variant of variants" >{{variant?.size}}</li>
               </ul>
               <ul class="flex-container fcBorderBottomNone">
                 <li class="flex-item flex1"><span>Variant Quantity</span></li>
-                <li class="flex-item flex2">1</li>
-                <li class="flex-item flex2">1</li>
-                <li class="flex-item flex2">1</li>
-                <li class="flex-item flex2">2</li>
-                <li class="flex-item flex2">2</li>
-                <li class="flex-item flex2">2</li>
-                <li class="flex-item flex2">2</li>
-                <li class="flex-item flex2">1</li>
+                <li class="flex-item flex2" *ngFor="let variant of variants" >{{variant?.quantity}}</li>
               </ul>
             </div>
           </div>

@@ -3,11 +3,12 @@ import {NgbCarousel, NgbSlideEvent, NgbSlideEventSource} from "@ng-bootstrap/ng-
 import {UtilsService} from "../../services/utils.service";
 import {ProductService} from "../../services/product.service";
 import {Router} from "@angular/router";
+import * as moment from "moment";
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
-  styleUrls: ['./details.component.sass']
+  styleUrls: ['./details.component.scss']
 })
 export class DetailsComponent implements OnInit {
   loading = false;
@@ -20,22 +21,36 @@ export class DetailsComponent implements OnInit {
   productTypes = [];
   collections = [];
   selectedItems = [];
+  colors = [];
+  variants = [];
+  @ViewChild('carousel', {static: true}) carousel: NgbCarousel;
 
-  @ViewChild('carousel', {static : true}) carousel: NgbCarousel;
-  constructor(private router: Router,private utils: UtilsService,private productService: ProductService) {
+  constructor(private router: Router, private utils: UtilsService, private productService: ProductService) {
   }
 
   ngOnInit() {
     this.selectedProduct = JSON.parse(sessionStorage.getItem('selectedProduct'));
     console.log(this.selectedProduct);
+    this.colors = this.selectedProduct.variants.map(a => a.color);
+    this.colors = [...new Set(this.colors)];
+    this.getVariants(this.colors[0]);
+    console.log(this.colors);
     this.selectedItems = this.selectedProduct.tags.split(',');
     this.productTypes = this.utils.productTypes;
     this.collections = this.utils.collections;
     this.tags = this.utils.tags;
   }
+
+  getVariants(color) {
+    this.variants = this.selectedProduct.variants.filter(function (item) {
+      return item.color.trim() === color
+    })
+  }
+
   getTags(tags) {
     return tags.split(',');
   }
+
   hasValue(value) {
     let hasFound = false;
     this.selectedItems.forEach((item) => {
@@ -48,6 +63,7 @@ export class DetailsComponent implements OnInit {
     }
     return false;
   }
+
   onSlide(slideEvent: NgbSlideEvent) {
     if (this.unpauseOnArrow && slideEvent.paused &&
       (slideEvent.source === NgbSlideEventSource.ARROW_LEFT || slideEvent.source === NgbSlideEventSource.ARROW_RIGHT)) {
@@ -57,6 +73,15 @@ export class DetailsComponent implements OnInit {
       this.togglePaused();
     }
   }
+  getDate(date){
+    if(date !== ''){
+      date = date.split('T');
+      let returndate = date[0].split('-');
+      return returndate[2]+'/'+returndate[1]+'/'+returndate[0];
+    }
+    return 'N/A';
+  }
+
   togglePaused() {
     if (this.paused) {
       this.carousel.cycle();
@@ -65,6 +90,7 @@ export class DetailsComponent implements OnInit {
     }
     this.paused = !this.paused;
   }
+
   addToList(checked, value) {
     if (checked) {
       this.selectedItems.push(value);
@@ -75,15 +101,16 @@ export class DetailsComponent implements OnInit {
     }
     console.log(this.selectedItems);
   }
-  addListToProduct(){
+
+  addListToProduct() {
     this.selectedProduct.tags = this.selectedItems.toString();
   }
 
-  back(){
+  back() {
     this.router.navigate(['dashboard']);
   }
 
-  saveData(){
+  saveData() {
     let request = {
       "productDetail": this.selectedProduct.productDetail,
       "productType": this.selectedProduct.productType,
@@ -92,7 +119,7 @@ export class DetailsComponent implements OnInit {
       "markup": this.selectedProduct.markup,
     }
     this.loading = true;
-    this.productService.updateProduct(this.selectedProduct.id,request)
+    this.productService.updateProduct(this.selectedProduct.id, request)
       .subscribe(res => {
         this.loading = false;
         console.log(res);
@@ -101,7 +128,7 @@ export class DetailsComponent implements OnInit {
       });
   }
 
-  removeFromList(tag){
+  removeFromList(tag) {
     const selectedItems = this.selectedProduct.tags.split(',').filter(function (item) {
       return item !== tag
     })
