@@ -20,11 +20,11 @@ export class AuthGuard implements CanActivate, CanActivateChild {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if (sessionStorage.getItem(STORAGEKEY.loginUser) == null && sessionStorage.getItem(STORAGEKEY.loginUser) == undefined) {
+    if (sessionStorage.getItem('isLoggedIn') === 'yes') {
+      return true;
+    } else {
       this.router.navigateByUrl("login");
       return false;
-    } else {
-      return true;
     }
   }
 

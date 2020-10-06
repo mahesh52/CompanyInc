@@ -6,6 +6,7 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { DetailsComponent } from './pages/details/details.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import {AuthGuard} from "./auth.guard";
 
 const routes: Routes = [
   {
@@ -13,10 +14,10 @@ const routes: Routes = [
     children: [
       {path: '', redirectTo: 'login', pathMatch: 'full'},
       {path: 'login', component: LoginComponent},
-      {path: 'home', component: HomeComponent},
+      {path: 'home', component: HomeComponent,canActivate: [AuthGuard]},
       {path: 'register', component: RegisterComponent},
-      {path: 'dashboard', component: DashboardComponent},
-      {path: 'details', component: DetailsComponent},
+      {path: 'dashboard', component: DashboardComponent,canActivate: [AuthGuard]},
+      {path: 'details', component: DetailsComponent,canActivate: [AuthGuard]},
     ]
   },
 ];

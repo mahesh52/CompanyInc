@@ -3,6 +3,7 @@ import {Router} from "@angular/router";
 import {ProductService} from "../../services/product.service";
 import {UtilsService} from "../../services/utils.service";
 import {PaginationService} from "../../services/pagination.service";
+import {SortUtilsService} from "../../services/sort-utils.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -26,7 +27,10 @@ export class DashboardComponent implements OnInit {
   selectedItems = [];
   isProdSelected = false;
 
-  constructor(private router: Router, private paginationService: PaginationService, private productService: ProductService, private utils: UtilsService) {
+  constructor(private router: Router, private paginationService: PaginationService,
+              private productService: ProductService,
+              private utils: UtilsService,
+              private sortUtilsService: SortUtilsService) {
 
   }
 
@@ -53,7 +57,7 @@ export class DashboardComponent implements OnInit {
       .subscribe(res => {
         this.loading = false;
         console.log(res);
-        res[0].ShopifyStatus = 'Published';
+        //res[0].ShopifyStatus = 'Published';
         this.productDetails = res;
         this.originalList = res;
         this.totalProducts = res.length;
@@ -110,7 +114,7 @@ export class DashboardComponent implements OnInit {
     if (value) {
       if (value === 'New') {
         const items = this.originalList.filter(function (item) {
-          if(!item.ShopifyStatus){
+          if (!item.ShopifyStatus) {
             item.ShopifyStatus = '';
           }
           return item.ShopifyStatus.toUpperCase() === value.toUpperCase() || item.ShopifyStatus === '' || item.ShopifyStatus === null
@@ -209,5 +213,24 @@ export class DashboardComponent implements OnInit {
       }, error => {
         this.loading = false;
       });
+  }
+
+  getSalePrice(price,markup) {
+    if(price && markup){
+      return (price*(1+(markup/100))).toFixed(2);
+    }
+    return '';
+  }
+
+  sortData(key) {
+    if (key) {
+      this.productDetails = this.sortUtilsService.sortByKey(this.productDetails, key, false);
+      this.pager = {};
+      this.setPage(1);
+    } else {
+      this.productDetails = this.originalList;
+      this.pager = {};
+      this.setPage(1);
+    }
   }
 }

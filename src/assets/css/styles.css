@@ -256,7 +256,7 @@ color: #43425d;}
   letter-spacing: normal;
   text-align: left;
   color: #4d4f5c;}
-.dateRagenSection .form-control {height: calc(1.1em + .75rem + 2px);}
+
 .gj-datepicker.gj-datepicker-bootstrap.gj-unselectable.input-group{width:200px !important;}
 .gj-datepicker-bootstrap [role=right-icon] button .gj-icon, .gj-datepicker-bootstrap [role=right-icon] button .material-icons{top:5px !important;}
 .loadSource{ border-radius: 4px;
