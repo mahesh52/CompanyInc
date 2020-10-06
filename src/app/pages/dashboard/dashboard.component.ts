@@ -26,6 +26,8 @@ export class DashboardComponent implements OnInit {
 
   selectedItems = [];
   isProdSelected = false;
+  orderNumber = '';
+  isSearched = false;
 
   constructor(private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
@@ -108,6 +110,31 @@ export class DashboardComponent implements OnInit {
       })
     }
     console.log(this.selectedItems);
+  }
+  clearTableData(){
+    this.isSearched = false;
+    this.orderNumber = '';
+    this.productDetails = this.originalList;
+    this.pager = {};
+    this.setPage(1);
+  }
+  filterByOrderNumber() {
+    this.isSearched = true;
+    const orderNumber = this.orderNumber;
+    if(orderNumber){
+      const items = this.originalList.filter(function (item) {
+        return item.id.toUpperCase() === orderNumber.toUpperCase()
+      });
+      this.productDetails = items;
+      this.pager = {};
+      this.setPage(1);
+    } else {
+      this.isSearched = false;
+      this.productDetails = this.originalList;
+      this.pager = {};
+      this.setPage(1);
+    }
+
   }
 
   filterData(value) {
@@ -215,9 +242,9 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  getSalePrice(price,markup) {
-    if(price && markup){
-      return (price*(1+(markup/100))).toFixed(2);
+  getSalePrice(price, markup) {
+    if (price && markup) {
+      return (price * (1 + (markup / 100))).toFixed(2);
     }
     return '';
   }

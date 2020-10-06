@@ -22,10 +22,12 @@
         <button class="btn btn-primary loadSource" (click)="loadFromSource()">Load From Source</button>
       </div>
       <div class="">
-        <form class="form-inline" action="/action_page.php">
+        <form class="form-inline" name ="searchForm">
           <label for="email"><span class="from1 mr-2">Keyword</span></label>
-          <input type="email" class="form-control mr-3" placeholder="Enter email" id="email">
-          <button type="submit" class="btn btn-primary loadSource">Submit</button>
+          <input type="email" class="form-control mr-3" name = "orderNumber" [(ngModel)]="orderNumber" placeholder="Enter Order Number" id="email">
+          <button type="submit" *ngIf="!isSearched" class="btn btn-primary loadSource" (click)="filterByOrderNumber()">Submit</button>
+          <button type="submit" *ngIf="isSearched" class="btn btn-primary loadSource" (click)="clearTableData()">Clear</button>
+
         </form>
       </div>
       <div class="">
