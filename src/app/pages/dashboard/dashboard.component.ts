@@ -31,6 +31,7 @@ export class DashboardComponent implements OnInit {
   orderNumber = '';
   isSearched = false;
   selectedProdDetails = '';
+
   constructor(private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
               private http: HttpClient,
@@ -43,22 +44,28 @@ export class DashboardComponent implements OnInit {
     this.productTypes = this.utils.productTypes;
     this.collections = this.utils.collections;
     this.tags = this.utils.tags;
-
-    this.getProducts();
-    this.getImage();
+    if (sessionStorage.getItem('products') !== '' && sessionStorage.getItem('products') !== null &&  sessionStorage.getItem('products') !== undefined) {
+      const res1 = JSON.parse(sessionStorage.getItem('products') );
+      this.productDetails = res1;
+      this.originalList = res1;
+      this.totalProducts = res1.length;
+      this.setPage(1);
+    } else {
+      this.getProducts();
+    }
   }
-
-  getImage() {
-    return this.http.get("https://hapeservices.azurewebsites.net/api/product/Image?filepath=FYM2B57CF7B98/12605234/image1.jpg")
-  }
-
   details(id) {
-    const selectedItems = this.productDetails.filter(function (item) {
+    let index = 0;
+    const selectedItems = this.productDetails.filter(function (item,index) {
       return item.id === id
     });
+    this.productDetails.forEach((item, i) => {
+      if (item.id === id) {
+        index = i;
+      }
+    });
     console.log(selectedItems);
-    sessionStorage.setItem('selectedProduct', JSON.stringify(selectedItems[0]));
-    this.router.navigate(['details']);
+    this.router.navigate(['/details',index]);
   }
 
   getProducts() {
@@ -70,9 +77,10 @@ export class DashboardComponent implements OnInit {
         //res[0].ShopifyStatus = 'Published';
         let res1 = [];
         res.forEach((item) => {
-          item.markup = item.markup+' %';
+          item.markup = item.markup + ' %';
           res1.push(item);
         });
+        sessionStorage.setItem('products',JSON.stringify(res1));
         this.productDetails = res1;
         this.originalList = res1;
         this.totalProducts = res1.length;
@@ -135,10 +143,13 @@ export class DashboardComponent implements OnInit {
     this.selectedProdDetails = this.productDetails[this.selectedDetailsIndex].productDetail;
     this.isProdSelected = true;
   }
-  updateProductDetails(){
+
+  updateProductDetails() {
     this.productDetails[this.selectedDetailsIndex].productDetail = this.selectedProdDetails;
+    sessionStorage.setItem('products',JSON.stringify(this.productDetails));
     this.isProdSelected = false;
   }
+
   addToList(checked, value) {
     if (checked) {
       this.selectedItems.push(value);
@@ -221,6 +232,7 @@ export class DashboardComponent implements OnInit {
 
   addListToProduct() {
     this.productDetails[this.selectedIndex].tags = this.selectedItems.toString();
+    sessionStorage.setItem('products',JSON.stringify(this.productDetails));
     this.isProdSelected = false;
   }
 
@@ -230,12 +242,13 @@ export class DashboardComponent implements OnInit {
       "productType": item.productType,
       "collections": item.collections,
       "tags": item.tags,
-      "markup": item.markup.replace('%','').replace(),
+      "markup": item.markup.replace('%', '').replace(),
     }
     this.loading = true;
     this.productService.updateProduct(item.id, request)
       .subscribe(res => {
         this.loading = false;
+        sessionStorage.setItem('products',JSON.stringify(this.productDetails));
         console.log(res);
       }, error => {
         this.loading = false;
@@ -258,6 +271,7 @@ export class DashboardComponent implements OnInit {
       return item !== tag
     })
     this.productDetails[index].tags = selectedItems.toString();
+    sessionStorage.setItem('products',JSON.stringify(this.originalList));
   }
 
   uploadProducts() {
@@ -284,7 +298,7 @@ export class DashboardComponent implements OnInit {
 
   getSalePrice(price, markup) {
     if (price && markup) {
-      markup = markup.replace('%','').trim();
+      markup = markup.replace('%', '').trim();
       return (price * (1 + (markup / 100))).toFixed(2);
     }
     return '';

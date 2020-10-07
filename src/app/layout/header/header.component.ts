@@ -7,18 +7,22 @@ import {Router} from "@angular/router";
   styleUrls: ['./header.component.sass']
 })
 export class HeaderComponent implements OnInit {
-
+  userDetails: {};
 
   constructor(private router: Router) {
 
   }
 
   ngOnInit() {
-
+    if (sessionStorage.getItem('user') !== null && sessionStorage.getItem('user') !== undefined
+      && sessionStorage.getItem('user') !== '') {
+      this.userDetails = JSON.parse(sessionStorage.getItem('user'))[0];
+    }
   }
 
   logout() {
     sessionStorage.setItem('isLoggedIn', 'no');
+    sessionStorage.clear();
     this.router.navigate(['login']);
   }
 }

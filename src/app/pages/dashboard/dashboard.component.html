@@ -127,7 +127,7 @@
           <td align="center" class="snoTd">{{i + 1}}</td>
           <td class="styleTd">
             <div class="styleImg"><img style="cursor:pointer;" (click)="details(item.id)"
-                                       [src]="'data:image/jpg;base64,'+item?.stylePhotos[0]"/></div>
+                                       [src]="item?.stylePhotos[0]"/></div>
             <h6 style="cursor:pointer;" (click)="details(item.id)" class="styleName">{{item?.styleTitle}}</h6>
           </td>
           <td class="pdTd" style="position: relative;">

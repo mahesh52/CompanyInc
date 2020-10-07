@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {NgbCarousel, NgbSlideEvent, NgbSlideEventSource} from "@ng-bootstrap/ng-bootstrap";
 import {UtilsService} from "../../services/utils.service";
 import {ProductService} from "../../services/product.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import * as moment from "moment";
 
 @Component({
@@ -23,13 +23,19 @@ export class DetailsComponent implements OnInit {
   selectedItems = [];
   colors = [];
   variants = [];
+  productDetails = [];
+  selectedId: string;
+  salePrice = '';
   @ViewChild('carousel', {static: true}) carousel: NgbCarousel;
 
-  constructor(private router: Router, private utils: UtilsService, private productService: ProductService) {
+  constructor(private route: ActivatedRoute, private router: Router, private utils: UtilsService, private productService: ProductService) {
   }
 
   ngOnInit() {
-    this.selectedProduct = JSON.parse(sessionStorage.getItem('selectedProduct'));
+    this.selectedId = this.route.snapshot.paramMap.get('id');
+    this.productDetails = JSON.parse(sessionStorage.getItem('products'));
+    this.selectedProduct = this.productDetails[this.selectedId];
+    console.log(this.selectedId);
     console.log(this.selectedProduct);
     this.colors = this.selectedProduct.variants.map(a => a.color);
     this.colors = [...new Set(this.colors)];
@@ -39,8 +45,18 @@ export class DetailsComponent implements OnInit {
     this.productTypes = this.utils.productTypes;
     this.collections = this.utils.collections;
     this.tags = this.utils.tags;
-  }
 
+    this.getSalePrice();
+  }
+  getSalePrice() {
+    const price = this.selectedProduct.price;
+    let markup = this.selectedProduct.markup;
+    if (price && markup) {
+      markup = markup.replace('%', '').trim();
+      this.selectedProduct.salePrice =  (price * (1 + (markup / 100))).toFixed(2);
+      console.log( this.selectedProduct.salePrice );
+    }
+  }
   getVariants(color) {
     this.variants = this.selectedProduct.variants.filter(function (item) {
       return item.color.trim() === color
@@ -73,11 +89,12 @@ export class DetailsComponent implements OnInit {
       this.togglePaused();
     }
   }
-  getDate(date){
-    if(date !== ''){
+
+  getDate(date) {
+    if (date !== '') {
       date = date.split('T');
       let returndate = date[0].split('-');
-      return returndate[2]+'/'+returndate[1]+'/'+returndate[0];
+      return returndate[2] + '/' + returndate[1] + '/' + returndate[0];
     }
     return 'N/A';
   }
@@ -104,6 +121,8 @@ export class DetailsComponent implements OnInit {
 
   addListToProduct() {
     this.selectedProduct.tags = this.selectedItems.toString();
+    this.productDetails[this.selectedId] = this.selectedProduct;
+    sessionStorage.setItem('products', JSON.stringify(this.productDetails));
   }
 
   back() {
@@ -122,6 +141,8 @@ export class DetailsComponent implements OnInit {
     this.productService.updateProduct(this.selectedProduct.id, request)
       .subscribe(res => {
         this.loading = false;
+        this.productDetails[this.selectedId] = this.selectedProduct;
+        sessionStorage.setItem('products', JSON.stringify(this.productDetails));
         console.log(res);
       }, error => {
         this.loading = false;
@@ -133,5 +154,7 @@ export class DetailsComponent implements OnInit {
       return item !== tag
     })
     this.selectedProduct.tags = selectedItems.toString();
+    this.productDetails[this.selectedId] = this.selectedProduct;
+    sessionStorage.setItem('products', JSON.stringify(this.productDetails));
   }
 }

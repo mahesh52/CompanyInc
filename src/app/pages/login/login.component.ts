@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit {
       })
       if(user.length > 0){
         sessionStorage.setItem('isLoggedIn', 'yes');
+        sessionStorage.setItem('user',JSON.stringify(user));
         this.router.navigate(['home']);
       } else {
         this.loginError = 'Invalid username or password';
