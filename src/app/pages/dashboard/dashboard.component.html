@@ -85,9 +85,13 @@
 
       </div>
       <div class="col-md-4">
-                  <input  type="email" class="form-control mr-3 orderNumber" name = "orderNumber" [(ngModel)]="orderNumber" placeholder="Enter Order Number" id="email">
-                  <button type="submit" *ngIf="!isSearched" class="btn btn-primary loadSource" (click)="filterByOrderNumber()">Search</button>
-                  <button type="submit" *ngIf="isSearched" class="btn btn-primary loadSource" (click)="clearTableData()">Clear</button>
+        <input type="email" class="form-control mr-3 orderNumber" name="orderNumber" [(ngModel)]="orderNumber"
+               placeholder="Enter Order Number" id="email">
+        <button type="submit" *ngIf="!isSearched" class="btn btn-primary loadSource" (click)="filterByOrderNumber()">
+          Search
+        </button>
+        <button type="submit" *ngIf="isSearched" class="btn btn-primary loadSource" (click)="clearTableData()">Clear
+        </button>
 
       </div>
     </div>
@@ -129,12 +133,13 @@
           <td class="pdTd" style="position: relative;">
             <!--            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.-->
             <!--              LabelUnspecified</p>-->
-            <textarea style="width:100%;resize: none;font-size: 10px" rows=3 cols=22 [(ngModel)]="item.productDetail">{{item?.productDetail}}</textarea>
-            <span style="    position: absolute;
+            <textarea style="width:100%;resize: none;font-size: 10px" rows=3 cols=22
+                      [(ngModel)]="item.productDetail">{{item?.productDetail}}</textarea>
+            <span data-toggle="modal" data-target="#myModal1" style="    position: absolute;cursor: pointer;
     bottom: 0;
     text-align: center;
     right: 10px;
-    font-weight: bold;">...</span>
+    font-weight: bold;"  (click)="selectDetIndex(item.id)" >...</span>
             <!--            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>-->
           </td>
           <td class="ptTd">
@@ -149,12 +154,12 @@
             </select>
           </td>
           <td class="ptTags">
-            <div class="ribbonTd" *ngFor="let tag of getTags(item?.tags)">
+            <div class="ribbonTd" *ngFor="let tag of getTags(item?.tags);let j =index;">
               <span style="cursor:pointer;position: absolute;
     left: 5px;" (click)="removeFromList(item.id,tag)">X</span>
               <span>  {{tag}}</span>
             </div>
-            <p>...</p>
+            <p *ngIf="getTagsLength(item?.tags) > 2">...</p>
             <div class="ribbonTd1">
               <span style="cursor:pointer;width: 18px;
     height: 18px;" data-toggle="modal" data-target="#myModal"
@@ -163,7 +168,7 @@
             </div>
           </td>
           <td class="unitPrice"><p>$ {{item?.price}} </p></td>
-          <td><input type="text" class="form-control markupInput" [(ngModel)]="item.markup" ></td>
+          <td><input type="text" class="form-control markupInput" [(ngModel)]="item.markup"></td>
 
           <td align="center"><p>$ {{getSalePrice(item?.price, item?.markup)}} </p></td>
           <td><p>{{item?.orderNumber}}</p></td>
@@ -183,7 +188,8 @@
 
     <div class="tablePagination mt-2 pt-1">
       <button class="btn btn-primary loadSource" (click)="uploadProducts()">Export to Destination</button>
-      <ngb-pagination style="position: absolute;right: 0" [collectionSize]="pager.totalItems" [pageSize]="pager.pageSize" [(page)]="pager.currentPage"
+      <ngb-pagination style="position: absolute;right: 0" [collectionSize]="pager.totalItems"
+                      [pageSize]="pager.pageSize" [(page)]="pager.currentPage"
                       [maxSize]="pager.totalPages" [rotate]="true" (pageChange)="setPage(pager.currentPage)"
                       [boundaryLinks]="true"></ngb-pagination>
     </div>
@@ -215,7 +221,32 @@
           <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="addListToProduct()">Add</button>
         </div>
         <div style="float: right">
-          <button type="button" class="btn btn-primary" data-dismiss="modal" >Close</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="myModal1" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Product Details</h4>
+      </div>
+      <div class="modal-body">
+        <textarea rows="10" cols="58" [(ngModel)]="selectedProdDetails"></textarea>
+      </div>
+      <div class="modal-footer">
+        <div style="float: left">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="updateProductDetails()">Add</button>
+        </div>
+        <div style="float: right">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>

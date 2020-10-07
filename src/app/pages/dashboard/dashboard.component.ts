@@ -4,6 +4,7 @@ import {ProductService} from "../../services/product.service";
 import {UtilsService} from "../../services/utils.service";
 import {PaginationService} from "../../services/pagination.service";
 import {SortUtilsService} from "../../services/sort-utils.service";
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-dashboard',
@@ -17,6 +18,7 @@ export class DashboardComponent implements OnInit {
   collections = [];
   tags = [];
   selectedIndex: number;
+  selectedDetailsIndex: number;
   totalProducts: number;
   pager: any = {};
   pagedItems: any[];
@@ -28,9 +30,10 @@ export class DashboardComponent implements OnInit {
   isProdSelected = false;
   orderNumber = '';
   isSearched = false;
-
+  selectedProdDetails = '';
   constructor(private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
+              private http: HttpClient,
               private utils: UtilsService,
               private sortUtilsService: SortUtilsService) {
 
@@ -42,6 +45,11 @@ export class DashboardComponent implements OnInit {
     this.tags = this.utils.tags;
 
     this.getProducts();
+    this.getImage();
+  }
+
+  getImage() {
+    return this.http.get("https://hapeservices.azurewebsites.net/api/product/Image?filepath=FYM2B57CF7B98/12605234/image1.jpg")
   }
 
   details(id) {
@@ -60,9 +68,14 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
         console.log(res);
         //res[0].ShopifyStatus = 'Published';
-        this.productDetails = res;
-        this.originalList = res;
-        this.totalProducts = res.length;
+        let res1 = [];
+        res.forEach((item) => {
+          item.markup = item.markup+' %';
+          res1.push(item);
+        });
+        this.productDetails = res1;
+        this.originalList = res1;
+        this.totalProducts = res1.length;
         this.setPage(1);
 
       }, error => {
@@ -85,11 +98,21 @@ export class DashboardComponent implements OnInit {
   }
 
   getTags(tags) {
-    return tags.split(',');
+    let returnTags = tags.split(',');
+    if (returnTags.length > 2) {
+      returnTags = returnTags.splice(0, 2);
+      //console.log(tags);
+    }
+    return returnTags;
   }
 
+  getTagsLength(tags) {
+    return tags.split(',').length;
+
+  }
+
+
   selectIndex(id) {
-    let index = 0;
     this.productDetails.forEach((item, i) => {
       if (item.id === id) {
         this.selectedIndex = i;
@@ -97,10 +120,25 @@ export class DashboardComponent implements OnInit {
     });
 
 
-    this.selectedItems = this.productDetails[index].tags.split(',');
+    this.selectedItems = this.productDetails[this.selectedIndex].tags.split(',');
     this.isProdSelected = true;
   }
 
+  selectDetIndex(id) {
+    this.productDetails.forEach((item, i) => {
+      if (item.id === id) {
+        this.selectedDetailsIndex = i;
+      }
+    });
+
+
+    this.selectedProdDetails = this.productDetails[this.selectedDetailsIndex].productDetail;
+    this.isProdSelected = true;
+  }
+  updateProductDetails(){
+    this.productDetails[this.selectedDetailsIndex].productDetail = this.selectedProdDetails;
+    this.isProdSelected = false;
+  }
   addToList(checked, value) {
     if (checked) {
       this.selectedItems.push(value);
@@ -111,17 +149,19 @@ export class DashboardComponent implements OnInit {
     }
     console.log(this.selectedItems);
   }
-  clearTableData(){
+
+  clearTableData() {
     this.isSearched = false;
     this.orderNumber = '';
     this.productDetails = this.originalList;
     this.pager = {};
     this.setPage(1);
   }
+
   filterByOrderNumber() {
     this.isSearched = true;
     const orderNumber = this.orderNumber;
-    if(orderNumber){
+    if (orderNumber) {
       const items = this.originalList.filter(function (item) {
         return item.id.toUpperCase() === orderNumber.toUpperCase()
       });
@@ -190,7 +230,7 @@ export class DashboardComponent implements OnInit {
       "productType": item.productType,
       "collections": item.collections,
       "tags": item.tags,
-      "markup": item.markup,
+      "markup": item.markup.replace('%','').replace(),
     }
     this.loading = true;
     this.productService.updateProduct(item.id, request)
@@ -244,6 +284,7 @@ export class DashboardComponent implements OnInit {
 
   getSalePrice(price, markup) {
     if (price && markup) {
+      markup = markup.replace('%','').trim();
       return (price * (1 + (markup / 100))).toFixed(2);
     }
     return '';
