@@ -1,7 +1,7 @@
 <div class="bodycon pb-5">
 
 
-  <div class="dpTopStrip mb-5">
+  <div class="dpTopStrip mb-3" style="padding: 10px 0px;">
     <div class="container">
       <div class="dpTopStripFlex">
         <div class="">
@@ -58,9 +58,10 @@
 
           <!-- The slideshow -->
           <div class="carousel-inner">
-            <ngb-carousel   #carousel  [interval]="false" [keyboard]="false"  [wrap]="false" [showNavigationArrows]="true" [pauseOnHover]="pauseOnHover" (slide)="onSlide($event)" >
-              <ng-template ngbSlide *ngFor="let image of selectedProduct?.stylePhotos" >
-                  <img [src]="image" alt="Los Angeles">
+            <ngb-carousel #carousel [interval]="false" [keyboard]="false" [wrap]="false" [showNavigationArrows]="true"
+                          [pauseOnHover]="pauseOnHover" (slide)="onSlide($event)">
+              <ng-template ngbSlide *ngFor="let image of selectedProduct?.stylePhotos">
+                <img [src]="image" alt="Los Angeles">
               </ng-template>
             </ngb-carousel>
 
@@ -85,7 +86,8 @@
           </div>
           <div class="col-md-9">
             <div class="">
-              <textarea [(ngModel)]="selectedProduct.productDetail" rows = 5 cols=50>{{selectedProduct?.productDetail}}</textarea>
+              <textarea class="w-100" style="font-size: 13px;" [(ngModel)]="selectedProduct.productDetail" rows=5
+                        cols=50>{{selectedProduct?.productDetail}}</textarea>
             </div>
           </div>
         </div>
@@ -94,7 +96,7 @@
           <div class="col-md-1"></div>
           <div class="col-md-2 text-center">
             <h5 class="detailsTitleH5">Style Color</h5>
-            <select class="form-control lightGray"  (change)="getVariants($event.target.value)">
+            <select class="form-control lightGray" (change)="getVariants($event.target.value)">
               <option *ngFor="let item of colors">{{item}}</option>
             </select>
           </div>
@@ -104,11 +106,11 @@
                 <li class="flex-item flex1">
                   <span>Variant Size</span>
                 </li>
-                <li class="flex-item flex2"  *ngFor="let variant of variants" >{{variant?.size}}</li>
+                <li class="flex-item flex2" *ngFor="let variant of variants">{{variant?.size}}</li>
               </ul>
               <ul class="flex-container fcBorderBottomNone">
                 <li class="flex-item flex1"><span>Variant Quantity</span></li>
-                <li class="flex-item flex2" *ngFor="let variant of variants" >{{variant?.quantity}}</li>
+                <li class="flex-item flex2" *ngFor="let variant of variants">{{variant?.quantity}}</li>
               </ul>
             </div>
           </div>
@@ -117,8 +119,8 @@
 
         <div class="row mt-3">
           <div class="col-md-1"></div>
-          <div class="col-md-3 text-center">
-            <h5 class="detailsTitleH5 text-center mt-4">Tags</h5>
+          <div class="col-md-2 text-center">
+            <h5 class="detailsTitleH5 mt-2">Tags</h5>
           </div>
           <div class="col-md-8">
             <div class="ribbonTd" *ngFor="let tag of getTags(selectedProduct?.tags)">
@@ -126,69 +128,95 @@
     left: 5px;" (click)="removeFromList(tag)">X</span>
               <span>{{tag}}</span>
             </div>
-            <div class="ribbonTd1 ribbonTdRight"  data-toggle="modal" data-target="#myModal" >
-              <span style="cursor:pointer;width: 18px;
-    height: 18px;" >+</span></div>
+            <div class="ribbonTd1 ribbonTdRight" style="margin-right: 0px !important;" data-toggle="modal" data-target="#myModal">
+              <span style="cursor: pointer;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    position: relative;
+    top: -4px;">+</span></div>
           </div>
         </div>
+
+        <div class="row mt-3">
+          <div class="col-md-1"></div>
+          <div class="col-md-2 text-center">
+            <h5 class="detailsTitleH5 mt-2">Product Type</h5>
+          </div>
+          <div class="col-md-9">
+            <div class="row">
+              <div class="col-md-4">
+
+                <select style="font-size: 13px;" class="form-control"
+                        [(ngModel)]="selectedProduct.productType">
+                  <option *ngFor="let ptype of productTypes"
+                          [selected]="ptype === selectedProduct?.productType">{{ptype}}</option>
+                </select>
+              </div>
+              <div class="col-md-8">
+                <div class="row">
+                  <div class="col-md-3">
+                    <h5 class="detailsTitleH5 mt-2">Collections</h5>
+                  </div>
+                  <div class="col-md-7">
+                    <select style="font-size: 13px;" class="form-control"
+                            [(ngModel)]="selectedProduct.collections">
+                      <option *ngFor="let collection of collections"
+                              [selected]="collection === selectedProduct?.collections">{{collection}}</option>
+                    </select>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-md-1"></div>
+          <div class="col-md-2 text-center">
+            <h5 class="detailsTitleH5 mt-2">Unit Price<small>(Inc. Shipping)</small></h5>
+          </div>
+          <div class="col-md-9">
+            <div class="row">
+              <div class="col-md-2">
+
+                <input style="font-size: 13px;" class="form-control" disabled
+                       [value]="'$'+selectedProduct?.price">
+              </div>
+              <div class="col-md-8">
+                <div class="row">
+                  <div class="col-md-3">
+                    <h5 class="detailsTitleH5 mt-2">Mark-up</h5>
+                  </div>
+                  <div class="col-md-3">
+                    <input style="font-size: 13px;" class="form-control"
+                           [(ngModel)]="selectedProduct.markup" (ngModelChange)="getSalePrice()">
+                  </div>
+                  <div class="col-md-3">
+                    <h5 class="detailsTitleH5 mt-2">Sale Price</h5>
+                  </div>
+                  <div class="col-md-3">
+                    <input style="font-size: 13px;" class="form-control" disabled
+                           [value]="'$'+selectedProduct.salePrice">
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="text-center" style="margin-left: 110px;">
+          <button class="btn btn-primary loadSource" (click)="saveData()">Save Changes</button>
+        </div>
       </div>
+
     </div>
-
-
-    <div class="detailsBottomStrip mt-5">
-      <div class="dbsMain dbsm1">
-        <div>
-          <div class="row mt-4">
-            <div class="col-md-5 mt-2"><h4>Product Type</h4></div>
-            <div class="col-md-7"><select class="form-control" [(ngModel)]="selectedProduct.productType" >
-              <option *ngFor="let ptype of productTypes" [selected]="ptype === selectedProduct?.productType">{{ptype}}</option>
-            </select></div>
-          </div>
-        </div>
-        <div>
-          <div class="row mt-4">
-            <div class="col-md-5"><h4>Unit Price
-              Including shipping</h4></div>
-            <div class="col-md-7"><input class="form-control" disabled [value]="selectedProduct?.price"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="dbsMain dbsm2">
-        <div>
-          <div class="row mt-4">
-            <div class="col-md-5 text-right mt-2"><h4>Collection</h4></div>
-            <div class="col-md-7"><select class="form-control" [(ngModel)]="selectedProduct.collections">
-              <option *ngFor="let collection of collections" [selected]="collection === selectedProduct?.collections">{{collection}}</option>
-            </select></div>
-          </div>
-        </div>
-        <div>
-          <div class="row mt-4">
-            <div class="col-md-5 text-right mt-2"><h4>Markup</h4></div>
-            <div class="col-md-7"><input class="form-control" [(ngModel)]="selectedProduct.markup" (ngModelChange)="getSalePrice()"></div>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="dbsMain dbsm3">
-        <div>
-          <div class="row mt-4">
-            <div class="col-md-5 text-right mt-2"><h4>Sale Price</h4></div>
-            <div class="col-md-7"><input class="form-control" disabled [value]="selectedProduct.salePrice"></div>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="dbsMain dbsm4">
-        <button class="btn btn-primary loadSource" (click)="saveData()">Save Changes</button>
-      </div>
-
-
-    </div>
-
 
   </div>
 
@@ -205,9 +233,10 @@
         <h4 class="modal-title">Add Tags</h4>
       </div>
       <div class="modal-body">
-        <div class="row" >
+        <div class="row">
           <div class="col-md-6" *ngFor="let tag of tags">
-            <input type = "checkbox" class="tags" [checked]="hasValue(tag.item_text)" (click)="addToList($event.target.checked,tag.item_text)">
+            <input type="checkbox" class="tags" [checked]="hasValue(tag.item_text)"
+                   (click)="addToList($event.target.checked,tag.item_text)">
             <label>{{tag.item_text}}</label>
 
           </div>
