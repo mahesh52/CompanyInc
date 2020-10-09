@@ -113,6 +113,7 @@ export class DashboardComponent implements OnInit {
   getTags(tags) {
     if (tags && tags !== null && tags !== undefined) {
       let returnTags = tags.split(',');
+      returnTags = returnTags.filter(item => item);
       if (returnTags.length > 2) {
         returnTags = returnTags.splice(0, 2);
         //console.log(tags);
@@ -184,11 +185,18 @@ export class DashboardComponent implements OnInit {
   filterByOrderNumber() {
     this.isSearched = true;
     const orderNumber = this.orderNumber;
+
     if (orderNumber) {
-      const items = this.originalList.filter(function (item) {
-        return item.orderNumber.toUpperCase() === orderNumber.toUpperCase()
+      let list = [];
+      this.originalList.forEach((item) => {
+        if (item.orderNumber.toUpperCase().includes(orderNumber.toUpperCase())) {
+          list.push(item);
+        }
       });
-      this.productDetails = items;
+      // const items = this.originalList.filter(function (item) {
+      //   return item.orderNumber.toUpperCase() === orderNumber.toUpperCase()
+      // });
+      this.productDetails = list;
       this.pager = {};
       this.setPage(1);
     } else {
@@ -243,6 +251,8 @@ export class DashboardComponent implements OnInit {
   }
 
   addListToProduct() {
+    this.selectedItems = this.selectedItems.filter(item => item);
+
     this.productDetails[this.selectedIndex].tags = this.selectedItems.toString();
     sessionStorage.setItem('products', JSON.stringify(this.productDetails));
     this.isProdSelected = false;
@@ -296,10 +306,12 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
       });
   }
+
   zeroPad(num, places) {
-    let  zero = places - num.toString().length + 1;
+    let zero = places - num.toString().length + 1;
     return Array(+(zero > 0 && zero)).join("0") + num;
   }
+
   loadFromSource() {
 
     if (this.fromDate && this.toDate) {
@@ -309,9 +321,9 @@ export class DashboardComponent implements OnInit {
         alert('To date must be greater than from date');
       } else {
         this.loading = true;
-        const formDate = this.fromDate['year'] + '-'+this.zeroPad(this.fromDate['month'], 2) + '-'+this.zeroPad(this.fromDate['day'], 2);
-        const toDate = this.toDate['year'] + '-'+this.zeroPad(this.toDate['month'], 2) + '-'+this.zeroPad(this.toDate['day'], 2);
-        this.productService.downloadProducts(formDate,toDate)
+        const formDate = this.fromDate['year'] + '-' + this.zeroPad(this.fromDate['month'], 2) + '-' + this.zeroPad(this.fromDate['day'], 2);
+        const toDate = this.toDate['year'] + '-' + this.zeroPad(this.toDate['month'], 2) + '-' + this.zeroPad(this.toDate['day'], 2);
+        this.productService.downloadProducts(formDate, toDate)
           .subscribe(res => {
             this.loading = false;
             this.getProducts();

@@ -64,7 +64,10 @@ export class DetailsComponent implements OnInit {
   }
 
   getTags(tags) {
-    return tags.split(',');
+    if(tags){
+      return tags.split(',').filter(item => item);
+    }
+
   }
 
   hasValue(value) {
@@ -120,6 +123,7 @@ export class DetailsComponent implements OnInit {
   }
 
   addListToProduct() {
+    this.selectedItems = this.selectedItems.filter(item => item);
     this.selectedProduct.tags = this.selectedItems.toString();
     this.productDetails[this.selectedId] = this.selectedProduct;
     sessionStorage.setItem('products', JSON.stringify(this.productDetails));
@@ -153,6 +157,7 @@ export class DetailsComponent implements OnInit {
     const selectedItems = this.selectedProduct.tags.split(',').filter(function (item) {
       return item !== tag
     })
+    this.selectedItems = selectedItems;
     this.selectedProduct.tags = selectedItems.toString();
     this.productDetails[this.selectedId] = this.selectedProduct;
     sessionStorage.setItem('products', JSON.stringify(this.productDetails));
