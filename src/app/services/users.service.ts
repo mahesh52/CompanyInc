@@ -15,6 +15,10 @@ export class UsersService {
     {
       "username":"catherine",
       "password":"catherine"
+    },
+    {
+      "username":"Catherine",
+      "password":"Catherine"
     }
   ]
 }

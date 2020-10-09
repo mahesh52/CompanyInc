@@ -5,6 +5,9 @@ import {UtilsService} from "../../services/utils.service";
 import {PaginationService} from "../../services/pagination.service";
 import {SortUtilsService} from "../../services/sort-utils.service";
 import {HttpClient} from "@angular/common/http";
+import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+
+
 
 @Component({
   selector: 'app-dashboard',
@@ -174,7 +177,7 @@ export class DashboardComponent implements OnInit {
     const orderNumber = this.orderNumber;
     if (orderNumber) {
       const items = this.originalList.filter(function (item) {
-        return item.id.toUpperCase() === orderNumber.toUpperCase()
+        return item.orderNumber.toUpperCase() === orderNumber.toUpperCase()
       });
       this.productDetails = items;
       this.pager = {};

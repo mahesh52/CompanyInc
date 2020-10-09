@@ -64,11 +64,16 @@
     <div class="row mb-3">
       <div class="col-md-2 text-right">
         <strong class="from">From &nbsp;</strong>
-        <input id="datepicker" width="220"/>
+<!--        <input id="datepicker" width="220"/>-->
+        <input id="datepicker" width="220" placeholder="yyyy-mm-dd"
+               name="dp" ngbDatepicker #d="ngbDatepicker">
+        <button  id = "calender"  (click)="d.toggle()" type="button"></button>
       </div>
       <div class="col-md-3 text-right">
         <strong class="from">To &nbsp;</strong>
-        <input id="datepicker1" width="140"/>
+        <input id="datepicker1" width="140"  placeholder="yyyy-mm-dd"
+               name="dp" ngbDatepicker #d1="ngbDatepicker">
+        <button id = "calender1"  (click)="d1.toggle()" type="button"></button>
       </div>
       <div class="col-md-2 text-center">
         <button class="btn btn-primary loadSource" (click)="loadFromSource()">Load from source</button>
