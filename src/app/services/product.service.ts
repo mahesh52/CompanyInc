@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ApiService} from "./api.service";
 
 @Injectable({
@@ -6,19 +6,22 @@ import {ApiService} from "./api.service";
 })
 export class ProductService {
 
-  constructor( private api: ApiService) { }
+  constructor(private api: ApiService) {
+  }
 
-  getProducts(){
+  getProducts() {
     return this.api.Get('api/product');
   }
 
-  updateProduct(id,data) {
-    return this.api.PutOthers('api/product/'+id, data);
+  updateProduct(id, data) {
+    return this.api.PutOthers('api/product/' + id, data);
   }
-  uploadProducts(){
-    return this.api.Post('api/product/UploadProducts',{});
+
+  uploadProducts() {
+    return this.api.Post('api/product/UploadProducts', {});
   }
-  downloadProducts(){
-    return this.api.Post('api/product/DownloadStyles',{});
+
+  downloadProducts(fromDate, todate) {
+    return this.api.Post('api/product/DownloadStyles?toDate=' + todate + '&fromDate=' + fromDate, {});
   }
 }

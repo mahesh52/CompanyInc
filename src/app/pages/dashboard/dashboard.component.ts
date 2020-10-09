@@ -5,8 +5,7 @@ import {UtilsService} from "../../services/utils.service";
 import {PaginationService} from "../../services/pagination.service";
 import {SortUtilsService} from "../../services/sort-utils.service";
 import {HttpClient} from "@angular/common/http";
-import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
-
+import * as moment from 'moment';
 
 
 @Component({
@@ -34,6 +33,8 @@ export class DashboardComponent implements OnInit {
   orderNumber = '';
   isSearched = false;
   selectedProdDetails = '';
+  fromDate = '';
+  toDate = '';
 
   constructor(private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
@@ -47,8 +48,8 @@ export class DashboardComponent implements OnInit {
     this.productTypes = this.utils.productTypes;
     this.collections = this.utils.collections;
     this.tags = this.utils.tags;
-    if (sessionStorage.getItem('products') !== '' && sessionStorage.getItem('products') !== null &&  sessionStorage.getItem('products') !== undefined) {
-      const res1 = JSON.parse(sessionStorage.getItem('products') );
+    if (sessionStorage.getItem('products') !== '' && sessionStorage.getItem('products') !== null && sessionStorage.getItem('products') !== undefined) {
+      const res1 = JSON.parse(sessionStorage.getItem('products'));
       this.productDetails = res1;
       this.originalList = res1;
       this.totalProducts = res1.length;
@@ -57,9 +58,10 @@ export class DashboardComponent implements OnInit {
       this.getProducts();
     }
   }
+
   details(id) {
     let index = 0;
-    const selectedItems = this.productDetails.filter(function (item,index) {
+    const selectedItems = this.productDetails.filter(function (item, index) {
       return item.id === id
     });
     this.productDetails.forEach((item, i) => {
@@ -68,7 +70,7 @@ export class DashboardComponent implements OnInit {
       }
     });
     console.log(selectedItems);
-    this.router.navigate(['/details',index]);
+    this.router.navigate(['/details', index]);
   }
 
   getProducts() {
@@ -83,7 +85,7 @@ export class DashboardComponent implements OnInit {
           item.markup = item.markup + ' %';
           res1.push(item);
         });
-        sessionStorage.setItem('products',JSON.stringify(res1));
+        sessionStorage.setItem('products', JSON.stringify(res1));
         this.productDetails = res1;
         this.originalList = res1;
         this.totalProducts = res1.length;
@@ -109,7 +111,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getTags(tags) {
-    if(tags && tags !== null &&tags !== undefined){
+    if (tags && tags !== null && tags !== undefined) {
       let returnTags = tags.split(',');
       if (returnTags.length > 2) {
         returnTags = returnTags.splice(0, 2);
@@ -122,7 +124,10 @@ export class DashboardComponent implements OnInit {
   }
 
   getTagsLength(tags) {
-    return tags.split(',').length;
+    if (tags && tags !== undefined && tags !== null) {
+      return tags.split(',').length;
+    }
+    return 0;
 
   }
 
@@ -153,7 +158,7 @@ export class DashboardComponent implements OnInit {
 
   updateProductDetails() {
     this.productDetails[this.selectedDetailsIndex].productDetail = this.selectedProdDetails;
-    sessionStorage.setItem('products',JSON.stringify(this.productDetails));
+    sessionStorage.setItem('products', JSON.stringify(this.productDetails));
     this.isProdSelected = false;
   }
 
@@ -239,7 +244,7 @@ export class DashboardComponent implements OnInit {
 
   addListToProduct() {
     this.productDetails[this.selectedIndex].tags = this.selectedItems.toString();
-    sessionStorage.setItem('products',JSON.stringify(this.productDetails));
+    sessionStorage.setItem('products', JSON.stringify(this.productDetails));
     this.isProdSelected = false;
   }
 
@@ -255,7 +260,7 @@ export class DashboardComponent implements OnInit {
     this.productService.updateProduct(item.id, request)
       .subscribe(res => {
         this.loading = false;
-        sessionStorage.setItem('products',JSON.stringify(this.productDetails));
+        sessionStorage.setItem('products', JSON.stringify(this.productDetails));
         console.log(res);
       }, error => {
         this.loading = false;
@@ -278,7 +283,7 @@ export class DashboardComponent implements OnInit {
       return item !== tag
     })
     this.productDetails[index].tags = selectedItems.toString();
-    sessionStorage.setItem('products',JSON.stringify(this.originalList));
+    sessionStorage.setItem('products', JSON.stringify(this.originalList));
   }
 
   uploadProducts() {
@@ -291,16 +296,34 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
       });
   }
-
+  zeroPad(num, places) {
+    let  zero = places - num.toString().length + 1;
+    return Array(+(zero > 0 && zero)).join("0") + num;
+  }
   loadFromSource() {
-    this.loading = true;
-    this.productService.downloadProducts()
-      .subscribe(res => {
-        this.loading = false;
-        this.getProducts();
-      }, error => {
-        this.loading = false;
-      });
+
+    if (this.fromDate && this.toDate) {
+      const time1 = moment(this.fromDate).format('YYYY-MM-DD');
+      const time2 = moment(this.toDate).format('YYYY-MM-DD');
+      if (time1 > time2) {
+        alert('To date must be greater than from date');
+      } else {
+        this.loading = true;
+        const formDate = this.fromDate['year'] + '-'+this.zeroPad(this.fromDate['month'], 2) + '-'+this.zeroPad(this.fromDate['day'], 2);
+        const toDate = this.toDate['year'] + '-'+this.zeroPad(this.toDate['month'], 2) + '-'+this.zeroPad(this.toDate['day'], 2);
+        this.productService.downloadProducts(formDate,toDate)
+          .subscribe(res => {
+            this.loading = false;
+            this.getProducts();
+          }, error => {
+            this.loading = false;
+          });
+      }
+
+    } else {
+      alert('Please select from date and to date');
+    }
+
   }
 
   getSalePrice(price, markup) {
