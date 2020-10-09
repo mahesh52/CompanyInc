@@ -14,6 +14,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
   }
   load(){
+    sessionStorage.removeItem('products');
     this.router.navigate(['dashboard']);
   }
 
