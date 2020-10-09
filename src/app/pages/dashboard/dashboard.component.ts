@@ -109,12 +109,16 @@ export class DashboardComponent implements OnInit {
   }
 
   getTags(tags) {
-    let returnTags = tags.split(',');
-    if (returnTags.length > 2) {
-      returnTags = returnTags.splice(0, 2);
-      //console.log(tags);
+    if(tags && tags !== null &&tags !== undefined){
+      let returnTags = tags.split(',');
+      if (returnTags.length > 2) {
+        returnTags = returnTags.splice(0, 2);
+        //console.log(tags);
+      }
+      return returnTags;
     }
-    return returnTags;
+    return [];
+
   }
 
   getTagsLength(tags) {
