@@ -4,21 +4,9 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class UsersService {
+  userDetails: any;
+  tokenDetails: any;
+  isUserLoggedIn = false;
 
   constructor() { }
-
-  users = [
-    {
-      "username":"admin",
-      "password":"admin"
-    },
-    {
-      "username":"catherine",
-      "password":"catherine"
-    },
-    {
-      "username":"Catherine",
-      "password":"Catherine"
-    }
-  ]
 }

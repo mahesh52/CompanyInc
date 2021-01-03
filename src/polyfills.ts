@@ -61,6 +61,9 @@ import * as jQuery from 'jquery';
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+(window as any).global = window;
+
+
 export function scrollToSection(id) {
   const element = document.getElementById(id);
   if (element) {

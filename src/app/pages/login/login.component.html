@@ -1,42 +1,120 @@
-<div class="register-photo">
+<!--<div class="register-photo">-->
+<!--  <div class="container">-->
+<!--    <div class="form-container">-->
+<!--      <div class="image-holder"></div>-->
+<!--      <form method="post">-->
+<!--        <h2 class="text-center">COMPANY INC.</h2>-->
+<!--        <p class="text-center welcomeP">Welcome back! Please login to your account.</p>-->
+<!--        <div class="alert alert-danger" role="alert" *ngIf="loginError !== ''">-->
+<!--          {{loginError}}-->
+<!--        </div>-->
+<!--        <div class="form-group"><input class="form-control" [(ngModel)]="username" type="input" name="Username" placeholder="Username"></div>-->
+<!--        <div class="form-group"><input class="form-control"  [(ngModel)]="password" type="password" name="password" placeholder="Password"></div>-->
+<!--        <div class="row">-->
+<!--          <div class="col-md-7">-->
+<!--            <div class="form-group">-->
+<!--              <div class="form-check">-->
+<!--                <label class="form-check-label"><input class="form-check-input" type="checkbox">Remember me</label>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="col-md-5">-->
+<!--            <a  class="forgotPassword">Forgot Password</a>-->
+<!--          </div>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--          <div class="welcomBtns">-->
+<!--            <button class="btn btn-login btn-block" (click)="login()" type="submit">Login</button>-->
+<!--            <button class="btn btn-signup btn-block" (click)="signUp()" type="submit">Sign up</button>-->
+<!--          </div>-->
+<!--        </div>-->
+
+<!--        <p class="termsofUse">Term of use. Privacy policy</p>-->
+
+
+<!--      </form>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+
+<div class="bg-1">
+<div class="login-bg">
   <div class="container">
-    <div class="form-container">
-      <div class="image-holder"></div>
-      <form method="post">
-        <h2 class="text-center">COMPANY INC.</h2>
-        <p class="text-center welcomeP">Welcome back! Please login to your account.</p>
-        <div class="alert alert-danger" role="alert" *ngIf="loginError !== ''">
-          {{loginError}}
-        </div>
-        <div class="form-group"><input class="form-control" [(ngModel)]="username" type="input" name="Username" placeholder="Username"></div>
-        <div class="form-group"><input class="form-control"  [(ngModel)]="password" type="password" name="password" placeholder="Password"></div>
-        <div class="row">
-          <div class="col-md-7">
-            <div class="form-group">
-              <div class="form-check">
-                <label class="form-check-label"><input class="form-check-input" type="checkbox">Remember me</label>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-5">
-            <a  class="forgotPassword">Forgot Password</a>
-          </div>
-        </div>
-
+    <div class="login-container">
+      <h3 class="logo-txt">COMPANY INC.</h3>
+      <div class="mb-3">
+        <p class="Welcome-back-Please-login-to-your-account">
+          Welcome back!
+        </p>
+        <p class="Welcome-back-Please-login-to-your-account">
+          Please login to your account.
+        </p>
+      </div>
+      <div class="text-center">
+        <button class="g-btn mx-auto">
+          <img src="assets/images/google@3x.jpg" alt="google" height="25"  (click)="loginWithGoogle()"  />
+          <span class="google-txt">Login with Google</span>
+        </button>
+      </div>
+      <div class="text-center">
+        <button class="fb-btn mx-auto" (click)="loginWithFb()"  >
+          <img src="assets/images/facebook@3x.png" alt="google" height="25" />
+          <span class="fb-txt">Login with Facebook</span>
+        </button>
+      </div>
+      <div class="text-center my-3">
+        <label class="or-txt">or</label>
+      </div>
+      <div class="text-center my-3" *ngIf="loginError != ''" class="alert alert-danger">
+        <span>{{loginError}}</span>
+      </div>
+      <form [formGroup]="loginForm" (ngSubmit)="login()"  method="post" class="login-form-sec">
         <div class="form-group">
-          <div class="welcomBtns">
-            <button class="btn btn-login btn-block" (click)="login()" type="submit">Login</button>
-            <button class="btn btn-signup btn-block" (click)="signUp()" type="submit">Sign up</button>
+              <span class="form-icon"
+              ><img src="assets/images/ic_person_24px@3x.png" height="13"
+              /></span>
+          <input
+            class="form-control"
+            type="input"
+            name="Username"
+            formControlName="username"
+            placeholder="Username"
+          />
+        </div>
+        <div class="form-group">
+              <span class="form-icon"
+              ><img src="assets/images/ic_lock_24px@3x.png" height="13"
+              /></span>
+          <input
+            class="form-control"
+            type="password"
+            name="password"
+            formControlName="password"
+            placeholder="Password"
+          />
+        </div>
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <button  [disabled]="!loginForm.valid"  class="btn form-btn btn-block mx-auto" type="submit">
+              Login
+            </button>
+            <a routerLink="/forgotpwd" class="fpwd-txt">Forgot Password</a>
+          </div>
+          <div class="col-md-12 text-center mt-4">
+            <a href="#" class="fpwd-txt">No Account?</a>
+            <a routerLink="/register" class="btn form-btn btn-block mx-auto signup-btn">
+              Sign up
+            </a>
           </div>
         </div>
-
-        <p class="termsofUse">Term of use. Privacy policy</p>
-
-
+        <div class="form-group mt-2">
+          <p class="termsofUse-txt my-0">Term of use. Privacy policy</p>
+        </div>
       </form>
     </div>
   </div>
 </div>
-
-
-
+</div>
+<app-loading *ngIf="loading"></app-loading>

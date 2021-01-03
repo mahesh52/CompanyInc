@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
+import {NavigationEnd, Router} from "@angular/router";
+import {filter} from "rxjs/operators";
 
 @Component({
   selector: 'app-header',
@@ -8,20 +9,24 @@ import {Router} from "@angular/router";
 })
 export class HeaderComponent implements OnInit {
   userDetails: {};
-
+  currentUrl: string;
   constructor(private router: Router) {
-
+    router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      this.currentUrl = event.url;
+    });
   }
 
   ngOnInit() {
+    this.currentUrl = this.router.url.split('?')[0];
     if (sessionStorage.getItem('user') !== null && sessionStorage.getItem('user') !== undefined
       && sessionStorage.getItem('user') !== '') {
       this.userDetails = JSON.parse(sessionStorage.getItem('user'))[0];
     }
   }
 
-  logout() {
-    sessionStorage.setItem('isLoggedIn', 'no');
+  logoutUser() {
     sessionStorage.clear();
     this.router.navigate(['login']);
   }

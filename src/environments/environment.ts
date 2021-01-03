@@ -5,6 +5,16 @@
 export const environment = {
   production: false,
   baseUrl: 'https://hapeservices.azurewebsites.net/',
+  cognitoUrl: 'https://invoiceupload.auth.us-east-2.amazoncognito.com',
+  redirectUri:'http://localhost:4200/register',
+  amplify: {
+    Auth: {
+      identityPoolId: 'us-east-2:67cf00d5-e600-44f2-915b-54c424a4b826',
+      region: 'us-east-2',
+      userPoolId: 'us-east-2_Dk6dRsNU9',
+      userPoolWebClientId: '5u6uobos0tjd5fs155ckq86hoi'
+    }
+  }
 };
 
 /*

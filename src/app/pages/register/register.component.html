@@ -1,47 +1,219 @@
-<!---- registration--->
+<!--&lt;!&ndash;&#45;&#45; registration-&ndash;&gt;-->
 
-<div class="register-photo register-photo1" >
-  <div class="container">
-    <div class="form-container">
-      <div class="image-holder"></div>
-      <form method="post">
-        <h2 class="text-center">COMPANY INC.</h2>
-        <p class="text-center welcomeP">Welcome back! Please login to your account.</p>
+<!--<div class="register-photo register-photo1" >-->
+<!--  <div class="container">-->
+<!--    <div class="form-container">-->
+<!--      <div class="image-holder"></div>-->
+<!--      <form method="post">-->
+<!--        <h2 class="text-center">COMPANY INC.</h2>-->
+<!--        <p class="text-center welcomeP">Welcome back! Please login to your account.</p>-->
 
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group"><input class="form-control" type="input" name="Username" placeholder="First Name"></div>
+<!--        <div class="row">-->
+<!--          <div class="col-md-6">-->
+<!--            <div class="form-group"><input class="form-control" type="input" name="Username" placeholder="First Name"></div>-->
+<!--          </div>-->
+<!--          <div class="col-md-6">-->
+<!--            <div class="form-group"><input class="form-control" type="input" name="Username" placeholder="Last Name"></div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+<!--        <div class="form-group"><input class="form-control" type="input" name="Username" placeholder="Username"></div>-->
+<!--        <div class="form-group"><input class="form-control" type="email" name="Username" placeholder="Email"></div>-->
+<!--        <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password"></div>-->
+<!--        <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Confirm-Password"></div>-->
+<!--        <div class="row">-->
+<!--          <div class="col-md-12">-->
+<!--            <div class="form-group">-->
+<!--              <div class="form-check">-->
+<!--                <label class="form-check-label"><input class="form-check-input" type="checkbox">I agree with terms and conditions</label>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--          <div class="welcomBtns">-->
+<!--            <button class="btn btn-login btn-block" (click)="login()" type="submit">Login</button>-->
+<!--            <button class="btn btn-signup btn-block"  type="submit">Sign up</button>-->
+<!--          </div>-->
+<!--        </div>-->
+
+<!--        <p class="text-center alreadyMember"><a routerLink="/login">Already have an account? Sign in.</a></p>-->
+
+
+<!--      </form>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+<div class="bg-1">
+<div class="login-bg">
+  <div class="container" *ngIf="!isSignedUp">
+    <div class="login-container">
+      <h3 class="logo-txt">COMPANY INC.</h3>
+      <div class="text-center">
+        <button class="g-btn mx-auto" >
+          <img src="assets/images/google@3x.jpg"  (click)="loginWithGoogle()" alt="google" height="25" />
+          <span class="google-txt">Login with Google</span>
+        </button>
+      </div>
+      <div class="text-center">
+        <button class="fb-btn mx-auto" (click)="loginWithFb()">
+          <img src="assets/images/facebook@3x.png" alt="google" height="25" />
+          <span class="fb-txt">Login with Facebook</span>
+        </button>
+      </div>
+      <div class="text-center my-3">
+        <label class="or-txt">or</label>
+      </div>
+      <div class="text-center my-3" *ngIf="registerError != ''" class="alert alert-danger">
+        <span>{{registerError}}</span>
+      </div>
+      <form [formGroup]="registerForm" (ngSubmit)="register()" method="post" class="login-form-sec">
+        <div class="form-group">
+              <span class="form-icon"
+              ><img src="assets/images/ic_person_24px@3x.png" height="13"
+              /></span>
+          <input
+            class="form-control"
+            type="input"
+            name="name"
+            formControlName="name"
+            placeholder="Name"
+          />
+          <div class="error-text" *ngIf="registerForm.get('name').touched && registerForm.get('name').hasError('required')">
+            Name can't be blank
           </div>
-          <div class="col-md-6">
-            <div class="form-group"><input class="form-control" type="input" name="Username" placeholder="Last Name"></div>
+        </div>
+        <div class="form-group">
+              <span class="form-icon"
+              ><img src="assets/images/ic_person_24px@3x.png" height="13"
+              /></span>
+          <input
+            class="form-control"
+            type="input"
+            name="Username"
+            formControlName="username"
+            placeholder="Username"
+          />
+          <div class="error-text" *ngIf="registerForm.get('username').touched && registerForm.get('username').hasError('required')">
+            Username can't be blank
+          </div>
+        </div>
+        <div class="form-group">
+              <span class="form-icon"
+              ><img src="assets/images/ic_mail_outline_24px@3x.png" height="13"
+              /></span>
+          <input
+            class="form-control"
+            type="input"
+            name="email"
+            formControlName="email"
+            placeholder="E-mail"
+          />
+          <div class="error-text" *ngIf="registerForm.get('email').touched && registerForm.get('email').hasError('required')">
+            E-mail can't be blank
+          </div>
+        </div>
+        <div class="form-group">
+              <span class="form-icon"
+              ><img src="assets/images/ic_call_24px@3x.png" height="13"
+              /></span>
+          <input
+            class="form-control"
+            type="input"
+            name="mobile"
+            formControlName="mobile"
+            placeholder="Mobile"
+          />
+          <div class="error-text" *ngIf="registerForm.get('mobile').touched && registerForm.get('mobile').hasError('required')">
+            Mobile number can't be blank
           </div>
         </div>
 
-        <div class="form-group"><input class="form-control" type="input" name="Username" placeholder="Username"></div>
-        <div class="form-group"><input class="form-control" type="email" name="Username" placeholder="Email"></div>
-        <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password"></div>
-        <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Confirm-Password"></div>
-        <div class="row">
-          <div class="col-md-12">
-            <div class="form-group">
-              <div class="form-check">
-                <label class="form-check-label"><input class="form-check-input" type="checkbox">I agree with terms and conditions</label>
-              </div>
-            </div>
+        <div class="form-group password-input">
+              <span class="form-icon"
+              ><img src="assets/images/ic_lock_24px@3x.png" height="13"
+              /></span>
+          <input
+            class="form-control"
+            type="password"
+            name="password"
+            formControlName="password"
+            placeholder="Password"
+          />
+          <span class="pws-hint" data-container="body" data-toggle="popover" data-placement="right" data-skin="primary" data-html="true" title="Password Hint"  [ngbTooltip]="htmlContent">Password must have</span>
+          <ng-template #htmlContent>
+            <div class="popover-primary">
+              <h3 class="popover-header" style="color: #0b2e13">Password Hint</h3>
+              <div class="popover-body" style="background-color: #fff">
+                1. Your password must be between 8 and 30 characters,
+                <br> 2. One uppercase letter (ex: A, B, etc.)
+                <br> 3. One lowercase letter (ex: a, b, etc.)
+                <br> 4. One number digit and one special character (ex: @,*,!, etc.)</div></div>
+          </ng-template>
+          <div class="error-text" *ngIf="registerForm.get('password').hasError('passwordStrength')">
+            {{registerForm.get('password').errors['passwordStrength']}}
           </div>
         </div>
 
         <div class="form-group">
-          <div class="welcomBtns">
-            <button class="btn btn-login btn-block" (click)="login()" type="submit">Login</button>
-            <button class="btn btn-signup btn-block"  type="submit">Sign up</button>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" />Remember
+              me</label
+            >
           </div>
         </div>
-
-        <p class="text-center alreadyMember"><a routerLink="/login">Already have an account? Sign in.</a></p>
-
-
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <button class="btn form-btn btn-block mx-auto" [disabled]="!registerForm.valid" type="submit">
+              Sign Up
+            </button>
+            <a routerLink="/login" class="termsofUse-txt"
+            >Already have an account? Sign in.</a
+            >
+          </div>
+        </div>
+        <div class="form-group mt-2 mb-0">
+          <p class="termsofUse-txt my-0">Term of use. Privacy policy</p>
+        </div>
       </form>
     </div>
   </div>
+
+  <div class="container" *ngIf="isSignedUp">
+    <div class="login-container">
+      <h3 class="logo-txt">COMPANY INC.</h3>
+      <div class="text-center my-3" *ngIf="registerError != ''" class="alert alert-danger">
+        <span>{{registerError}}</span>
+      </div>
+      <div class="mb-3">
+        <p class="sentmail-txt">We have sent an email to :</p>
+        <p class="email-txt" style="word-break: break-word;">{{userData.email}}</p>
+      </div>
+      <div class="text-center">
+        <p class="email-info-txt">
+          Please follow the instructions in the email to verify your email
+          address, and then click button below to continue to your account.
+        </p>
+      </div>
+      <div class="text-center mt-5">
+        <button class="btn email-btn mx-auto" (click)="emailVerify()">
+          Email Verification Pending
+        </button>
+      </div>
+
+      <div
+        class="form-group d-flex text-center justify-content-center mt-3 mb-0"
+      >
+        <p class="hyper_link_txt">Didn’t receive a link?</p>
+        <a  class="hyper_link" (click)="resendLink()">Resend it</a>
+      </div>
+    </div>
+  </div>
+
+
 </div>
+</div>
+
+<app-loading *ngIf="loading"></app-loading>

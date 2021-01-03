@@ -1,0 +1,107 @@
+<div class="landing-page">
+  <nav class="navbar1 mainNavbar navbar-expand-sm navbar-dark">
+    <div class="container">
+      <div class="d-flex pt-5">
+        <a class="logo" href="#">COMPANY INC.</a>
+        <ul class="navbar-2">
+          <li class="nav-item active">
+            <a href="#">Company</a>
+          </li>
+          <li class="nav-item">
+            <a href="#">Features</a>
+          </li>
+          <li class="nav-item"><a href="#">Community</a></li>
+          <li class="nav-item">
+            <a href="#">Pricing</a>
+          </li>
+          <li class="nav-item">
+            <a href="#">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn sign-up-btn" routerLink="/register">Sign Up</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="container">
+    <div class="banner-sec">
+      <ngb-carousel  #carousel  interval="3000" [showNavigationArrows]="true" [pauseOnHover]="pauseOnHover" (slide)="onSlide($event)" >
+        <ng-template ngbSlide  >
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <h4 class="Company-Inc-is-more-than-integrated-software">
+                Company Inc. is more than integrated software
+              </h4>
+              <p class="home-info-txt mt-4">
+                It provides business owners to manage their products from
+                multiple e-commerce platforms within a same window
+              </p>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <img src="assets/images/Dash@3x.png" alt="dashboard" class="img-fluid mxh-350" />
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template ngbSlide  >
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <h4 class="Company-Inc-is-more-than-integrated-software">
+                Testing
+              </h4>
+              <p class="home-info-txt mt-4">
+                It provides business owners to manage their products from
+                multiple e-commerce platforms within a same window
+              </p>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <img src="assets/images/Dash@3x.png" alt="dashboard" class="img-fluid mxh-350" />
+            </div>
+          </div>
+        </ng-template>
+
+      </ngb-carousel>
+    </div>
+  </section>
+
+</div>
+<section class="sec-1">
+  <div class="container pt-5 pb-5">
+    <div class="row home-sec1-content">
+      <div class="col-md-4">
+        <p><img src="assets/images/icons_01.jpg" /></p>
+        <h5>Drag and Drop</h5>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<p>
+      </div>
+      <div class="col-md-4">
+        <p><img src="assets/images/icons_02.jpg" /></p>
+        <h5>Fully Costomizable</h5>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<p>
+      </div>
+      <div class="col-md-4">
+        <p><img src="assets/images/icons_03.jpg" /></p>
+        <h5>App Integration</h5>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<p>
+      </div>
+      <div class="col-md-4">
+        <p><img src="assets/images/icons_04.jpg" /></p>
+        <h5>Color Schemes</h5>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<p>
+      </div>
+      <div class="col-md-4">
+        <p><img src="assets/images/icons_05.jpg" /></p>
+        <h5>High Resolutions</h5>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<p>
+      </div>
+      <div class="col-md-4">
+        <p><img src="assets/images/icons_06.jpg" /></p>
+        <h5>Perfect Showcase</h5>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="sec-2"></section>
+<section class="sec-3"></section>
