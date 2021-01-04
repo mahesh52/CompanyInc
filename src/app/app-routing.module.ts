@@ -10,6 +10,7 @@ import {AuthGuard} from "./auth.guard";
 import {LandingComponent} from "./pages/landing/landing.component";
 import {PortalsComponent} from "./pages/portals/portals.component";
 import {ForgotpasswordComponent} from "./pages/forgotpassword/forgotpassword.component";
+import {SubscriptionComponent} from "./pages/subscription/subscription.component";
 
 const routes: Routes = [
   {
@@ -23,7 +24,8 @@ const routes: Routes = [
       {path: 'portals', component: PortalsComponent, canActivate: [AuthGuard]},
       {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
       {path: 'details/:id', component: DetailsComponent, canActivate: [AuthGuard]},
-      {path: 'forgotpwd', component: ForgotpasswordComponent}
+      {path: 'forgotpwd', component: ForgotpasswordComponent},
+      {path: 'subscription', component: SubscriptionComponent, canActivate: [AuthGuard]}
     ]
   },
 ];

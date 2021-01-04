@@ -1,5 +1,5 @@
 <section class="container">
-  <section class="step-1">
+  <section class="step-1" *ngIf="currentstep===1">
     <h4 class="Select-Upstream-and-Downstream-portals">
       Select Upstream and Downstream portals
     </h4>
@@ -15,7 +15,7 @@
           />
           <label class="chkbox">
             <span class="d-block Fashion-Go">Fashion Go</span>
-            <input type="checkbox" checked="checked" />
+            <input type="checkbox" checked="checked"/>
             <span class="checkmark home"></span>
           </label>
         </div>
@@ -30,11 +30,11 @@
         <div class="circle"></div>
       </div>
       <div class="text-center">
-        <button class="btn next-btn">Next</button>
+        <button class="btn next-btn" (click)="gotoStep2()">Next</button>
       </div>
     </div>
   </section>
-  <section class="step-2">
+  <section class="step-2" *ngIf="currentstep===2">
     <h4 class="Select-Upstream-and-Downstream-portals">
       Select Upstream and Downstream portals
     </h4>
@@ -49,7 +49,7 @@
             height="65"
           />
           <label class="chkbox">
-            <input type="checkbox" checked="checked" />
+            <input type="checkbox" checked="checked"/>
             <span class="checkmark home"></span>
           </label>
         </div>
@@ -66,11 +66,11 @@
         <div class="circle"></div>
       </div>
       <div class="text-center">
-        <button class="btn next-btn">Next</button>
+        <button class="btn next-btn" (click)="gotoStep3()" >Next</button>
       </div>
     </div>
   </section>
-  <section class="step-3">
+  <section class="step-3" *ngIf="currentstep===3">
     <div class="Progress-bar">
       <h3 class="Setup-your-accounts text-center">Setup your accounts</h3>
       <div class="container-fluid">
@@ -212,7 +212,7 @@
         </div>
       </div>
       <div class="text-center">
-        <button class="btn finish-btn">Finish Setting Up</button>
+        <button class="btn finish-btn" (click)="gotoSubscription()">Finish Setting Up</button>
       </div>
     </div>
   </section>

@@ -1,0 +1,135 @@
+<div class="home-page">
+<section class="container text-center">
+  <section class="sub-content">
+    <div class="part1">
+      <h4 class="form-title text-left">Choose a Plan</h4>
+      <label class="plan-name-txt" for="plan">Plan Name</label>
+      <select id="plan" class="selectplan">
+        <option label="standard">Standard</option>
+      </select>
+      <ul class="list-unstyled plan-def">
+        <li>
+          <label
+          ><span class="lable-txt">Downstream Portals</span
+          ><span>1</span></label
+          >
+        </li>
+        <li>
+          <label
+          ><span class="lable-txt">Upstream Portals</span
+          ><span>1</span></label
+          >
+        </li>
+        <li>
+          <label
+          ><span class="lable-txt">Product Transactions</span
+          ><span>Unlimited</span></label
+          >
+        </li>
+      </ul>
+      <label for="tenure" class="plan-name-txt">Tenure</label>
+      <select id="tenure" class="selectplan">
+        <option label="1 Month">1 Month</option>
+      </select>
+
+      <div class="currency-sec">
+              <span class="currency">99<span class="mx-2">$</span></span
+              ><span class="month-txt">/month</span>
+      </div>
+    </div>
+
+    <div class="part2">
+      <form action="" class="billing-info" [formGroup]="paymentForm">
+        <h4 class="form-title">Billing information</h4>
+        <div class="form-group">
+          <label for="cname">*Customer Name</label>
+          <input
+            type="text"
+            id="cname"
+            name="cname"
+            formControlName="cname"
+            class="form-control input-box"
+          />
+        </div>
+        <div class="form-group">
+          <label for="address">*Billing Address</label>
+          <input
+            type="text"
+            id="address"
+            name="address"
+            formControlName="address"
+            class="form-control input-box"
+          />
+        </div>
+        <div class="form-group">
+          <label for="country">*Country</label>
+          <select id="country" formControlName="country" class="form-control input-box"></select>
+        </div>
+        <div class="form-group">
+          <label for="city">*City</label>
+          <select id="city" formControlName="city"  class="form-control input-box"></select>
+        </div>
+        <div class="form-group">
+          <label for="code">*Zip Code</label>
+          <input
+            type="text"
+            id="code"
+            formControlName="zipcode"
+            name="code"
+            class="form-control input-box"
+          />
+        </div>
+
+        <div class="">
+          <h4 class="form-title">Payment information</h4>
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              formControlName="cardName"
+              class="form-control input-box"
+            />
+          </div>
+          <div class="form-group">
+            <label for="card">Credit/Debit Card</label>
+            <input
+              type="text"
+              id="card"
+              name="card"
+              formControlName="card"
+              placeholder="Enter 16 Digit Card Number"
+              class="form-control input-box"
+            />
+          </div>
+          <div class="form-group pull-left">
+            <label for="validity">Validity</label>
+            <input
+              type="text"
+              id="validity"
+              formControlName="validity"
+              name="validity"
+              placeholder="MM/YY"
+              class="form-control valid-input-box"
+            />
+          </div>
+          <div class="form-group pull-right">
+            <label for="cvv">CVV</label>
+            <input
+              type="text"
+              id="cvv"
+              name="vv"
+              formControlName="cvv"
+              class="form-control cvv-input-box"
+            />
+          </div>
+        </div>
+        <button type="button" class="payment-btn" (click)="proceedToPayment()">
+          Proceed to Payment
+        </button>
+      </form>
+    </div>
+  </section>
+</section>
+</div>
