@@ -45,6 +45,8 @@
     "redux": "^4.0.5",
     "rxjs": "~6.4.0",
     "slick-carousel": "^1.8.1",
+    "sockjs-client": "^1.5.0",
+    "stompjs": "^2.3.3",
     "tslib": "^1.13.0",
     "underscore": "^1.11.0",
     "zone.js": "~0.9.1"
