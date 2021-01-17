@@ -1,5 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {NgbCarousel, NgbPopover, NgbSlideEvent, NgbSlideEventSource} from "@ng-bootstrap/ng-bootstrap";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-landing',
@@ -13,7 +14,7 @@ export class LandingComponent implements OnInit {
   paused = false;
   @ViewChild('carousel', {static : true}) carousel: NgbCarousel;
   @ViewChild('popover',{static:true}) popover:NgbPopover;
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
   }
@@ -33,5 +34,8 @@ export class LandingComponent implements OnInit {
       this.carousel.pause();
     }
     this.paused = !this.paused;
+  }
+  registerUser(){
+    this.router.navigate(['register']);
   }
 }

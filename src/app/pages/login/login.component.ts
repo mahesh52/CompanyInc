@@ -63,6 +63,7 @@ export class LoginComponent implements OnInit {
   }
 
   loginWithGoogle() {
+    console.log('dasda')
     window.location.href = environment.cognitoUrl + '/oauth2/authorize?identity_provider=Google&redirect_uri=' + environment.redirectUri + '&response_type=CODE&client_id=' + environment.amplify.Auth.userPoolWebClientId + '&scope=aws.cognito.signin.user.admin email openid profile';
   }
 

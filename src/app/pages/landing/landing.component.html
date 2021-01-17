@@ -1,8 +1,8 @@
 <div class="landing-page">
   <nav class="navbar1 mainNavbar navbar-expand-sm navbar-dark">
     <div class="container">
-      <div class="d-flex pt-5">
-        <a class="logo" href="#">COMPANY INC.</a>
+      <div class="d-flex align-items-center">
+        <a class="logo-2" href="#">COMPANY INC.</a>
         <ul class="navbar-2">
           <li class="nav-item active">
             <a href="#">Company</a>
@@ -15,10 +15,10 @@
             <a href="#">Pricing</a>
           </li>
           <li class="nav-item">
-            <a href="#">Login</a>
+            <a routerLink="/login">Login</a>
           </li>
           <li class="nav-item">
-            <a class="btn sign-up-btn" routerLink="/register">Sign Up</a>
+            <button class="btn sign-up-btn" (click)="registerUser()">Sign Up</button>
           </li>
         </ul>
       </div>
