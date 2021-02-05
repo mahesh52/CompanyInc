@@ -6,16 +6,16 @@
     <div class="Progress-bar">
       <h3 class="Upstream-Portals text-center">Upstream Portals</h3>
       <div class="text-center">
-        <div class="selectblock text-center">
+        <div class="selectblock text-center" *ngFor="let upPortal of upStreamPortals">
           <img
-            src="assets/images/Image 5@3x.png"
+            [src]="upPortal?.portalLogoURL"
             class="d-block mx-auto"
             alt="image"
             height="53"
           />
           <label class="chkbox">
-            <span class="d-block Fashion-Go">Fashion Go</span>
-            <input type="checkbox" checked="checked"/>
+            <span class="d-block Fashion-Go">{{upPortal?.portalName}}</span>
+            <input type="checkbox" (click)="onClick($event,upPortal)"/>
             <span class="checkmark home"></span>
           </label>
         </div>
@@ -30,7 +30,7 @@
         <div class="circle"></div>
       </div>
       <div class="text-center">
-        <button class="btn next-btn" (click)="gotoStep2()">Next</button>
+        <button class="btn next-btn" [disabled]="selectedUpStreamPortals?.length===0" (click)="gotoStep2()">Next</button>
       </div>
     </div>
   </section>
@@ -39,17 +39,18 @@
       Select Upstream and Downstream portals
     </h4>
     <div class="Progress-bar">
-      <h3 class="Upstream-Portals text-center">Downstream Portalss</h3>
+      <h3 class="Upstream-Portals text-center">Downstream Portals</h3>
       <div class="text-center">
-        <div class="selectblock text-center">
+        <div class="selectblock text-center" *ngFor="let downPortal of downStreamPortals">
           <img
-            src="assets/images/Image 15@3x.png"
+            [src]="downPortal?.portalLogoURL"
             class="d-block mx-auto"
             alt="image"
             height="65"
           />
           <label class="chkbox">
-            <input type="checkbox" checked="checked"/>
+            <!--            <span class="d-block Fashion-Go">{{downPortal?.portalName}}</span>-->
+            <input type="checkbox" (click)="onClickDownPortal($event,downPortal)"/>
             <span class="checkmark home"></span>
           </label>
         </div>
@@ -66,7 +67,7 @@
         <div class="circle"></div>
       </div>
       <div class="text-center">
-        <button class="btn next-btn" (click)="gotoStep3()" >Next</button>
+        <button class="btn next-btn" [disabled]="selectedDownStreamPortals?.length===0" (click)="gotoStep3()">Next</button>
       </div>
     </div>
   </section>
@@ -77,14 +78,12 @@
         <div class="row mx-0">
           <div class="col-md-6">
             <div
-              class="home-login-sec d-flex align-items-center justify-content-center"
-            >
+              class="home-login-sec d-flex align-items-center justify-content-center" *ngFor="let selectedUp of selectedUpStreamPortals">
               <div
-                class="d-flex align-items-center justify-content-center"
-              >
+                class="d-flex align-items-center justify-content-center">
                 <div class="px-3">
                   <img
-                    src="assets/images/fashion-go.png"
+                    [src]="selectedUp?.portalLogoURL"
                     height="100"
                     alt="fashion-go"
                   />
@@ -101,6 +100,8 @@
                         class="form-control"
                         type="input"
                         name="Username"
+                        [disabled]="selectedUp.isVerified"
+                        [(ngModel)]="selectedUp.username"
                         placeholder="Username"
                       />
                     </div>
@@ -114,16 +115,20 @@
                         class="form-control"
                         type="password"
                         name="password"
+                        [disabled]="selectedUp.isVerified"
+                        [(ngModel)]="selectedUp.password"
                         placeholder="Password"
                       />
                     </div>
                     <div class="form-group">
-                      <button class="btn verify-btn">Verified</button>
+                      <button class="btn verify-btn" *ngIf="!selectedUp?.isVerified" (click)="verifyPortal(selectedUp)">Verify</button>
+                      <button class="btn verify-btn" *ngIf="selectedUp?.isVerified" >Verified</button>
                     </div>
                   </form>
                 </div>
               </div>
             </div>
+
           </div>
           <div class="col-md-6">
             <div

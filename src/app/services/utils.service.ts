@@ -1,4 +1,7 @@
 import {Injectable} from '@angular/core';
+import {ApiService} from "./api.service";
+import {APICONFIG} from "../common/APICONFIG";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +50,18 @@ export class UtilsService {
     {item_id: "Dresses", item_text: "Dresses"},
   ];
 
-  constructor() {
+  constructor(private api: ApiService) {
+  }
+
+  getUpStreamPortals() {
+    return this.api.GetWithoutHeaders(environment.baseUrl + APICONFIG.getUpStreamPortals);
+  }
+
+  getDownStreamPortals() {
+    return this.api.GetWithoutHeaders(environment.baseUrl + APICONFIG.getDownStreamPortals);
+  }
+
+  postVerifyUpStreamPortal(payload) {
+    return this.api.Post(environment.baseUrl2 + APICONFIG.verifyPortals, payload);
   }
 }

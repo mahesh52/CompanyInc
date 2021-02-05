@@ -38,11 +38,20 @@ this.headers = new HttpHeaders(headerValue);
 public Get(url: string) {
   try {
       this.SetHeaders();
-      return this.http.get(this.baseUrl + url, { headers: this.headers });
+      return this.http.get(url, { headers: this.headers });
   } catch (error) {
       return error
   }
 }
+
+  public GetWithoutHeaders(url: string) {
+    try {
+      // this.SetHeaders();
+      return this.http.get(url);
+    } catch (error) {
+      return error
+    }
+  }
 
 public Post(url: string, data: any) {
   try {
