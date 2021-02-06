@@ -15,11 +15,13 @@ export class PortalsComponent implements OnInit {
   downStreamPortals: any;
   selectedUpStreamPortals: any[];
   selectedDownStreamPortals: any[];
+  userDetails: any;
 
   constructor(private user: UsersService, private utilService: UtilsService, private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
   }
 
   ngOnInit() {
+    this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
     this.selectedUpStreamPortals = [];
     this.selectedDownStreamPortals = [];
     this.getUpStreamPortals();
@@ -80,7 +82,7 @@ export class PortalsComponent implements OnInit {
   verifyPortal(upPortal) {
     console.log(upPortal);
     const payload = {
-      "customerID": "cust@dev",
+      "customerID": this.userDetails.customerID,
       "portalType": "Upstream",
       "portalID": upPortal.portalID,
       "portalName": upPortal.portalName,
@@ -90,11 +92,58 @@ export class PortalsComponent implements OnInit {
       },
       "isVerified": true
     }
+
+
     this.utilService.postVerifyUpStreamPortal(payload).subscribe(res => {
+      upPortal.isVerified = true;
       console.log(res);
     }, error => {
+      // todo once service is working
+      upPortal.isVerified = true;
+      if(error && error.status === 200){
+        upPortal.isVerified = true;
+      }
       console.log('Error while verifying the upstream portals');
       console.log(error);
     });
   }
+
+  verifyDownStreamPortal(downPortal) {
+    const payload = {
+      "customerID": this.userDetails.customerID,
+      "portalType": "Downstream",
+      "portalID": downPortal.portalID,
+      "portalName": downPortal.portalName,
+      "configuration": {
+        "apiKey": downPortal.apikey,
+        "Password": downPortal.password,
+        "storeName": downPortal.storeName
+      },
+      "isVerified": true
+    }
+    this.utilService.postVerifyUpStreamPortal(payload).subscribe(res => {
+      downPortal.isVerified = true;
+      console.log(res);
+    }, error => {
+      if(error && error.status === 200){
+        downPortal.isVerified = true;
+      }
+      //todo needs to remove after services working
+      downPortal.isVerified = true;
+      console.log('Error while verifying the downPortal portals');
+      console.log(error);
+    });
+  }
+
+  isPortalSetupDone() {
+    if (this.selectedUpStreamPortals && this.selectedDownStreamPortals) {
+      const verifiedUpPortals = this.selectedUpStreamPortals.filter(seletedUp => !seletedUp.isVerified);
+      const verifiedDownPortals = this.selectedDownStreamPortals.filter(seletedDown => !seletedDown.isVerified);
+      if (verifiedUpPortals.length === 0 && verifiedDownPortals.length === 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }

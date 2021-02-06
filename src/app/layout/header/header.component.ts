@@ -20,9 +20,9 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.currentUrl = this.router.url.split('?')[0];
-    if (sessionStorage.getItem('user') !== null && sessionStorage.getItem('user') !== undefined
-      && sessionStorage.getItem('user') !== '') {
-      this.userDetails = JSON.parse(sessionStorage.getItem('user'))[0];
+    if (sessionStorage.getItem('userDetails') !== null && sessionStorage.getItem('userDetails') !== undefined
+      && sessionStorage.getItem('userDetails') !== '') {
+      this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
     }
   }
 

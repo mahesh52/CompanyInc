@@ -11,7 +11,7 @@
             [src]="upPortal?.portalLogoURL"
             class="d-block mx-auto"
             alt="image"
-            height="53"
+            style="width:100px;height:30px;"
           />
           <label class="chkbox">
             <span class="d-block Fashion-Go">{{upPortal?.portalName}}</span>
@@ -46,7 +46,7 @@
             [src]="downPortal?.portalLogoURL"
             class="d-block mx-auto"
             alt="image"
-            height="65"
+            style="width:100px;height:30px;"
           />
           <label class="chkbox">
             <!--            <span class="d-block Fashion-Go">{{downPortal?.portalName}}</span>-->
@@ -78,17 +78,18 @@
         <div class="row mx-0">
           <div class="col-md-6">
             <div
-              class="home-login-sec d-flex align-items-center justify-content-center" *ngFor="let selectedUp of selectedUpStreamPortals">
+              class="home-login-sec d-flex align-items-center justify-content-center"
+              *ngFor="let selectedUp of selectedUpStreamPortals">
               <div
                 class="d-flex align-items-center justify-content-center">
                 <div class="px-3">
                   <img
                     [src]="selectedUp?.portalLogoURL"
-                    height="100"
+                    style="width:100px;height:30px;"
                     alt="fashion-go"
                   />
                 </div>
-                <div>
+                <div >
                   <form method="post" class="login-form-sec px-3">
                     <div class="form-group">
                             <span class="form-icon"
@@ -133,14 +134,15 @@
           <div class="col-md-6">
             <div
               class="home-login-sec d-flex align-items-center justify-content-center"
+              *ngFor="let selectedDown of selectedDownStreamPortals"
             >
               <div
                 class="d-flex align-items-center justify-content-center"
               >
                 <div class="px-3">
                   <img
-                    src="assets/images/shopify.png"
-                    height="100"
+                    [src]="selectedDown?.portalLogoURL"
+                    style="width:100px;height:30px;"
                     alt="fashion-go"
                   />
                 </div>
@@ -156,6 +158,8 @@
                         class="form-control"
                         type="input"
                         name="Username"
+                        [disabled]="selectedDown.isVerified"
+                        [(ngModel)]="selectedDown.apikey"
                         placeholder="API Key"
                       />
                     </div>
@@ -171,6 +175,8 @@
                         type="password"
                         name="password"
                         placeholder="Password"
+                        [disabled]="selectedDown.isVerified"
+                        [(ngModel)]="selectedDown.password"
                       />
                     </div>
 
@@ -185,10 +191,13 @@
                         type="input"
                         name="Username"
                         placeholder="Store Name"
+                        [disabled]="selectedDown.isVerified"
+                        [(ngModel)]="selectedDown.storeName"
                       />
                     </div>
                     <div class="form-group">
-                      <button class="btn verify-btn">Verified</button>
+                      <button class="btn verify-btn" *ngIf="!selectedDown?.isVerified" (click)="verifyDownStreamPortal(selectedDown)" >Verify</button>
+                      <button class="btn verify-btn" *ngIf="selectedDown?.isVerified" >Verified</button>
                     </div>
                   </form>
                 </div>
@@ -217,7 +226,7 @@
         </div>
       </div>
       <div class="text-center">
-        <button class="btn finish-btn" (click)="gotoSubscription()">Finish Setting Up</button>
+        <button class="btn finish-btn" [disabled]="!isPortalSetupDone()" (click)="gotoSubscription()">Finish Setting Up</button>
       </div>
     </div>
   </section>

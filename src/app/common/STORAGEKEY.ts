@@ -1,5 +1,6 @@
 export enum STORAGEKEY {
   loginUser = 'loginUser',
   userDetails = 'userDetails',
-  redirectUrl = 'redirectUrl'
+  redirectUrl = 'redirectUrl',
+  auth = 'auth',
 }

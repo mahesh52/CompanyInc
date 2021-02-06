@@ -53,8 +53,12 @@ export class UtilsService {
   constructor(private api: ApiService) {
   }
 
+  getSubscriptions() {
+    return this.api.Get(environment.baseUrl + APICONFIG.getSubscriptions);
+  }
+
   getUpStreamPortals() {
-    return this.api.GetWithoutHeaders(environment.baseUrl + APICONFIG.getUpStreamPortals);
+    return this.api.Get(environment.baseUrl + APICONFIG.getUpStreamPortals);
   }
 
   getDownStreamPortals() {
@@ -62,6 +66,6 @@ export class UtilsService {
   }
 
   postVerifyUpStreamPortal(payload) {
-    return this.api.Post(environment.baseUrl2 + APICONFIG.verifyPortals, payload);
+    return this.api.Post(environment.baseUrl + APICONFIG.verifyPortals, payload);
   }
 }

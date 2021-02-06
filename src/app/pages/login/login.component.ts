@@ -49,6 +49,7 @@ export class LoginComponent implements OnInit {
           this.user.tokenDetails = tokenDetails;
           this.loading = false;
           sessionStorage.setItem('auth', JSON.stringify(tokenDetails));
+          this.getUserDetails();
           this.router.navigateByUrl('/portals')
         },
         error => {
@@ -57,7 +58,15 @@ export class LoginComponent implements OnInit {
           this.loading = false;
         });
   }
-
+  getUserDetails() {
+    this.user.getUserDetails().subscribe(
+      result => {
+        sessionStorage.setItem('userDetails', JSON.stringify(result));
+      },
+      error => {
+        console.log(error);
+      });
+  }
   loginWithFb() {
     window.location.href = environment.cognitoUrl + '/oauth2/authorize?identity_provider=Facebook&redirect_uri=' + environment.redirectUri + '&response_type=CODE&client_id=' + environment.amplify.Auth.userPoolWebClientId + '&scope=aws.cognito.signin.user.admin email openid profile';
   }

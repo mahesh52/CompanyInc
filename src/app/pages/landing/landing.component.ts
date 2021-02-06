@@ -17,6 +17,9 @@ export class LandingComponent implements OnInit {
   constructor(private router: Router) { }
 
   ngOnInit() {
+    if (sessionStorage.getItem('auth') !== null && sessionStorage.getItem('auth') !== undefined) {
+      this.router.navigateByUrl("portals");
+    }
   }
   onSlide(slideEvent: NgbSlideEvent) {
     if (this.unpauseOnArrow && slideEvent.paused &&

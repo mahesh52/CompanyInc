@@ -1,5 +1,7 @@
 export enum APICONFIG {
-  getUpStreamPortals = "Portal/Upstream",
-  getDownStreamPortals = "Portal/Downstream",
-  verifyPortals = "PortalConfiguration/VerifyAndStore"
+  getUpStreamPortals = "Portal/Upstream/All",
+  getDownStreamPortals = "Portal/Downstream/All",
+  verifyPortals = "PortalConfiguration/VerifyAndStore",
+  getSubscriptions = "Subscription",
+  getUser = "Customer"
 }

@@ -3,6 +3,7 @@ import {UsersService} from "../../services/users.service";
 import {HttpClient} from "@angular/common/http";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {UtilsService} from "../../services/utils.service";
 
 @Component({
   selector: 'app-subscription',
@@ -11,8 +12,11 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 })
 export class SubscriptionComponent implements OnInit {
   paymentForm: FormGroup;
+  subscriptions: any;
+  selectedSubscription: any;
+  selectedValue: any;
 
-  constructor(private user: UsersService, private http: HttpClient, private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
+  constructor(private utilService: UtilsService, private user: UsersService, private http: HttpClient, private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
     this.paymentForm = fb.group({
       'cname': ['', Validators.required],
       'address': ['', Validators.required],
@@ -27,6 +31,18 @@ export class SubscriptionComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getSubscriptions();
+  }
+
+  getSubscriptions() {
+    this.utilService.getSubscriptions().subscribe(res => {
+      this.subscriptions = res;
+      this.selectedSubscription = res[0];
+      this.selectedValue = res[0].subscriptionID;
+    }, error => {
+      console.log('Error while getting the subscriptions');
+      console.log(error);
+    });
   }
 
   proceedToPayment() {
@@ -48,10 +64,14 @@ export class SubscriptionComponent implements OnInit {
 
   chargeCard(token: string) {
     console.log(token);
-   // const headers = new Headers({'token': token, 'amount': 100});
+    // const headers = new Headers({'token': token, 'amount': 100});
     // this.http.post('http://localhost:8080/payment/charge', {}, {headers: headers})
     //   .subscribe(resp => {
     //     console.log(resp);
     //   })
+  }
+
+  selectSubscription() {
+    this.selectedSubscription = this.subscriptions.filter(obj => obj.subscriptionID === this.selectedValue)[0];
   }
 }

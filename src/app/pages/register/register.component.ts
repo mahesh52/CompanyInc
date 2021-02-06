@@ -34,7 +34,7 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit() {
     const code: string = this.route.snapshot.queryParamMap.get('code');
-  //  console.log(code);
+    //  console.log(code);
     if (code && code !== '') {
       let formData = new URLSearchParams();
       formData.set('grant_type', 'authorization_code');
@@ -49,14 +49,25 @@ export class RegisterComponent implements OnInit {
           this.user.tokenDetails = result;
           this.user.isUserLoggedIn = true;
           //this.auth.getLoginUser();
+          this.getUserDetails();
           this.router.navigateByUrl('/portals');
-          sessionStorage.setItem('auth',JSON.stringify(result));
+          sessionStorage.setItem('auth', JSON.stringify(result));
         },
         error => {
           console.log(error);
         });
     }
 
+  }
+
+  getUserDetails() {
+    this.user.getUserDetails().subscribe(
+      result => {
+        sessionStorage.setItem('userDetails', JSON.stringify(result));
+      },
+      error => {
+        console.log(error);
+      });
   }
 
   register() {
@@ -105,7 +116,7 @@ export class RegisterComponent implements OnInit {
           refreshToken: result.signInUserSession.refreshToken.token
         }
         this.user.tokenDetails = tokenDetails;
-        sessionStorage.setItem('auth',JSON.stringify(tokenDetails));
+        sessionStorage.setItem('auth', JSON.stringify(tokenDetails));
         this.router.navigateByUrl('/portals');
       },
       error => {

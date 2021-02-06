@@ -6,7 +6,7 @@ export const environment = {
   production: false,
 //  baseUrl: 'https://hapeservices.azurewebsites.net/',
   baseUrl: 'http://ec2-3-133-143-117.us-east-2.compute.amazonaws.com:9192/',
-  baseUrl2:'http://ec2-3-133-143-117.us-east-2.compute.amazonaws.com:9193/',
+  baseUrl2:'http://ec2-3-133-143-117.us-east-2.compute.amazonaws.com:9192/',
   cognitoUrl: 'https://invoiceupload.auth.us-east-2.amazoncognito.com',
   redirectUri: 'http://localhost:4200/register',
   amplify: {
