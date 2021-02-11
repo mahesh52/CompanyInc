@@ -35,8 +35,12 @@ export class DashboardComponent implements OnInit {
   selectedProdDetails = '';
   fromDate = '';
   toDate = '';
+  upStreamPortals: any;
+  downStreamPortals: any;
+  upStreamPortal:any;
+  downStreamPortal:any;
 
-  constructor(private router: Router, private paginationService: PaginationService,
+  constructor(private utilService: UtilsService,private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
               private http: HttpClient,
               private utils: UtilsService,
@@ -47,18 +51,39 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.productTypes = this.utils.productTypes;
     this.collections = this.utils.collections;
+    this.getUpStreamPortals();
+    this.getDownStreamPortals();
     this.tags = this.utils.tags;
-    if (sessionStorage.getItem('products') !== '' && sessionStorage.getItem('products') !== null && sessionStorage.getItem('products') !== undefined) {
-      const res1 = JSON.parse(sessionStorage.getItem('products'));
-      this.productDetails = res1;
-      this.originalList = res1;
-      this.totalProducts = res1.length;
-      this.setPage(1);
-    } else {
+
+  }
+  getUpStreamPortals() {
+    this.utilService.getUpStreamPortals().subscribe(res => {
+      this.upStreamPortals = res;
+      this.upStreamPortal = res[0].portalID;
       this.getProducts();
-    }
+      if (sessionStorage.getItem('products') !== '' && sessionStorage.getItem('products') !== null && sessionStorage.getItem('products') !== undefined) {
+        const res1 = JSON.parse(sessionStorage.getItem('products'));
+        this.productDetails = res1;
+        this.originalList = res1;
+        this.totalProducts = res1.length;
+        this.setPage(1);
+      } else {
+        this.getProducts();
+      }
+    }, error => {
+      console.log('Error while getting the upstream portals');
+      console.log(error);
+    });
   }
 
+  getDownStreamPortals() {
+    this.utilService.getDownStreamPortals().subscribe(res => {
+      this.downStreamPortals = res;
+    }, error => {
+      console.log('Error while getting the downstream portals');
+      console.log(error);
+    });
+  }
   details(id) {
     let index = 0;
     const selectedItems = this.productDetails.filter(function (item, index) {
@@ -75,7 +100,7 @@ export class DashboardComponent implements OnInit {
 
   getProducts() {
     this.loading = true;
-    this.productService.getProducts()
+    this.productService.getProducts(this.upStreamPortal)
       .subscribe(res => {
         this.loading = false;
         console.log(res);
@@ -126,7 +151,7 @@ export class DashboardComponent implements OnInit {
 
   getTagsLength(tags) {
     if (tags && tags !== undefined && tags !== null) {
-      return tags.split(',').length;
+      return tags.length;
     }
     return 0;
 
@@ -323,7 +348,7 @@ export class DashboardComponent implements OnInit {
         this.loading = true;
         const formDate = this.fromDate['year'] + '-' + this.zeroPad(this.fromDate['month'], 2) + '-' + this.zeroPad(this.fromDate['day'], 2);
         const toDate = this.toDate['year'] + '-' + this.zeroPad(this.toDate['month'], 2) + '-' + this.zeroPad(this.toDate['day'], 2);
-        this.productService.downloadProducts(formDate, toDate)
+        this.productService.getProducts(this.upStreamPortal,formDate,toDate)
           .subscribe(res => {
             this.loading = false;
             this.getProducts();

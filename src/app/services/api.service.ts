@@ -21,7 +21,7 @@ export class ApiService {
     if (sessionStorage.getItem(STORAGEKEY.auth) != undefined && sessionStorage.getItem(STORAGEKEY.auth) != null) {
       var user = JSON.parse(sessionStorage.getItem(STORAGEKEY.auth));
       headerValue = {
-
+        'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + user['access_token'],
       }
     } else {
@@ -60,6 +60,24 @@ export class ApiService {
     }
   }
 
+  public PostChargeCustomer(url: string, data: any, amount, token) {
+    try {
+      this.SetHeadersCharge(token, amount);
+      return this.http.post(url, data, {headers: this.headers});
+    } catch (error) {
+      return error;
+    }
+  }
+  private SetHeadersCharge(token, amount) {
+    // let headerValue = {
+    //     'token': token,
+    //     'amount': amount
+    //   };
+    this.headers =new HttpHeaders().set('token', token)
+      .set('amount' , amount.toString());
+
+   // this.headers = new HttpHeaders(headerValue);
+  }
   public PostCustom(url: string, data: any) {
     try {
       this.SetHeaders();

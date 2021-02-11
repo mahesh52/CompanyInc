@@ -1,87 +1,35 @@
 <div class="bodycon pt-3 pb-3">
   <div class="container-fluid">
-    <!--    <div class="dateRagenSection">-->
-    <!--&lt;!&ndash;      <div class="">&ndash;&gt;-->
-    <!--&lt;!&ndash;        <h4>DATE RANGE</h4>&ndash;&gt;-->
-    <!--&lt;!&ndash;      </div>&ndash;&gt;-->
-    <!--      <div class="fromToDate">-->
-    <!--        <div>-->
-    <!--          <div class="row">-->
-    <!--            <div class="col-md-2"><span class="from">From</span></div>-->
-    <!--            <div class="col-md-2"><input id="datepicker" width="276" /></div>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--        <div>-->
-    <!--          <div class="row mt-4">-->
-    <!--            <div class="col-md-2"><span class="from">To</span></div>-->
-    <!--            <div class="col-md-2"><input id="datepicker1" width="276" /></div>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--      <div class="">-->
-    <!--        <button class="btn btn-primary loadSource" (click)="loadFromSource()">Load From Source</button>-->
-    <!--      </div>-->
-    <!--      <div class="">-->
-    <!--        <form class="form-inline" name ="searchForm">-->
-    <!--          <label for="email"><span class="from1 mr-2">Keyword</span></label>-->
-    <!--          <input type="email" class="form-control mr-3" name = "orderNumber" [(ngModel)]="orderNumber" placeholder="Enter Order Number" id="email">-->
-    <!--          <button type="submit" *ngIf="!isSearched" class="btn btn-primary loadSource" (click)="filterByOrderNumber()">Submit</button>-->
-    <!--          <button type="submit" *ngIf="isSearched" class="btn btn-primary loadSource" (click)="clearTableData()">Clear</button>-->
-
-    <!--        </form>-->
-    <!--      </div>-->
-    <!--      <div class="">-->
-    <!--        <div class="fromToDate">-->
-    <!--          <div>-->
-    <!--            <div class="row">-->
-    <!--              <div class="col-md-4"><span class="from">Sort By</span></div>-->
-    <!--              <div class="col-md-8">-->
-    <!--                <select class="form-control" (change)="sortData($event.target.value)">-->
-    <!--                  <option value = "">Select</option>-->
-    <!--                  <option value="id">Order Number</option>-->
-    <!--                  <option value="price">Unit Price</option>-->
-    <!--                  <option value="styleTitle">Style</option>-->
-    <!--                  <option value="markup">Mark up</option>-->
-    <!--                </select>-->
-    <!--              </div>-->
-    <!--            </div>-->
-    <!--          </div>-->
-    <!--          <div>-->
-    <!--            <div class="row mt-4">-->
-    <!--              <div class="col-md-4"><span class="from">Status</span></div>-->
-    <!--              <div class="col-md-8">-->
-    <!--                <select class="form-control" (change)="filterData($event.target.value)">-->
-    <!--                  <option value = "">Select</option>-->
-    <!--                  <option value = "New">New</option>-->
-    <!--                  <option value="Published">Published</option>-->
-    <!--                </select></div>-->
-    <!--            </div>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </div>-->
 
     <div class="row mb-3">
-      <div class="col-md-2 text-right">
+      <div class="col-md-3 text-right">
         <strong class="from">From &nbsp;</strong>
-<!--        <input id="datepicker" width="220"/>-->
+        <!--        <input id="datepicker" width="220"/>-->
         <input id="datepicker" width="220" placeholder="yyyy-mm-dd"
                [(ngModel)]="fromDate"
                name="dp" ngbDatepicker #d="ngbDatepicker">
-        <button  id = "calender"  (click)="d.toggle()" type="button"></button>
+        <button id="calender" (click)="d.toggle()" type="button"></button>
       </div>
       <div class="col-md-3 text-right">
         <strong class="from">To &nbsp;</strong>
-        <input id="datepicker1" width="140"  placeholder="yyyy-mm-dd"
+        <input id="datepicker1" width="140" placeholder="yyyy-mm-dd"
                [(ngModel)]="toDate"
                name="dp" ngbDatepicker #d1="ngbDatepicker">
-        <button id = "calender1"  (click)="d1.toggle()" type="button"></button>
+        <button id="calender1" (click)="d1.toggle()" type="button"></button>
+      </div>
+      <div class="col-md-3 text-right">
+        <strong class="from">UpstreamStream Portal &nbsp;</strong>
+        <select [(ngModel)]="upStreamPortal">
+          <option *ngFor="let upstream of upStreamPortals;"
+                  [value]="upstream?.portalID">{{upstream?.portalName}}</option>
+        </select>
       </div>
       <div class="col-md-2 text-center">
-        <button class="btn btn-primary loadSource"  (click)="loadFromSource()">Load from source</button>
+        <button class="btn btn-primary loadSource" (click)="loadFromSource()">Load from source</button>
       </div>
-      <div class="col-2 text-right">
-
+    </div>
+    <div class="row mb-3">
+      <div class="col-4">
         <select class="form-control" (change)="sortData($event.target.value)">
           <option value="">Sort by</option>
           <option value="id">Order Number</option>
@@ -91,7 +39,7 @@
         </select>
 
       </div>
-      <div class="col-md-3 text-right">
+      <div class="col-md-3 ">
         <input type="email" class="form-control mr-3 orderNumber" name="orderNumber" [(ngModel)]="orderNumber"
                placeholder="Enter Order Number" id="email">
         <button type="submit" *ngIf="!isSearched" class="btn btn-primary loadSource" (click)="filterByOrderNumber()">
@@ -102,7 +50,6 @@
 
       </div>
     </div>
-
     <div class="tableFixHead">
       <table>
         <thead>
@@ -133,20 +80,20 @@
         <tr *ngFor="let item of pagedItems;let i =index;">
           <td align="center" class="snoTd">{{i + 1}}</td>
           <td class="styleTd">
-            <div class="styleImg"><img style="cursor:pointer;" (click)="details(item.id)"
-                                       [src]="item?.stylePhotos[0]"/></div>
-            <h6 style="cursor:pointer;" (click)="details(item.id)" class="styleName">{{item?.styleTitle}}</h6>
+            <div class="styleImg"><img style="cursor:pointer;" (click)="details(item)"
+                                       [src]="item?.photos['Image 1.jpg']"/></div>
+            <h6 style="cursor:pointer;" (click)="details(item?.id)" class="styleName">{{item?.title}}</h6>
           </td>
           <td class="pdTd" style="position: relative;">
             <!--            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.-->
             <!--              LabelUnspecified</p>-->
             <textarea style="width:100%;resize: none;font-size: 10px" rows=3 cols=22
-                      [(ngModel)]="item.productDetail">{{item?.productDetail}}</textarea>
+                      [(ngModel)]="item.details">{{item?.details}}</textarea>
             <span data-toggle="modal" data-target="#myModal1" style="    position: absolute;cursor: pointer;
     bottom: 0;
     text-align: center;
     right: 10px;
-    font-weight: bold;"  (click)="selectDetIndex(item.id)" >...</span>
+    font-weight: bold;" (click)="selectDetIndex(item.id)">...</span>
             <!--            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>-->
           </td>
           <td class="ptTd">
@@ -161,7 +108,7 @@
             </select>
           </td>
           <td class="ptTags">
-            <div class="ribbonTd" *ngFor="let tag of getTags(item?.tags);let j =index;">
+            <div class="ribbonTd" *ngFor="let tag of item?.tags;let j =index;">
               <span style="cursor:pointer;position: absolute;
     left: 5px;" (click)="removeFromList(item.id,tag)">X</span>
               <span>  {{tag}}</span>
@@ -174,12 +121,12 @@
 
             </div>
           </td>
-          <td class="unitPrice"><p>$ {{item?.price}} </p></td>
+          <td class="unitPrice"><p>$ {{item?.unitPriceWithShippingFee}} </p></td>
           <td><input type="text" class="form-control markupInput" [(ngModel)]="item.markup"></td>
 
-          <td align="center"><p>$ {{getSalePrice(item?.price, item?.markup)}} </p></td>
+          <td align="center"><p>$ {{getSalePrice(item?.unitPriceWithShippingFee, item?.markup)}} </p></td>
           <td><p>{{item?.orderNumber}}</p></td>
-          <td><p>{{item?.ShopifyStatus || 'N/A'}}</p></td>
+          <td><p>{{item?.downstreamStatus || 'N/A'}}</p></td>
           <td>
             <button (click)="saveData(item)" class="btn btn-primary loadSource">Save</button>
           </td>
@@ -250,7 +197,8 @@
       </div>
       <div class="modal-footer">
         <div style="float: left">
-          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="updateProductDetails()">Add</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="updateProductDetails()">Add
+          </button>
         </div>
         <div style="float: right">
           <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>

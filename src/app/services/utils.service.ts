@@ -15,13 +15,15 @@ export class UtilsService {
     "Tween",
     "Women",
     "Women's",
-    "Womens"
+    "Womens",
+    "Mitansh Yadav"
   ];
 
   collections = [
     "Home page",
     "Home Page 1",
-    "Masks"
+    "Masks",
+    "Women"
   ];
   tags = [
     {item_id: "Women's", item_text: "Women's"},
@@ -67,5 +69,9 @@ export class UtilsService {
 
   postVerifyUpStreamPortal(payload) {
     return this.api.Post(environment.baseUrl + APICONFIG.verifyPortals, payload);
+  }
+
+  chargeCustomer(token, payload, amount) {
+    return this.api.PostChargeCustomer(environment.baseUrl + APICONFIG.chargeUser, payload, amount, token);
   }
 }

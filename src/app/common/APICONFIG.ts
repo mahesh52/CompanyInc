@@ -3,5 +3,7 @@ export enum APICONFIG {
   getDownStreamPortals = "Portal/Downstream/All",
   verifyPortals = "PortalConfiguration/VerifyAndStore",
   getSubscriptions = "Subscription",
-  getUser = "Customer"
+  getUser = "Customer",
+  chargeUser = "Charge",
+  productUSer = "Product"
 }

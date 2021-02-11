@@ -33,6 +33,7 @@ import {AuthService} from "./services/auth.service";
 import { PortalsComponent } from './pages/portals/portals.component';
 import { ForgotpasswordComponent } from './pages/forgotpassword/forgotpassword.component';
 import { SubscriptionComponent } from './pages/subscription/subscription.component';
+import { PaymentConfirmComponent } from './pages/payment-confirm/payment-confirm.component';
 
 @NgModule({
     declarations: [
@@ -50,6 +51,7 @@ import { SubscriptionComponent } from './pages/subscription/subscription.compone
         PortalsComponent,
         ForgotpasswordComponent,
         SubscriptionComponent,
+        PaymentConfirmComponent,
     ],
   imports: [
     BrowserModule,
