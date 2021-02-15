@@ -64,7 +64,7 @@ export class UtilsService {
   }
 
   getDownStreamPortals() {
-    return this.api.GetWithoutHeaders(environment.baseUrl + APICONFIG.getDownStreamPortals);
+    return this.api.Get(environment.baseUrl + APICONFIG.getDownStreamPortals);
   }
 
   postVerifyUpStreamPortal(payload) {
