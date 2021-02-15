@@ -6,6 +6,7 @@ import {AuthService} from "../../services/auth.service";
 import {environment} from "../../../environments/environment";
 import {HttpHeaders, HttpClient} from "@angular/common/http";
 import {UsersService} from "../../services/users.service";
+import {STORAGEKEY} from "../../common/STORAGEKEY";
 
 @Component({
   selector: 'app-register',
@@ -46,12 +47,14 @@ export class RegisterComponent implements OnInit {
       };
       this.http.post(environment.cognitoUrl + '/oauth2/token', formData.toString(), options).subscribe(
         result => {
+          sessionStorage.setItem('auth', JSON.stringify(result));
           this.user.tokenDetails = result;
           this.user.isUserLoggedIn = true;
           //this.auth.getLoginUser();
           this.getUserDetails();
-          this.router.navigateByUrl('/portals');
-          sessionStorage.setItem('auth', JSON.stringify(result));
+
+          //this.router.navigateByUrl('/portals');
+
         },
         error => {
           console.log(error);
@@ -61,13 +64,45 @@ export class RegisterComponent implements OnInit {
   }
 
   getUserDetails() {
-    this.user.getUserDetails().subscribe(
-      result => {
-        sessionStorage.setItem('userDetails', JSON.stringify(result));
+
+    const user = JSON.parse(sessionStorage.getItem(STORAGEKEY.auth));
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer ' + user['access_token'])
+    };
+
+    this.http.get(environment.cognitoUrl + '/oauth2/userInfo', options).subscribe(
+      (result: any) => {
+        console.log(result);
+        const data = {
+          customerName: result.name,
+          customerEmailAddress: result.email,
+          customerUserName: result.username
+
+        };
+        this.user.createUser(data).subscribe(
+          result => {
+            //sessionStorage.setItem('userDetails', JSON.stringify(result));
+            this.user.getUserDetails().subscribe(
+              result => {
+                sessionStorage.setItem('userDetails', JSON.stringify(result));
+                console.log(result);
+                this.router.navigateByUrl('/portals');
+              },
+              error => {
+                console.log(error);
+              });
+
+
+          },
+          error => {
+            console.log(error);
+          });
+        //sessionStorage.setItem('auth', JSON.stringify(result));
       },
       error => {
         console.log(error);
       });
+
   }
 
   register() {
@@ -112,12 +147,37 @@ export class RegisterComponent implements OnInit {
         this.user.isUserLoggedIn = true;
         const tokenDetails = {
           idToken: result.signInUserSession.idToken.jwtToken,
-          accessToken: result.signInUserSession.accessToken.jwtToken,
+          access_token: result.signInUserSession.accessToken.jwtToken,
           refreshToken: result.signInUserSession.refreshToken.token
         }
         this.user.tokenDetails = tokenDetails;
         sessionStorage.setItem('auth', JSON.stringify(tokenDetails));
-        this.router.navigateByUrl('/portals');
+        const data = {
+          customerName: this.userData.name,
+          customerEmailAddress: this.userData.email,
+          customerUserName: this.userData.username
+
+        };
+        this.user.createUser(data).subscribe(
+          result => {
+            //sessionStorage.setItem('userDetails', JSON.stringify(result));
+            this.user.getUserDetails().subscribe(
+              result => {
+                sessionStorage.setItem('userDetails', JSON.stringify(result));
+                console.log(result);
+                this.router.navigateByUrl('/portals');
+              },
+              error => {
+                console.log(error);
+              });
+
+
+          },
+          error => {
+            console.log(error);
+          });
+
+
       },
       error => {
         console.log(error);

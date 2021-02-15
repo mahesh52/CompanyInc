@@ -5,5 +5,6 @@ export enum APICONFIG {
   getSubscriptions = "Subscription",
   getUser = "Customer",
   chargeUser = "Charge",
-  productUSer = "Product"
+  productUSer = "Product",
+  createuser = "Customer/Create"
 }

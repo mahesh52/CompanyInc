@@ -16,4 +16,8 @@ export class UsersService {
   getUserDetails() {
     return this.api.Get(environment.baseUrl + APICONFIG.getUser);
   }
+
+  createUser(data) {
+    return this.api.Post(environment.baseUrl + APICONFIG.createuser,data);
+  }
 }
