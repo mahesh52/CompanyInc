@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
           this.user.isUserLoggedIn = true;
           const tokenDetails = {
             idToken: result.signInUserSession.idToken.jwtToken,
-            accessToken: result.signInUserSession.accessToken.jwtToken,
+            access_token: result.signInUserSession.accessToken.jwtToken,
             refreshToken: result.signInUserSession.refreshToken.token
           }
           this.user.tokenDetails = tokenDetails;
