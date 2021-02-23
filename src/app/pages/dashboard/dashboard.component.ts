@@ -49,11 +49,18 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.productTypes = this.utils.productTypes;
-    this.collections = this.utils.collections;
     this.getUpStreamPortals();
-    this.tags = this.utils.tags;
+  }
 
+  getGlobalConfigurations() {
+    this.utilService.getGlobalConfigurations(this.downStreamPortal).subscribe(res => {
+      this.productTypes = res[0].productTypes;
+      this.collections =res[0].collections;
+      this.tags = res[0].tags;
+    }, error => {
+      console.log('Error while getting the upstream portals');
+      console.log(error);
+    });
   }
 
   getUpStreamPortals() {
@@ -108,6 +115,7 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
         console.log(res);
         //res[0].ShopifyStatus = 'Published';
+        this.getGlobalConfigurations();
         let res1 = [];
         res.forEach((item) => {
           item.markup = item.markup + ' %';
@@ -161,16 +169,15 @@ export class DashboardComponent implements OnInit {
   }
 
 
-  selectIndex(id) {
+  selectIndex(productID) {
+    this.isProdSelected = true;
     this.productDetails.forEach((item, i) => {
-      if (item.id === id) {
+      if (item.productID === productID) {
         this.selectedIndex = i;
       }
     });
-
-
     this.selectedItems = this.productDetails[this.selectedIndex].tags.split(',');
-    this.isProdSelected = true;
+
   }
 
   selectDetIndex(id) {
@@ -280,8 +287,11 @@ export class DashboardComponent implements OnInit {
 
   addListToProduct() {
     this.selectedItems = this.selectedItems.filter(item => item);
-
-    this.productDetails[this.selectedIndex].tags = this.selectedItems.toString();
+    if(this.productDetails[this.selectedIndex].tags){
+      this.productDetails[this.selectedIndex].tags = [...this.productDetails[this.selectedIndex].tags,...this.selectedItems];
+    } else {
+      this.productDetails[this.selectedIndex].tags = this.selectedItems;
+    }
     sessionStorage.setItem('products', JSON.stringify(this.productDetails));
     this.isProdSelected = false;
   }

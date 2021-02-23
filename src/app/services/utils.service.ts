@@ -59,6 +59,10 @@ export class UtilsService {
     return this.api.Get(environment.baseUrl + APICONFIG.getSubscriptions);
   }
 
+  getGlobalConfigurations(downStreamPortalId) {
+    return this.api.Get(environment.baseUrl + APICONFIG.getGlobalConfigs+'/'+downStreamPortalId);
+  }
+
   getUpStreamPortals() {
     return this.api.Get(environment.baseUrl + APICONFIG.getUpStreamPortals);
   }

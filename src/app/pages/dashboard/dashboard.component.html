@@ -124,7 +124,7 @@
             <div class="ribbonTd1">
               <span style="cursor:pointer;width: 18px;
     height: 18px;" data-toggle="modal" data-target="#myModal"
-                    (click)="selectIndex(item.id)">+</span>
+                    (click)="selectIndex(item.productID)">+</span>
 
             </div>
           </td>
@@ -170,9 +170,9 @@
       <div class="modal-body">
         <div class="row" *ngIf="isProdSelected">
           <div class="col-md-6" *ngFor="let tag of tags">
-            <input type="checkbox" class="tags" [checked]="hasValue(tag.item_text)"
-                   (click)="addToList($event.target.checked,tag.item_text)">
-            <label>{{tag.item_text}}</label>
+            <input type="checkbox" class="tags" [checked]="hasValue(tag)"
+                   (click)="addToList($event.target.checked,tag)">
+            <label>{{tag}}</label>
 
           </div>
         </div>

@@ -6,5 +6,6 @@ export enum APICONFIG {
   getUser = "Customer",
   chargeUser = "Charge",
   productUSer = "Product",
-  createuser = "Customer/Create"
+  createuser = "Customer/Create",
+  getGlobalConfigs = "GetDWGlobalValues"
 }
