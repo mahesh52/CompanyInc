@@ -11,8 +11,8 @@ export class ProductService {
   constructor(private api: ApiService) {
   }
 
-  getProducts(upStreamPortalId, fromDate?: string, toDate?: string) {
-    let url = environment.baseUrl + APICONFIG.productUSer + '/' + upStreamPortalId;
+  getProducts(upStreamPortalId,downStreamPortalId, fromDate?: string, toDate?: string) {
+    let url = environment.baseUrl + APICONFIG.productUSer + '/' + upStreamPortalId+'/'+downStreamPortalId;
     if (fromDate && toDate) {
       url = url + '?endDate=' + toDate + '&startDate=' + fromDate;
     }

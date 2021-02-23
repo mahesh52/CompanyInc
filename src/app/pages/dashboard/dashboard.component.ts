@@ -37,10 +37,10 @@ export class DashboardComponent implements OnInit {
   toDate = '';
   upStreamPortals: any;
   downStreamPortals: any;
-  upStreamPortal:any;
-  downStreamPortal:any;
+  upStreamPortal: any;
+  downStreamPortal: any;
 
-  constructor(private utilService: UtilsService,private router: Router, private paginationService: PaginationService,
+  constructor(private utilService: UtilsService, private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
               private http: HttpClient,
               private utils: UtilsService,
@@ -52,14 +52,25 @@ export class DashboardComponent implements OnInit {
     this.productTypes = this.utils.productTypes;
     this.collections = this.utils.collections;
     this.getUpStreamPortals();
-    this.getDownStreamPortals();
     this.tags = this.utils.tags;
 
   }
+
   getUpStreamPortals() {
     this.utilService.getUpStreamPortals().subscribe(res => {
       this.upStreamPortals = res;
       this.upStreamPortal = res[0].portalID;
+      this.getDownStreamPortals();
+    }, error => {
+      console.log('Error while getting the upstream portals');
+      console.log(error);
+    });
+  }
+
+  getDownStreamPortals() {
+    this.utilService.getDownStreamPortals().subscribe(res => {
+      this.downStreamPortals = res;
+      this.downStreamPortal = res[0].portalID;
       this.getProducts();
       if (sessionStorage.getItem('products') !== '' && sessionStorage.getItem('products') !== null && sessionStorage.getItem('products') !== undefined) {
         const res1 = JSON.parse(sessionStorage.getItem('products'));
@@ -71,19 +82,11 @@ export class DashboardComponent implements OnInit {
         this.getProducts();
       }
     }, error => {
-      console.log('Error while getting the upstream portals');
-      console.log(error);
-    });
-  }
-
-  getDownStreamPortals() {
-    this.utilService.getDownStreamPortals().subscribe(res => {
-      this.downStreamPortals = res;
-    }, error => {
       console.log('Error while getting the downstream portals');
       console.log(error);
     });
   }
+
   details(id) {
     let index = 0;
     const selectedItems = this.productDetails.filter(function (item, index) {
@@ -100,7 +103,7 @@ export class DashboardComponent implements OnInit {
 
   getProducts() {
     this.loading = true;
-    this.productService.getProducts(this.upStreamPortal)
+    this.productService.getProducts(this.upStreamPortal, this.downStreamPortal)
       .subscribe(res => {
         this.loading = false;
         console.log(res);
@@ -346,9 +349,9 @@ export class DashboardComponent implements OnInit {
         alert('To date must be greater than from date');
       } else {
         this.loading = true;
-        const formDate = this.fromDate['year'] + '-' + this.zeroPad(this.fromDate['month'], 2) + '-' + this.zeroPad(this.fromDate['day'], 2);
-        const toDate = this.toDate['year'] + '-' + this.zeroPad(this.toDate['month'], 2) + '-' + this.zeroPad(this.toDate['day'], 2);
-        this.productService.getProducts(this.upStreamPortal,formDate,toDate)
+        const formDate = this.zeroPad(this.fromDate['month'], 2) + '-' + this.zeroPad(this.fromDate['day'], 2) + '-' + this.fromDate['year'];
+        const toDate = this.zeroPad(this.toDate['month'], 2) + '-' + this.zeroPad(this.toDate['day'], 2) + '-' + this.toDate['year'];
+        this.productService.getProducts(this.upStreamPortal, this.downStreamPortal, formDate, toDate)
           .subscribe(res => {
             this.loading = false;
             this.getProducts();
