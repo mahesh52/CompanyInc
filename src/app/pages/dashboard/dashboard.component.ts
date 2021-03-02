@@ -6,7 +6,9 @@ import {PaginationService} from "../../services/pagination.service";
 import {SortUtilsService} from "../../services/sort-utils.service";
 import {HttpClient} from "@angular/common/http";
 import * as moment from 'moment';
-
+import {SSE} from "../landing/sse";
+import {environment} from "../../../environments/environment";
+import {APICONFIG} from "../../common/APICONFIG";
 
 @Component({
   selector: 'app-dashboard',
@@ -39,6 +41,7 @@ export class DashboardComponent implements OnInit {
   downStreamPortals: any;
   upStreamPortal: any;
   downStreamPortal: any;
+  userDetails: any;
 
   constructor(private utilService: UtilsService, private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
@@ -49,13 +52,14 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
     this.getUpStreamPortals();
   }
 
   getGlobalConfigurations() {
     this.utilService.getGlobalConfigurations(this.downStreamPortal).subscribe(res => {
       this.productTypes = res[0].productTypes;
-      this.collections =res[0].collections;
+      this.collections = res[0].collections;
       this.tags = res[0].tags;
     }, error => {
       console.log('Error while getting the upstream portals');
@@ -64,7 +68,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getUpStreamPortals() {
-    this.utilService.getUpStreamPortals().subscribe(res => {
+    this.utilService.getUserUpStreamPortals().subscribe(res => {
       this.upStreamPortals = res;
       this.upStreamPortal = res[0].portalID;
       this.getDownStreamPortals();
@@ -75,7 +79,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getDownStreamPortals() {
-    this.utilService.getDownStreamPortals().subscribe(res => {
+    this.utilService.getUserDownStreamPortals().subscribe(res => {
       this.downStreamPortals = res;
       this.downStreamPortal = res[0].portalID;
       this.getProducts();
@@ -287,8 +291,8 @@ export class DashboardComponent implements OnInit {
 
   addListToProduct() {
     this.selectedItems = this.selectedItems.filter(item => item);
-    if(this.productDetails[this.selectedIndex].tags){
-      this.productDetails[this.selectedIndex].tags = [...this.productDetails[this.selectedIndex].tags,...this.selectedItems];
+    if (this.productDetails[this.selectedIndex].tags) {
+      this.productDetails[this.selectedIndex].tags = [...this.productDetails[this.selectedIndex].tags, ...this.selectedItems];
     } else {
       this.productDetails[this.selectedIndex].tags = this.selectedItems;
     }
@@ -335,14 +339,55 @@ export class DashboardComponent implements OnInit {
   }
 
   uploadProducts() {
-    this.loading = true;
-    this.productService.uploadProducts()
-      .subscribe(res => {
-        this.loading = false;
-        this.getProducts();
-      }, error => {
-        this.loading = false;
-      });
+    // this.loading = true;
+    // this.productService.uploadProducts(this.upStreamPortal,this.downStreamPortal)
+    //   .subscribe(res => {
+    //     this.loading = false;
+    //     this.getProducts();
+    //   }, error => {
+    //     this.loading = false;
+    //   });
+
+    EventSource = SSE;
+    let url = environment.baseUrl + APICONFIG.upLoadProducts + this.upStreamPortal + '/' + this.downStreamPortal;
+
+    const eventSource = new SSE(url, {
+      headers: {'Content-Type': 'application/json'},
+      payload: '["ALL"]'
+    });
+    // const eventSource = new EventSource("http://localhost:9192/UploadProductEmitter/u@2001/d@2003");
+    // eventSource.addEventListener('status', function (e) {
+    //   console.log('System status is now: ' + e.data);
+    // });
+
+    eventSource.addEventListener(
+      this.userDetails.customerID,
+      this.handleServerEvent,
+      false
+    );
+
+    eventSource.addEventListener(
+      'progress',
+      this.handleServerEvent,
+      false
+    );
+
+    eventSource.addEventListener("COMPLETE", function (evt) {
+      console.log(evt);
+      eventSource.close();
+    });
+    eventSource.stream();
+
+    eventSource.onopen = (e) => console.log("open");
+
+    eventSource.onerror = (e) => {
+      if (e.readyState == EventSource.CLOSED) {
+        console.log("close");
+      } else {
+        console.log(e);
+      }
+      //  this.initListener();
+    };
   }
 
   zeroPad(num, places) {
@@ -358,16 +403,16 @@ export class DashboardComponent implements OnInit {
       if (time1 > time2) {
         alert('To date must be greater than from date');
       } else {
-        this.loading = true;
         const formDate = this.zeroPad(this.fromDate['month'], 2) + '-' + this.zeroPad(this.fromDate['day'], 2) + '-' + this.fromDate['year'];
         const toDate = this.zeroPad(this.toDate['month'], 2) + '-' + this.zeroPad(this.toDate['day'], 2) + '-' + this.toDate['year'];
-        this.productService.getProducts(this.upStreamPortal, this.downStreamPortal, formDate, toDate)
-          .subscribe(res => {
-            this.loading = false;
-            this.getProducts();
-          }, error => {
-            this.loading = false;
-          });
+        // this.productService.downLoadProducts(this.upStreamPortal, formDate, toDate)
+        //   .subscribe(res => {
+        //     this.loading = false;
+        //     //  need to create SSE events
+        //   }, error => {
+        //     this.loading = false;
+        //   });
+        this.initListener(formDate, toDate);
       }
 
     } else {
@@ -375,6 +420,65 @@ export class DashboardComponent implements OnInit {
     }
 
   }
+
+  initListener = (formDate, toDate) => {
+    EventSource = SSE;
+    let url = environment.baseUrl + APICONFIG.downLoadProducts + this.upStreamPortal;
+    if (formDate && toDate) {
+      url = url + '?endDate=' + toDate + '&startDate=' + formDate;
+    }
+    const eventSource = new SSE(url, {
+      headers: {'Content-Type': 'application/json'},
+      payload: ''
+    });
+    // const eventSource = new EventSource("http://localhost:9192/UploadProductEmitter/u@2001/d@2003");
+    // eventSource.addEventListener('status', function (e) {
+    //   console.log('System status is now: ' + e.data);
+    // });
+
+    eventSource.addEventListener(
+      this.userDetails.customerID,
+      this.handleServerEvent,
+      false
+    );
+
+    eventSource.addEventListener(
+      'progress',
+      this.handleServerEvent,
+      false
+    );
+
+    eventSource.addEventListener("COMPLETE", function (evt) {
+      console.log(evt);
+      eventSource.close();
+    });
+    eventSource.stream();
+
+    eventSource.onopen = (e) => console.log("open");
+
+    eventSource.onerror = (e) => {
+      if (e.readyState == EventSource.CLOSED) {
+        console.log("close");
+      } else {
+        console.log(e);
+      }
+    //  this.initListener();
+    };
+
+
+  };
+  handleServerEvent = (e) => {
+    const json = JSON.parse(e.data);
+    console.log(json);
+    // let newNotifications = this.state.newNotifications;
+    // newNotifications.unshift({
+    //   from: json.from,
+    //   message: json.message,
+    //   isRead: false,
+    // });
+
+    // this.setState({ newNotifications: newNotifications });
+  };
 
   getSalePrice(price, markup) {
     if (price && markup) {

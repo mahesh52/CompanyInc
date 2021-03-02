@@ -34,43 +34,43 @@ export class LandingComponent implements OnInit {
   }
 
   initListener = () => {
-    EventSource = SSE;
-    const eventSource = new SSE("http://ec2-3-133-143-117.us-east-2.compute.amazonaws.com:9192/UploadProductEmitter/u@2001/d@2003", {headers: {'Content-Type': 'application/json'},
-      payload: '["ORD9999@JESSI-999"]'});
-    // const eventSource = new EventSource("http://localhost:9192/UploadProductEmitter/u@2001/d@2003");
-    // eventSource.addEventListener('status', function (e) {
-    //   console.log('System status is now: ' + e.data);
+    // EventSource = SSE;
+    // const eventSource = new SSE("http://ec2-3-133-143-117.us-east-2.compute.amazonaws.com:9192/UploadProductEmitter/u@2001/d@2003", {headers: {'Content-Type': 'application/json'},
+    //   payload: '["ORD9999@JESSI-999"]'});
+    // // const eventSource = new EventSource("http://localhost:9192/UploadProductEmitter/u@2001/d@2003");
+    // // eventSource.addEventListener('status', function (e) {
+    // //   console.log('System status is now: ' + e.data);
+    // // });
+    //
+    // eventSource.addEventListener(
+    //   this.state.loggedInUser,
+    //   this.handleServerEvent,
+    //   false
+    // );
+    //
+    // eventSource.addEventListener(
+    //   'progress',
+    //   this.handleServerEvent,
+    //   false
+    // );
+    //
+    // eventSource.addEventListener("COMPLETE", function (evt) {
+    //   console.log(evt);
+    //   eventSource.close();
     // });
-
-    eventSource.addEventListener(
-      this.state.loggedInUser,
-      this.handleServerEvent,
-      false
-    );
-
-    eventSource.addEventListener(
-      'progress',
-      this.handleServerEvent,
-      false
-    );
-
-    eventSource.addEventListener("COMPLETE", function (evt) {
-      console.log(evt);
-      eventSource.close();
-    });
-    eventSource.stream();
-
-    eventSource.onopen = (e) => console.log("open");
-
-    eventSource.onerror = (e) => {
-      if (e.readyState == EventSource.CLOSED) {
-        console.log("close");
-      } else {
-        console.log(e);
-      }
-      this.initListener();
-    };
-
+    // eventSource.stream();
+    //
+    // eventSource.onopen = (e) => console.log("open");
+    //
+    // eventSource.onerror = (e) => {
+    //   if (e.readyState == EventSource.CLOSED) {
+    //     console.log("close");
+    //   } else {
+    //     console.log(e);
+    //   }
+    //   this.initListener();
+    // };
+    //
 
   };
   handleServerEvent = (e) => {

@@ -10,30 +10,31 @@
         </option>
       </select>
       <ul class="list-unstyled plan-def">
-        <li>
-          <label
-          ><span class="lable-txt">Downstream Portals</span
-          ><span>1</span></label
-          >
-        </li>
-        <li>
-          <label
-          ><span class="lable-txt">Upstream Portals</span
-          ><span>1</span></label
-          >
-        </li>
-        <li>
+<!--        <li>-->
+<!--          <label-->
+<!--          ><span class="lable-txt">Downstream Portals</span-->
+<!--          ><span>1</span></label-->
+<!--          >-->
+<!--        </li>-->
+<!--        <li>-->
+<!--          <label-->
+<!--          ><span class="lable-txt">Upstream Portals</span-->
+<!--          ><span>1</span></label-->
+<!--          >-->
+<!--        </li>-->
+        <li  *ngFor = "let feature of selectedSubscription?.featureList">
           <label>
-            <span class="lable-txt" *ngFor = "let feature of selectedSubscription?.featureList">
+            <span style="width: 100% !important;font-size: 15px !important;" class="lable-txt" >
               {{feature}}</span>
-<!--            <span>Unlimited</span>-->
+            <!--            <span>Unlimited</span>-->
           </label
           >
         </li>
       </ul>
+
       <label for="tenure" class="plan-name-txt">Tenure</label>
       <select id="tenure" class="selectplan">
-        <option label="1 Month">{{selectedSubscription?.subscriptionValidityPeriodInMonth}} Month(s)</option>
+        <option label="{{selectedSubscription?.subscriptionValidityPeriodInMonth}} Month(s)">{{selectedSubscription?.subscriptionValidityPeriodInMonth}} Month(s)</option>
       </select>
 
       <div class="currency-sec">
@@ -151,3 +152,4 @@
   </section>
 </section>
 </div>
+<app-loading *ngIf="loading"></app-loading>

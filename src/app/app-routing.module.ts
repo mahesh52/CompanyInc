@@ -11,7 +11,8 @@ import {LandingComponent} from "./pages/landing/landing.component";
 import {PortalsComponent} from "./pages/portals/portals.component";
 import {ForgotpasswordComponent} from "./pages/forgotpassword/forgotpassword.component";
 import {SubscriptionComponent} from "./pages/subscription/subscription.component";
-import { PaymentConfirmComponent } from './pages/payment-confirm/payment-confirm.component';
+import {PaymentConfirmComponent} from './pages/payment-confirm/payment-confirm.component';
+import {ProfileComponent} from './pages/profile/profile.component';
 
 const routes: Routes = [
   {
@@ -27,7 +28,8 @@ const routes: Routes = [
       {path: 'details/:id', component: DetailsComponent, canActivate: [AuthGuard]},
       {path: 'forgotpwd', component: ForgotpasswordComponent},
       {path: 'subscription', component: SubscriptionComponent, canActivate: [AuthGuard]},
-      {path: 'payment', component: PaymentConfirmComponent, canActivate: [AuthGuard]}
+      {path: 'payment', component: PaymentConfirmComponent, canActivate: [AuthGuard]},
+      {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]}
     ]
   },
 ];

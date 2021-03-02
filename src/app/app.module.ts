@@ -34,6 +34,7 @@ import { PortalsComponent } from './pages/portals/portals.component';
 import { ForgotpasswordComponent } from './pages/forgotpassword/forgotpassword.component';
 import { SubscriptionComponent } from './pages/subscription/subscription.component';
 import { PaymentConfirmComponent } from './pages/payment-confirm/payment-confirm.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 
 @NgModule({
     declarations: [
@@ -52,6 +53,7 @@ import { PaymentConfirmComponent } from './pages/payment-confirm/payment-confirm
         ForgotpasswordComponent,
         SubscriptionComponent,
         PaymentConfirmComponent,
+        ProfileComponent,
     ],
   imports: [
     BrowserModule,

@@ -17,7 +17,7 @@ export class SubscriptionComponent implements OnInit {
   selectedSubscription: any;
   selectedValue: any;
   userDetails: any;
-
+  loading = false;
   constructor(private utilService: UtilsService, private user: UsersService, private http: HttpClient, private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
     this.paymentForm = fb.group({
       'cname': ['', Validators.required],
@@ -66,11 +66,12 @@ export class SubscriptionComponent implements OnInit {
   }
 
   chargeCard(token: string) {
+    this.loading = true;
     let payload = {
       "customerID": this.userDetails.customerID,
       "customerName": this.paymentForm.value.cname,
       "customerSubscriptionID": this.selectedSubscription.subscriptionID,
-      "customerSubscriptionStartDate": moment().format("YYYY-MM-DD HH:mm:ss").replace(' ','T'),
+      "customerSubscriptionStartDate": moment().format("YYYY-MM-DD HH:mm:ss").replace(' ', 'T'),
       "customerSubscriptionEndDate": null,
       "isCustomerSubscriptionActive": true,
       "customerBillingAddress": {
@@ -83,18 +84,26 @@ export class SubscriptionComponent implements OnInit {
 
       "isCustomerActive": true
     };
-
-    let amount = this.selectedSubscription.subscriptionCost;
-    console.log(token);
-    this.utilService.chargeCustomer(token, payload, amount).subscribe(res => {
-      console.log(res);
-      console.log(res);
-      this.router.navigateByUrl('payment');
+    this.utilService.updateCustomer(payload).subscribe(response => {
+      let amount = this.selectedSubscription.subscriptionCost;
+      console.log(token);
+      this.utilService.chargeCustomer(token, payload, amount).subscribe(res => {
+        console.log(res);
+        console.log(res);
+        this.loading = false;
+        this.router.navigateByUrl('payment');
+      }, error => {
+        this.loading = false;
+        // todo handle error and remove below line
+        this.router.navigateByUrl('payment');
+        console.log('Error while charging customer');
+      })
     }, error => {
-      // todo handle error and remove below line
-      this.router.navigateByUrl('payment');
-      console.log('Error while charging customer');
-    })
+      this.loading = false;
+     console.log('error while doing payment')
+    });
+
+
     // const headers = new Headers({'token': token, 'amount': 100});
     // this.http.post('http://localhost:8080/payment/charge', {}, {headers: headers})
     //   .subscribe(resp => {

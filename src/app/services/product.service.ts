@@ -11,8 +11,16 @@ export class ProductService {
   constructor(private api: ApiService) {
   }
 
-  getProducts(upStreamPortalId,downStreamPortalId, fromDate?: string, toDate?: string) {
-    let url = environment.baseUrl + APICONFIG.productUSer + '/' + upStreamPortalId+'/'+downStreamPortalId;
+  getProducts(upStreamPortalId, downStreamPortalId, fromDate?: string, toDate?: string) {
+    let url = environment.baseUrl + APICONFIG.productUSer + '/' + upStreamPortalId + '/' + downStreamPortalId;
+    if (fromDate && toDate) {
+      url = url + '?endDate=' + toDate + '&startDate=' + fromDate;
+    }
+    return this.api.Get(url);
+  }
+
+  downLoadProducts(upStreamPortalId, fromDate?: string, toDate?: string) {
+    let url = environment.baseUrl + APICONFIG.downLoadProducts + upStreamPortalId;
     if (fromDate && toDate) {
       url = url + '?endDate=' + toDate + '&startDate=' + fromDate;
     }
@@ -23,8 +31,9 @@ export class ProductService {
     return this.api.PutOthers('api/product/' + id, data);
   }
 
-  uploadProducts() {
-    return this.api.Post('api/product/UploadProducts', {});
+  uploadProducts(upStreamPortal, downStreamPortal) {
+    let url = environment.baseUrl + APICONFIG.upLoadProducts + upStreamPortal + '/' + downStreamPortal;
+    return this.api.Post(url, ["ALL"]);
   }
 
   downloadProducts(fromDate, todate) {

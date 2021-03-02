@@ -16,16 +16,37 @@ export class PortalsComponent implements OnInit {
   selectedUpStreamPortals: any[];
   selectedDownStreamPortals: any[];
   userDetails: any;
+  loading = false;
 
   constructor(private user: UsersService, private utilService: UtilsService, private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
   }
 
   ngOnInit() {
     this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
-    this.selectedUpStreamPortals = [];
-    this.selectedDownStreamPortals = [];
-    this.getUpStreamPortals();
-    this.getDownStreamPortals();
+    if (this.userDetails.isCustomerSubscriptionActive) {
+      this.router.navigateByUrl('/dashboard');
+    } else {
+      this.utilService.getUserUpStreamPortals().subscribe(res => {
+        if(res.length > 0){
+          this.router.navigateByUrl('/subscription');
+        } else {
+          this.selectedUpStreamPortals = [];
+          this.selectedDownStreamPortals = [];
+          this.getUpStreamPortals();
+          this.getDownStreamPortals();
+        }
+
+      }, error => {
+        this.selectedUpStreamPortals = [];
+        this.selectedDownStreamPortals = [];
+        this.getUpStreamPortals();
+        this.getDownStreamPortals();
+        console.log('Error while getting the upstream portals');
+        console.log(error);
+      });
+
+    }
+
   }
 
   gotoStep2() {
@@ -92,15 +113,17 @@ export class PortalsComponent implements OnInit {
       },
       "isVerified": true
     }
-
+    this.loading = true;
 
     this.utilService.postVerifyUpStreamPortal(payload).subscribe(res => {
+      this.loading = false;
       upPortal.isVerified = true;
       console.log(res);
     }, error => {
       // todo once service is working
-      upPortal.isVerified = true;
-      if(error && error.status === 200){
+      this.loading = false;
+      //  upPortal.isVerified = true;
+      if (error && error.status === 200) {
         upPortal.isVerified = true;
       }
       console.log('Error while verifying the upstream portals');
@@ -121,15 +144,18 @@ export class PortalsComponent implements OnInit {
       },
       "isVerified": true
     }
+    this.loading = true;
     this.utilService.postVerifyUpStreamPortal(payload).subscribe(res => {
+      this.loading = false;
       downPortal.isVerified = true;
       console.log(res);
     }, error => {
-      if(error && error.status === 200){
+      this.loading = false;
+      if (error && error.status === 200) {
         downPortal.isVerified = true;
       }
       //todo needs to remove after services working
-      downPortal.isVerified = true;
+      //downPortal.isVerified = true;
       console.log('Error while verifying the downPortal portals');
       console.log(error);
     });

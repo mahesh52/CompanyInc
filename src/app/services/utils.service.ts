@@ -67,12 +67,22 @@ export class UtilsService {
     return this.api.Get(environment.baseUrl + APICONFIG.getUpStreamPortals);
   }
 
+  getUserUpStreamPortals() {
+    return this.api.Get(environment.baseUrl + APICONFIG.userUpStreamPortals);
+  }
+
   getDownStreamPortals() {
     return this.api.Get(environment.baseUrl + APICONFIG.getDownStreamPortals);
   }
-
+  getUserDownStreamPortals() {
+    return this.api.Get(environment.baseUrl + APICONFIG.userDownStreamPortals);
+  }
   postVerifyUpStreamPortal(payload) {
     return this.api.Post(environment.baseUrl + APICONFIG.verifyPortals, payload);
+  }
+
+  updateCustomer(payload) {
+    return this.api.Post(environment.baseUrl + APICONFIG.updateUser, payload);
   }
 
   chargeCustomer(token, payload, amount) {

@@ -30,14 +30,14 @@
 <nav class="navbar mainNavbar navbar-expand-sm bg-dark navbar-dark" *ngIf="currentUrl!=='/login' && currentUrl!=='/register' && currentUrl!=='/landing' && currentUrl!=='/forgotpwd'">>
   <a class="navbar-brand" href="#">COMPANY INC.</a>
   <ul class="navbar-nav nnLeft">
-    <li class="nav-item">
-      <a class="nav-link active homeIcon" href="home.html">Home</a>
+    <li class="nav-item" [routerLinkActive]="['active']">
+      <a class="nav-link homeIcon" [routerLinkActive]="['active']" routerLink="/dashboard">Home</a>
+    </li>
+    <li class="nav-item" [routerLinkActive]="['active']">
+      <a class="nav-link homeIcon" [routerLinkActive]="['active']" routerLink="/dashboard">Overview</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link homeIcon" href="home.html">Overview</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link dashboardIcon" href="workspace.html"
+      <a class="nav-link dashboardIcon" routerLink="/dashboard"
       >Dashboard</a
       >
     </li>
