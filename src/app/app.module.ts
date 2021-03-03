@@ -35,6 +35,9 @@ import { ForgotpasswordComponent } from './pages/forgotpassword/forgotpassword.c
 import { SubscriptionComponent } from './pages/subscription/subscription.component';
 import { PaymentConfirmComponent } from './pages/payment-confirm/payment-confirm.component';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { ToasterContainerComponent} from "./common/toaster-container.component";
+import { ToasterComponent} from "./common/toaster.component";
+import { ToasterService} from "./common/toaster.service";
 
 @NgModule({
     declarations: [
@@ -54,6 +57,7 @@ import { ProfileComponent } from './pages/profile/profile.component';
         SubscriptionComponent,
         PaymentConfirmComponent,
         ProfileComponent,
+      ToasterContainerComponent, ToasterComponent
     ],
   imports: [
     BrowserModule,

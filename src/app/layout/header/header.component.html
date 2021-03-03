@@ -27,7 +27,8 @@
 <!--</nav>-->
 
 
-<nav class="navbar mainNavbar navbar-expand-sm bg-dark navbar-dark" *ngIf="currentUrl!=='/login' && currentUrl!=='/register' && currentUrl!=='/landing' && currentUrl!=='/forgotpwd'">>
+<nav class="navbar mainNavbar navbar-expand-sm bg-dark navbar-dark"
+     *ngIf="currentUrl!=='/login' && currentUrl!=='/register' && currentUrl!=='/landing' && currentUrl!=='/forgotpwd'">>
   <a class="navbar-brand" href="#">COMPANY INC.</a>
   <ul class="navbar-nav nnLeft">
     <li class="nav-item" [routerLinkActive]="['active']">
@@ -49,7 +50,7 @@
   <ul class="navbar-nav nnRight ml-auto">
     <li>
       <div class="search-sec">
-        <input type="text" placeholder="Search" class="form-control" />
+        <input type="text" placeholder="Search" class="form-control"/>
         <img
           src="assets/images/ic_zoom_in_24px@3x.png"
           alt="search"
@@ -92,15 +93,15 @@
         class="dropdown-menu dropdown-menu-right"
         aria-labelledby="navbarDropdownMenuLink"
       >
-        <a class="dropdown-item" >My Profile</a>
+        <a class="dropdown-item"  routerLink="/profile" >My Profile</a>
         <a class="dropdown-item" (click)="logoutUser()">Logout</a>
       </div>
-<!--      <div-->
-<!--        class="dropdown-menu dropdown-menu-right"-->
-<!--        aria-labelledby="navbarDropdownMenuLink"-->
-<!--      >-->
-<!--        <a class="dropdown-item" (click)="logoutUser()">Logout</a>-->
-<!--      </div>-->
+      <!--      <div-->
+      <!--        class="dropdown-menu dropdown-menu-right"-->
+      <!--        aria-labelledby="navbarDropdownMenuLink"-->
+      <!--      >-->
+      <!--        <a class="dropdown-item" (click)="logoutUser()">Logout</a>-->
+      <!--      </div>-->
     </li>
   </ul>
 </nav>
