@@ -10,6 +10,7 @@ import {filter} from "rxjs/operators";
 export class HeaderComponent implements OnInit {
   userDetails: {};
   currentUrl: string;
+
   constructor(private router: Router) {
     router.events.pipe(
       filter(event => event instanceof NavigationEnd)
@@ -29,5 +30,9 @@ export class HeaderComponent implements OnInit {
   logoutUser() {
     sessionStorage.clear();
     this.router.navigate(['login']);
+  }
+
+  toggleNotifications() {
+    
   }
 }

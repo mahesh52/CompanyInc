@@ -73,18 +73,15 @@ export class SubscriptionComponent implements OnInit {
       "customerSubscriptionID": this.selectedSubscription.subscriptionID,
       "customerSubscriptionStartDate": moment().format("YYYY-MM-DD HH:mm:ss").replace(' ', 'T'),
       "customerSubscriptionEndDate": null,
-      "isCustomerSubscriptionActive": true,
       "customerBillingAddress": {
-        "BillingAddress": this.paymentForm.value.customerBillingAddress,
+        "BillingAddress": this.paymentForm.value.address,
         "ZipCode": this.paymentForm.value.zipcode,
         "Country": this.paymentForm.value.country,
         "CustomerName": this.paymentForm.value.cname,
         "City": this.paymentForm.value.city,
-      },
-
-      "isCustomerActive": true
+      }
     };
-    this.utilService.updateCustomer(payload).subscribe(response => {
+   this.utilService.updateCustomer(payload).subscribe(response => {
       let amount = this.selectedSubscription.subscriptionCost;
       console.log(token);
       this.utilService.chargeCustomer(token, payload, amount).subscribe(res => {

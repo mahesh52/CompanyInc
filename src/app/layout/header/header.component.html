@@ -59,23 +59,25 @@
       </div>
     </li>
     <li>
-      <a href="#" class="notification-icon">
+      <a (click)="toggleNotifications()" class="notification-icon">
         <img
           src="assets/images/ic_notifications_24px@3x.png"
           alt="notification"
           height="19"
           class="bell-icon"
         />
-        <img
-          src="assets/images/ic_announcement_24px@3x.png"
-          alt="notification"
-          height="14"
-          class="info-btn"
-        />
+<!--        <img-->
+<!--          src="assets/images/ic_announcement_24px@3x.png"-->
+<!--          alt="notification"-->
+<!--          height="14"-->
+<!--          class="info-btn"-->
+<!--        />-->
+        <span>(3)</span>
       </a>
     </li>
+
     <li>
-      <a href="#" class="userProfileIcon"
+      <a routerLink="/profile" class="userProfileIcon"
       ><img src="assets/images/user-profile-icon.png"
       /></a>
     </li>

@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import {SSE} from "../landing/sse";
 import {environment} from "../../../environments/environment";
 import {APICONFIG} from "../../common/APICONFIG";
+import {STORAGEKEY} from "../../common/STORAGEKEY";
 
 @Component({
   selector: 'app-dashboard',
@@ -427,8 +428,14 @@ export class DashboardComponent implements OnInit {
     if (formDate && toDate) {
       url = url + '?endDate=' + toDate + '&startDate=' + formDate;
     }
+    const user = JSON.parse(sessionStorage.getItem(STORAGEKEY.auth));
+    const headerValue = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + user['access_token'],
+    }
+
     const eventSource = new SSE(url, {
-      headers: {'Content-Type': 'application/json'},
+      headers: headerValue,
       payload: ''
     });
     // const eventSource = new EventSource("http://localhost:9192/UploadProductEmitter/u@2001/d@2003");
@@ -462,7 +469,7 @@ export class DashboardComponent implements OnInit {
       } else {
         console.log(e);
       }
-    //  this.initListener();
+      //  this.initListener();
     };
 
 

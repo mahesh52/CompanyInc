@@ -4,7 +4,7 @@ import {PasswordStrengthValidator} from "../register/password-strength.validator
 import {Constants} from "../../common/Constants";
 import * as moment from "moment";
 import {UtilsService} from "../../services/utils.service";
-import { ToasterService} from "../../common/toaster.service";
+import {ToasterService} from "../../common/toaster.service";
 
 @Component({
   selector: 'app-profile',
@@ -16,7 +16,7 @@ export class ProfileComponent implements OnInit {
   registerForm: FormGroup;
   contryList = Constants.countryList;
 
-  constructor(private toaster: ToasterService,private fb: FormBuilder,private utilService: UtilsService) {
+  constructor(private toaster: ToasterService, private fb: FormBuilder, private utilService: UtilsService) {
     this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
     console.log(this.userDetails)
     this.registerForm = fb.group({
@@ -24,10 +24,10 @@ export class ProfileComponent implements OnInit {
       'username': [this.userDetails.customerID, Validators.required],
       'email': [this.userDetails.customerEmailAddress, [Validators.required, Validators.email]],
       'mobile': ['', [Validators.required, Validators.minLength(10), Validators.maxLength(12)]],
-      'address': [this.userDetails.customerBillingAddress, Validators.required],
-      'country': ['', Validators.required],
-      'city': ['', Validators.required],
-      'zipcode': ['', Validators.required],
+      'address': [this.userDetails.customerBillingAddress.BillingAddress, Validators.required],
+      'country': [this.userDetails.customerBillingAddress.Country, Validators.required],
+      'city': [this.userDetails.customerBillingAddress.City, Validators.required],
+      'zipcode': [this.userDetails.customerBillingAddress.ZipCode, Validators.required],
     })
   }
 
@@ -45,7 +45,8 @@ export class ProfileComponent implements OnInit {
         "Country": this.registerForm.value.country,
         "City": this.registerForm.value.city,
       },
-
+      "mobile": this.registerForm.value.mobile,
+      "customerEmailAddress": this.registerForm.value.email,
       "isCustomerActive": true
     };
     this.utilService.updateCustomer(payload).subscribe(response => {
