@@ -4,6 +4,7 @@ import {UtilsService} from "../../services/utils.service";
 import {ProductService} from "../../services/product.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import * as moment from "moment";
+import {ToasterService} from "../../common/toaster.service";
 
 @Component({
   selector: 'app-details',
@@ -26,41 +27,51 @@ export class DetailsComponent implements OnInit {
   productDetails = [];
   selectedId: string;
   salePrice = '';
+  downStreamPortal: any;
+  upStreamPortal: any;
+  selectedColor:any;
   @ViewChild('carousel', {static: true}) carousel: NgbCarousel;
 
-  constructor(private route: ActivatedRoute, private router: Router, private utils: UtilsService, private productService: ProductService) {
+  constructor(private toaster: ToasterService,private utilService: UtilsService,private route: ActivatedRoute, private router: Router, private utils: UtilsService, private productService: ProductService) {
   }
 
   ngOnInit() {
+
     this.selectedId = this.route.snapshot.paramMap.get('id');
     this.productDetails = JSON.parse(sessionStorage.getItem('products'));
     this.selectedProduct = this.productDetails[this.selectedId];
+    this.downStreamPortal = sessionStorage.getItem('downStream');
+    this.upStreamPortal = sessionStorage.getItem('upStream');
     console.log(this.selectedId);
     console.log(this.selectedProduct);
-    this.colors = this.selectedProduct.variants.map(a => a.color);
-    this.colors = [...new Set(this.colors)];
-    this.getVariants(this.colors[0]);
-    console.log(this.colors);
-    this.selectedItems = this.selectedProduct.tags.split(',');
-    this.productTypes = this.utils.productTypes;
-    this.collections = this.utils.collections;
-    this.tags = this.utils.tags;
+    this.selectedColor = this.selectedProduct.variantColors;
+    this.getGlobalConfigurations();
+    this.selectedItems = this.selectedProduct.tags;
 
     this.getSalePrice();
   }
+  getGlobalConfigurations() {
+    this.utilService.getGlobalConfigurations(this.downStreamPortal).subscribe(res => {
+      if (res && res.length > 0) {
+        this.productTypes = res[0].productTypes;
+        this.collections = res[0].collections;
+        this.tags = res[0].tags;
+      }
+
+    }, error => {
+      console.log('Error while getting getGlobalConfigurations');
+      console.log(error);
+    });
+  }
+
   getSalePrice() {
-    const price = this.selectedProduct.price;
+    const price = this.selectedProduct.unitPriceWithShippingFee;
     let markup = this.selectedProduct.markup;
     if (price && markup) {
       markup = markup.replace('%', '').trim();
       this.selectedProduct.salePrice =  (price * (1 + (markup / 100))).toFixed(2);
       console.log( this.selectedProduct.salePrice );
     }
-  }
-  getVariants(color) {
-    this.variants = this.selectedProduct.variants.filter(function (item) {
-      return item.color.trim() === color
-    })
   }
 
   getTags(tags) {
@@ -72,17 +83,29 @@ export class DetailsComponent implements OnInit {
 
   hasValue(value) {
     let hasFound = false;
-    this.selectedItems.forEach((item) => {
-      if (item === value) {
-        hasFound = true;
+    if(this.selectedItems){
+      this.selectedItems.forEach((item) => {
+        if (item === value) {
+          hasFound = true;
+        }
+      });
+      if (hasFound) {
+        return true;
       }
-    });
-    if (hasFound) {
-      return true;
     }
+
     return false;
   }
+  addToTags(customtag) {
+    if (customtag.value && customtag.value !== '') {
+      const tagChecking = this.tags.filter((tag) => tag.toLowerCase() === customtag.value.toLowerCase())
+      if (tagChecking.length === 0) {
+        this.tags.push(customtag.value);
+      }
+      customtag.value = '';
+    }
 
+  }
   onSlide(slideEvent: NgbSlideEvent) {
     if (this.unpauseOnArrow && slideEvent.paused &&
       (slideEvent.source === NgbSlideEventSource.ARROW_LEFT || slideEvent.source === NgbSlideEventSource.ARROW_RIGHT)) {
@@ -101,7 +124,9 @@ export class DetailsComponent implements OnInit {
     }
     return 'N/A';
   }
-
+  getImages(images){
+    return Object.keys(images);
+  }
   togglePaused() {
     if (this.paused) {
       this.carousel.cycle();
@@ -113,6 +138,9 @@ export class DetailsComponent implements OnInit {
 
   addToList(checked, value) {
     if (checked) {
+      if(!this.selectedItems){
+        this.selectedItems = [];
+      }
       this.selectedItems.push(value);
     } else {
       this.selectedItems = this.selectedItems.filter(function (item) {
@@ -123,8 +151,8 @@ export class DetailsComponent implements OnInit {
   }
 
   addListToProduct() {
-    this.selectedItems = this.selectedItems.filter(item => item);
-    this.selectedProduct.tags = this.selectedItems.toString();
+   // this.selectedItems = this.selectedItems.filter(item => item);
+    this.selectedProduct.tags = this.selectedItems;
     this.productDetails[this.selectedId] = this.selectedProduct;
     sessionStorage.setItem('products', JSON.stringify(this.productDetails));
   }
@@ -135,30 +163,55 @@ export class DetailsComponent implements OnInit {
 
   saveData() {
     let request = {
-      "productDetail": this.selectedProduct.productDetail,
+      "productID": this.selectedProduct.productID,
+      "details": this.selectedProduct.details,
       "productType": this.selectedProduct.productType,
       "collections": this.selectedProduct.collections,
       "tags": this.selectedProduct.tags,
-      "markup": this.selectedProduct.markup,
+      "markup": this.selectedProduct.markup.replace('%', '').replace(),
+      "orderNumber": this.selectedProduct.orderNumber,
+      "skuUpstream": this.selectedProduct.skuUpstream,
+      "skuDownstream": this.selectedProduct.skuDownstream,
+      "upstreamPortalID": this.upStreamPortal,
+      "downstreamPortalId": this.downStreamPortal,
     }
+
     this.loading = true;
-    this.productService.updateProduct(this.selectedProduct.id, request)
+    this.productService.updateProduct(this.selectedProduct.id, request,this.downStreamPortal,this.upStreamPortal)
       .subscribe(res => {
+        if (res && res.length > 0) {
+          res.forEach((item) => {
+            let selectedIndex;
+            this.productDetails.forEach((prod, index) => {
+              if (prod.productID === item.productID) {
+                selectedIndex = index;
+              }
+            });
+            if(selectedIndex){
+              this.productDetails[selectedIndex] = item;
+            } else {
+              this.productDetails.push(item);
+            }
+          });
+        }
+
         this.loading = false;
         this.productDetails[this.selectedId] = this.selectedProduct;
         sessionStorage.setItem('products', JSON.stringify(this.productDetails));
+        this.toaster.show('success', '', 'Product details updated successfully!');
         console.log(res);
       }, error => {
         this.loading = false;
+        this.toaster.show('error', '', 'Something went wrong try again !!');
       });
   }
 
   removeFromList(tag) {
-    const selectedItems = this.selectedProduct.tags.split(',').filter(function (item) {
+    const selectedItems = this.selectedProduct.tags.filter(function (item) {
       return item !== tag
     })
     this.selectedItems = selectedItems;
-    this.selectedProduct.tags = selectedItems.toString();
+    this.selectedProduct.tags = selectedItems;
     this.productDetails[this.selectedId] = this.selectedProduct;
     sessionStorage.setItem('products', JSON.stringify(this.productDetails));
   }

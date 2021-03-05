@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
           this.loading = false;
           sessionStorage.setItem('auth', JSON.stringify(tokenDetails));
           this.getUserDetails();
-          this.router.navigateByUrl('/portals')
+
         },
         error => {
           console.log(error);
@@ -59,11 +59,15 @@ export class LoginComponent implements OnInit {
         });
   }
   getUserDetails() {
+    this.loading = true;
     this.user.getUserDetails().subscribe(
       result => {
+        this.loading = false;
         sessionStorage.setItem('userDetails', JSON.stringify(result));
+        this.router.navigateByUrl('/portals')
       },
       error => {
+        this.loading = false;
         console.log(error);
       });
   }

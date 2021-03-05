@@ -1,11 +1,10 @@
-
-<section class="container text-center">
+<section class="container text-center" *ngIf="activeSection === 'profile'">
   <section class="profile-bg">
     <form [formGroup]="registerForm" class="billing-info">
       <div class="inner-content">
         <div class="d-inline tab-btn-group">
-          <button class="btn tab-btn">Profile</button>
-          <button class="btn tab-btn active">Subscription</button>
+          <button class="btn tab-btn active" (click)="openSection('profile')">Profile</button>
+          <button class="btn tab-btn " (click)="openSection('subscription')">Subscription</button>
         </div>
         <div class="row">
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -133,7 +132,59 @@
             Save Changes
           </button>
         </div>
+
+
       </div>
     </form>
   </section>
 </section>
+
+
+<section class="container text-center" *ngIf="activeSection === 'subscription'">
+  <section class="profile-bg">
+
+    <div class="inner-content">
+      <div class="d-inline tab-btn-group">
+        <button class="btn tab-btn" (click)="openSection('profile')">Profile</button>
+        <button class="btn tab-btn active" (click)="openSection('subscription')">Subscription</button>
+      </div>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <h4 class="form-title">Subscription</h4>
+          <div class="part1">
+            <label class="plan-name-txt" >{{selectedSubscription[0]?.subscriptionName}} Plan</label>
+
+            <ul class="list-unstyled plan-def">
+              <li *ngFor="let feature of selectedSubscription[0]?.featureList">
+                <label>
+            <span style="width: 100% !important;font-size: 15px !important;" class="lable-txt">
+              {{feature}}</span>
+                </label
+                >
+              </li>
+            </ul>
+
+            <div class="currency-sec">
+              <span class="currency">{{selectedSubscription[0]?.subscriptionCost}}<span class="mx-2">$</span></span
+              ><span class="month-txt">/{{selectedSubscription[0]?.subscriptionValidityPeriodInMonth}} month(s)</span>
+            </div>
+          </div>
+          <div class="part2">
+            <label class="plan-name-txt" ><b>Start Date</b></label>
+            <br>
+            <span>{{getDate(userDetails?.customerSubscriptionStartDate)}}</span>
+            <br>
+            <br>
+            <label class="plan-name-txt" ><b>Ends On</b></label>
+            <br>
+            <span>{{getDate(userDetails?.customerSubscriptionEndDate)}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</section>
+
+
+<app-loading *ngIf="loading"></app-loading>

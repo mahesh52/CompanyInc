@@ -57,6 +57,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
     this.getUpStreamPortals();
+  //  this.initListener('','');
   }
 
   getGlobalConfigurations() {
@@ -107,14 +108,16 @@ export class DashboardComponent implements OnInit {
   details(id) {
     let index = 0;
     const selectedItems = this.productDetails.filter(function (item, index) {
-      return item.id === id
+      return item.productID === id
     });
     this.productDetails.forEach((item, i) => {
-      if (item.id === id) {
+      if (item.productID === id) {
         index = i;
       }
     });
     console.log(selectedItems);
+    sessionStorage.setItem('downStream',this.downStreamPortal);
+    sessionStorage.setItem('upStream',this.upStreamPortal);
     this.router.navigate(['/details', index]);
   }
 
@@ -448,13 +451,6 @@ export class DashboardComponent implements OnInit {
       } else {
         const formDate = this.zeroPad(this.fromDate['month'], 2) + '-' + this.zeroPad(this.fromDate['day'], 2) + '-' + this.fromDate['year'];
         const toDate = this.zeroPad(this.toDate['month'], 2) + '-' + this.zeroPad(this.toDate['day'], 2) + '-' + this.toDate['year'];
-        // this.productService.downLoadProducts(this.upStreamPortal, formDate, toDate)
-        //   .subscribe(res => {
-        //     this.loading = false;
-        //     //  need to create SSE events
-        //   }, error => {
-        //     this.loading = false;
-        //   });
         this.initListener(formDate, toDate);
       }
 
@@ -466,7 +462,8 @@ export class DashboardComponent implements OnInit {
 
   initListener = (formDate, toDate) => {
     EventSource = SSE;
-    let url = environment.baseUrl + APICONFIG.downLoadProducts + this.upStreamPortal;
+    //let url = 'http://ec2-3-133-143-117.us-east-2.compute.amazonaws.com:9192/TestNotifications';
+     let url = environment.baseUrl + APICONFIG.downLoadProducts + this.upStreamPortal;
     if (formDate && toDate) {
       url = url + '?endDate=' + toDate + '&startDate=' + formDate;
     }
@@ -518,8 +515,8 @@ export class DashboardComponent implements OnInit {
   };
   handleServerEvent = (e) => {
     console.log(e.data);
-    const json = JSON.parse(e.data);
-    console.log(json);
+    //const json = JSON.parse(e.data);
+   // console.log(json);
     // let newNotifications = this.state.newNotifications;
     // newNotifications.unshift({
     //   from: json.from,
@@ -551,8 +548,11 @@ export class DashboardComponent implements OnInit {
   }
 
   getImage(photos) {
-    const imgKeys = Object.keys(photos);
-    return photos[imgKeys[0]];
+    if(photos){
+      const imgKeys = Object.keys(photos);
+      return photos[imgKeys[0]];
+    }
+    return '';
   }
 
   selectProduct(event, product) {
