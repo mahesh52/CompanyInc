@@ -12,5 +12,6 @@ export enum APICONFIG {
   createuser = "Customer/Create",
   getGlobalConfigs = "GetDWGlobalValues",
   downLoadProducts = "DownloadProduct/",
-  upLoadProducts = "UploadProduct/"
+  upLoadProducts = "UploadProduct/",
+  updateProduct = "Product/"
 }

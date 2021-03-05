@@ -27,8 +27,8 @@ export class ProductService {
     return this.api.Get(url);
   }
 
-  updateProduct(id, data) {
-    return this.api.PutOthers('api/product/' + id, data);
+  updateProduct(id, data,downStream,upStream) {
+    return this.api.PutOthers(environment.baseUrl + APICONFIG.updateProduct+ upStream + '/' + downStream, data);
   }
 
   uploadProducts(upStreamPortal, downStreamPortal) {

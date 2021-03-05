@@ -120,7 +120,7 @@ export class ApiService {
   public PutOthers(url: string, data: any) {
     try {
       this.SetHeaders();
-      return this.http.put(this.baseUrl + url, data, {headers: this.headers});
+      return this.http.put(url, data, {headers: this.headers});
     } catch (error) {
       return error;
     }

@@ -10,6 +10,7 @@ import {SSE} from "../landing/sse";
 import {environment} from "../../../environments/environment";
 import {APICONFIG} from "../../common/APICONFIG";
 import {STORAGEKEY} from "../../common/STORAGEKEY";
+import {ToasterService} from "../../common/toaster.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -43,8 +44,9 @@ export class DashboardComponent implements OnInit {
   upStreamPortal: any;
   downStreamPortal: any;
   userDetails: any;
+  selectedProducts = [];
 
-  constructor(private utilService: UtilsService, private router: Router, private paginationService: PaginationService,
+  constructor(private toaster: ToasterService, private utilService: UtilsService, private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
               private http: HttpClient,
               private utils: UtilsService,
@@ -59,11 +61,14 @@ export class DashboardComponent implements OnInit {
 
   getGlobalConfigurations() {
     this.utilService.getGlobalConfigurations(this.downStreamPortal).subscribe(res => {
-      this.productTypes = res[0].productTypes;
-      this.collections = res[0].collections;
-      this.tags = res[0].tags;
+      if (res && res.length > 0) {
+        this.productTypes = res[0].productTypes;
+        this.collections = res[0].collections;
+        this.tags = res[0].tags;
+      }
+
     }, error => {
-      console.log('Error while getting the upstream portals');
+      console.log('Error while getting getGlobalConfigurations');
       console.log(error);
     });
   }
@@ -181,30 +186,33 @@ export class DashboardComponent implements OnInit {
         this.selectedIndex = i;
       }
     });
-    this.selectedItems = this.productDetails[this.selectedIndex].tags.split(',');
+    this.selectedItems = this.productDetails[this.selectedIndex].tags;
 
   }
 
   selectDetIndex(id) {
     this.productDetails.forEach((item, i) => {
-      if (item.id === id) {
+      if (item.productID === id) {
         this.selectedDetailsIndex = i;
       }
     });
 
 
-    this.selectedProdDetails = this.productDetails[this.selectedDetailsIndex].productDetail;
+    this.selectedProdDetails = this.productDetails[this.selectedDetailsIndex].details;
     this.isProdSelected = true;
   }
 
   updateProductDetails() {
-    this.productDetails[this.selectedDetailsIndex].productDetail = this.selectedProdDetails;
+    this.productDetails[this.selectedDetailsIndex].details = this.selectedProdDetails;
     sessionStorage.setItem('products', JSON.stringify(this.productDetails));
     this.isProdSelected = false;
   }
 
   addToList(checked, value) {
     if (checked) {
+      if (!this.selectedItems) {
+        this.selectedItems = [];
+      }
       this.selectedItems.push(value);
     } else {
       this.selectedItems = this.selectedItems.filter(function (item) {
@@ -279,63 +287,89 @@ export class DashboardComponent implements OnInit {
 
   hasValue(value) {
     let hasFound = false;
-    this.selectedItems.forEach((item) => {
-      if (item === value) {
-        hasFound = true;
+    if (this.selectedItems) {
+      this.selectedItems.forEach((item) => {
+        if (item === value) {
+          hasFound = true;
+        }
+      });
+      if (hasFound) {
+        return true;
       }
-    });
-    if (hasFound) {
-      return true;
     }
+
     return false;
   }
 
   addListToProduct() {
     this.selectedItems = this.selectedItems.filter(item => item);
-    if (this.productDetails[this.selectedIndex].tags) {
-      this.productDetails[this.selectedIndex].tags = [...this.productDetails[this.selectedIndex].tags, ...this.selectedItems];
-    } else {
-      this.productDetails[this.selectedIndex].tags = this.selectedItems;
-    }
+    // if (this.productDetails[this.selectedIndex].tags) {
+    //   this.productDetails[this.selectedIndex].tags = [...this.productDetails[this.selectedIndex].tags, ...this.selectedItems];
+    // } else {
+    this.productDetails[this.selectedIndex].tags = this.selectedItems;
+    //  }
     sessionStorage.setItem('products', JSON.stringify(this.productDetails));
     this.isProdSelected = false;
   }
 
   saveData(item) {
     let request = {
-      "productDetail": item.productDetail,
+      "productID": item.productID,
+      "details": item.details,
       "productType": item.productType,
       "collections": item.collections,
       "tags": item.tags,
       "markup": item.markup.replace('%', '').replace(),
+      "orderNumber": item.orderNumber,
+      "skuUpstream": item.skuUpstream,
+      "skuDownstream": item.skuDownstream,
+      "upstreamPortalID": this.upStreamPortal,
+      "downstreamPortalId": this.downStreamPortal,
     }
     this.loading = true;
-    this.productService.updateProduct(item.id, request)
+    this.productService.updateProduct(item.productID, request, this.downStreamPortal, this.upStreamPortal)
       .subscribe(res => {
+        if (res && res.length > 0) {
+          res.forEach((item) => {
+            let selectedIndex;
+            this.productDetails.forEach((prod, index) => {
+              if (prod.productID === item.productID) {
+                selectedIndex = index;
+              }
+            });
+            if(selectedIndex){
+              this.productDetails[selectedIndex] = item;
+            } else {
+              this.productDetails.push(item);
+            }
+          });
+        }
         this.loading = false;
         sessionStorage.setItem('products', JSON.stringify(this.productDetails));
         console.log(res);
+        this.toaster.show('success', '', 'Product details updated successfully!');
       }, error => {
         this.loading = false;
+        this.toaster.show('error', '', 'Something went wrong try again !!');
       });
   }
 
   removeFromList(id, tag) {
     let index = 0;
     const item = this.productDetails.filter(function (item) {
-      return item.id === id
+      return item.productID === id
     });
 
     this.productDetails.forEach((item, i) => {
-      if (item.id === id) {
+      if (item.productID === id) {
         index = i;
       }
     });
 
-    const selectedItems = this.productDetails[index].tags.split(',').filter(function (item) {
+    const selectedItems = this.productDetails[index].tags.filter(function (item) {
       return item !== tag
     })
-    this.productDetails[index].tags = selectedItems.toString();
+    this.productDetails[index].tags = selectedItems;
     sessionStorage.setItem('products', JSON.stringify(this.originalList));
   }
 
@@ -351,11 +385,19 @@ export class DashboardComponent implements OnInit {
 
     EventSource = SSE;
     let url = environment.baseUrl + APICONFIG.upLoadProducts + this.upStreamPortal + '/' + this.downStreamPortal;
-
-    const eventSource = new SSE(url, {
-      headers: {'Content-Type': 'application/json'},
+    const user = JSON.parse(sessionStorage.getItem(STORAGEKEY.auth));
+    const headerValue = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + user['access_token'],
+    }
+    const payload = {
+      headers: headerValue,
       payload: '["ALL"]'
-    });
+    };
+    if (this.selectedProducts.length > 0) {
+      payload.payload = JSON.stringify(this.selectedProducts.map(a => a.productID));
+    }
+    const eventSource = new SSE(url, payload);
     // const eventSource = new EventSource("http://localhost:9192/UploadProductEmitter/u@2001/d@2003");
     // eventSource.addEventListener('status', function (e) {
     //   console.log('System status is now: ' + e.data);
@@ -475,6 +517,7 @@ export class DashboardComponent implements OnInit {
 
   };
   handleServerEvent = (e) => {
+    console.log(e.data);
     const json = JSON.parse(e.data);
     console.log(json);
     // let newNotifications = this.state.newNotifications;
@@ -505,5 +548,29 @@ export class DashboardComponent implements OnInit {
       this.pager = {};
       this.setPage(1);
     }
+  }
+
+  getImage(photos) {
+    const imgKeys = Object.keys(photos);
+    return photos[imgKeys[0]];
+  }
+
+  selectProduct(event, product) {
+    if (event.target.checked) {
+      this.selectedProducts.push(product);
+    } else {
+      this.selectedProducts = this.selectedProducts.filter((item) => item.productID !== product.productID)
+    }
+  }
+
+  addToTags(customtag) {
+    if (customtag.value && customtag.value !== '') {
+      const tagChecking = this.tags.filter((tag) => tag.toLowerCase() === customtag.value.toLowerCase())
+      if (tagChecking.length === 0) {
+        this.tags.push(customtag.value);
+      }
+      customtag.value = '';
+    }
+
   }
 }
