@@ -1098,27 +1098,26 @@ th {
   background: #fff;
 }
 
+
+
 /******* CUSTOM STYLE.CSS *****/
 .bg-1 {
-  background: url("../images/login-bg.jpg") no-repeat;
   background-size: cover;
   background-attachment: fixed;
   background-position: center;
 }
 .login-bg {
-  width: 100%;
-  /* min-height: calc(100vh - 20px); */
-  display: flex;
+  min-height:100vh ; display: flex;
   align-items: center;
-  margin: 48px auto;
+  margin:0px auto; background: url("../images/login-bg.jpg") no-repeat; background-size: cover;
 }
 .login-container {
-  width: 371px;
-  border-radius: 31px;
+  width: 370px;
+  border-radius: 30px;
   box-shadow: 3px 3px 50px 0 rgba(40, 67, 101, 0.53);
   background-color: #e9edf7;
-  margin: 0 auto;
-  padding: 45px 0px;
+  margin:15px auto;
+  padding:35px 0px 25px;
 }
 .logo-txt {
   height: 37px;
@@ -1146,7 +1145,6 @@ th {
   margin-bottom: 0;
 }
 .g-btn {
-  width: 158px;
   height: 35px;
   border-radius: 4px;
   -webkit-backdrop-filter: blur(30px);
@@ -1154,8 +1152,9 @@ th {
   box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.26);
   border: solid 1px #4f8cee;
   background-color: #ffffff;
-  /* margin-bottom:25px; */
+  /* margin-bottom:25px; */ margin:0px 8px !important; padding-right: 10px; line-height: 19px;
 }
+.g-btn img, .fb-btn img{transform: scale(0.8); float: left;}
 .google-txt {
   font-family: "Source Sans Pro", sans-serif;
   font-size: 10px;
@@ -1169,14 +1168,13 @@ th {
   margin-left: 10px;
 }
 .fb-btn {
-  width: 158px;
   height: 35px;
   border-radius: 4px;
   -webkit-backdrop-filter: blur(30px);
   backdrop-filter: blur(30px);
   box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.26);
   background-color: #19366e;
-  border: none;
+  border: none; margin:0px 8px !important; padding-right: 10px; line-height: 19px;
 }
 .fb-txt {
   font-family: "Source Sans Pro", sans-serif;
