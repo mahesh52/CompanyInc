@@ -3476,6 +3476,12 @@ ul.plan-def li span + span {
 .dpFromInline :-ms-input-placeholder { color: #0a2052 !important; }
 .dpFromInline input::placeholder { color: #0a2052 !important; }
 
+
+.notificationSection{position: relative;}
+.notificationSection a{cursor: pointer;}
+.notificationSection #notificationCollapse{position:absolute; top:34px; right:0px; width:320px;  box-shadow: 10px 10px 10px rgba(123, 148, 204, 0.16);}
+.notificationSection #notificationCollapse .card.card-body{max-height:300px; overflow-y:auto;}
+
 /* {margin-left: -28px;
 border: none;
 background: none;
