@@ -1,5 +1,44 @@
 <div class="landing-page">
-  <nav class="navbar1 mainNavbar navbar-expand-sm navbar-dark">
+
+  <nav class="navbar mainNavbar navbar-expand-lg">
+    <div class="container">
+    <a class="navbar-brand" href="#">COMPANY INC.</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-justify-right" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-4-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+      </svg></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Company </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Features</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Community</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Pricing</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link"routerLink="/login">Login</a>
+        </li>
+      </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <button class="btn sign-up-btn" (click)="registerUser()">Sign Up</button>
+    </form>
+    </div>
+
+    </div>
+
+  </nav>
+
+
+
+  <!-- <nav class="navbar1 mainNavbar navbar-expand-lg navbar-dark">
     <div class="container">
       <div class="d-flex align-items-center">
         <a class="logo-2" href="#">COMPANY INC.</a>
@@ -24,14 +63,14 @@
         </ul>
       </div>
     </div>
-  </nav>
+  </nav> -->
 
   <section class="container">
     <div class="banner-sec">
       <ngb-carousel  #carousel  interval="3000" [showNavigationArrows]="true" [pauseOnHover]="pauseOnHover" (slide)="onSlide($event)" >
         <ng-template ngbSlide  >
           <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-lg-6 col-lg-6 col-md-12 col-xs-12">
               <h4 class="Company-Inc-is-more-than-integrated-software">
                 Company Inc. is more than integrated software
               </h4>
@@ -40,7 +79,7 @@
                 multiple e-commerce platforms within a same window
               </p>
             </div>
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-lg-6 col-lg-6 col-md-12 col-xs-12">
               <img src="assets/images/Dash@3x.png" alt="dashboard" class="img-fluid mxh-350" />
             </div>
           </div>
@@ -48,7 +87,7 @@
 
         <ng-template ngbSlide  >
           <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-lg-6 col-lg-6 col-md-12 col-xs-12">
               <h4 class="Company-Inc-is-more-than-integrated-software">
                 Testing
               </h4>
@@ -57,7 +96,7 @@
                 multiple e-commerce platforms within a same window
               </p>
             </div>
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-lg-6 col-lg-6 col-md-12 col-xs-12">
               <img src="assets/images/Dash@3x.png" alt="dashboard" class="img-fluid mxh-350" />
             </div>
           </div>
@@ -71,32 +110,32 @@
 <section class="sec-1">
   <div class="container pt-5 pb-5">
     <div class="row home-sec1-content">
-      <div class="col-md-4">
+      <div class="col-md-6 col-lg-4">
         <p><img src="assets/images/icons_01.jpg" /></p>
         <h5>Drag and Drop</h5>
         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<p>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6 col-lg-4">
         <p><img src="assets/images/icons_02.jpg" /></p>
         <h5>Fully Costomizable</h5>
         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<p>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6 col-lg-4">
         <p><img src="assets/images/icons_03.jpg" /></p>
         <h5>App Integration</h5>
         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<p>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6 col-lg-4">
         <p><img src="assets/images/icons_04.jpg" /></p>
         <h5>Color Schemes</h5>
         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<p>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6 col-lg-4">
         <p><img src="assets/images/icons_05.jpg" /></p>
         <h5>High Resolutions</h5>
         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<p>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6 col-lg-4">
         <p><img src="assets/images/icons_06.jpg" /></p>
         <h5>Perfect Showcase</h5>
         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<p>

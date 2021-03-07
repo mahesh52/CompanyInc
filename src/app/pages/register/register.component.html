@@ -55,13 +55,12 @@
           <img src="assets/images/google@3x.jpg"  (click)="loginWithGoogle()" alt="google" height="25" />
           <span class="google-txt">Login with Google</span>
         </button>
-      </div>
-      <div class="text-center">
         <button class="fb-btn mx-auto" (click)="loginWithFb()">
           <img src="assets/images/facebook@3x.png" alt="google" height="25" />
           <span class="fb-txt">Login with Facebook</span>
         </button>
       </div>
+
       <div class="text-center my-3">
         <label class="or-txt">or</label>
       </div>
@@ -141,8 +140,8 @@
             formControlName="password"
             placeholder="Password"
           />
-          <span class="pws-hint" data-container="body" data-toggle="popover" data-placement="right" data-skin="primary" data-html="true" title="Password Hint"  [ngbTooltip]="htmlContent">Password must have</span>
-          <ng-template #htmlContent>
+          <!-- <span class="pws-hint" data-container="body" data-toggle="popover" data-placement="right" data-skin="primary" data-html="true" title="Password Hint"  [ngbTooltip]="htmlContent">Password must have</span> -->
+          <!-- <ng-template #htmlContent>
             <div class="popover-primary">
               <h3 class="popover-header" style="color: #0b2e13">Password Hint</h3>
               <div class="popover-body" style="background-color: #fff">
@@ -150,7 +149,7 @@
                 <br> 2. One uppercase letter (ex: A, B, etc.)
                 <br> 3. One lowercase letter (ex: a, b, etc.)
                 <br> 4. One number digit and one special character (ex: @,*,!, etc.)</div></div>
-          </ng-template>
+          </ng-template> -->
           <div class="error-text" *ngIf="registerForm.get('password').hasError('passwordStrength')">
             {{registerForm.get('password').errors['passwordStrength']}}
           </div>
@@ -159,8 +158,7 @@
         <div class="form-group">
           <div class="form-check">
             <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" />Remember
-              me</label
+              <input class="form-check-input" type="checkbox" />I agree with terms and conditions</label
             >
           </div>
         </div>

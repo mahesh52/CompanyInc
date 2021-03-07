@@ -1,40 +1,35 @@
 <div class="bodycon pt-3 pb-3">
   <div class="container-fluid">
 
-    <div class="row mb-3">
-      <div class="col-md-3 text-right">
-        <strong class="from">From &nbsp;</strong>
-        <!--        <input id="datepicker" width="220"/>-->
-        <input id="datepicker" width="220" placeholder="yyyy-mm-dd"
-               [(ngModel)]="fromDate"
-               name="dp" ngbDatepicker #d="ngbDatepicker">
-        <button id="calender" (click)="d.toggle()" type="button"></button>
-      </div>
-      <div class="col-md-3 text-right">
-        <strong class="from">To &nbsp;</strong>
-        <input id="datepicker1" width="140" placeholder="yyyy-mm-dd"
-               [(ngModel)]="toDate"
-               name="dp" ngbDatepicker #d1="ngbDatepicker">
-        <button id="calender1" (click)="d1.toggle()" type="button"></button>
-      </div>
-      <div class="col-md-3 text-right">
-        <strong class="from">UpstreamStream Portal &nbsp;</strong>
-        <select [(ngModel)]="upStreamPortal">
-          <option *ngFor="let upstream of upStreamPortals;"
-                  [value]="upstream?.portalID">{{upstream?.portalName}}</option>
-        </select>
-      </div>
-<!--      <div class="col-md-2 text-right">-->
-<!--        <strong class="from">DownstreamStream Portal &nbsp;</strong>-->
-<!--        <select [(ngModel)]="downStreamPortal">-->
-<!--          <option *ngFor="let downStream of downStreamPortals;"-->
-<!--                  [value]="downStream?.portalID">{{downStream?.portalName}}</option>-->
-<!--        </select>-->
-<!--      </div>-->
-      <div class="col-md-2 text-center">
-        <button class="btn btn-primary loadSource" (click)="loadFromSource()">Load from source</button>
-      </div>
+<div class="dashboardPage">
+  <div class="d-flex mb-3 dpFromInline">
+    <div class="ddpageFrom">
+      <label>From &nbsp;</label>
+      <input id="datepicker" width="220" placeholder="yyyy-mm-dd" [(ngModel)]="fromDate" name="dp" ngbDatepicker #d="ngbDatepicker">
+      <button id="calender" (click)="d.toggle()" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
+        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+      </svg></button>
     </div>
+    <div class="ddpageFrom ddpageTo">
+      <label>To &nbsp;</label>
+      <input id="datepicker1" width="140" placeholder="yyyy-mm-dd" [(ngModel)]="toDate" name="dp" ngbDatepicker #d1="ngbDatepicker">
+      <button id="calender1" (click)="d1.toggle()" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
+        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+      </svg></button>
+    </div>
+    <div class="ddpageFrom ddpageUpstream">
+      <label>UpstreamStream Portal &nbsp;</label>
+      <select [(ngModel)]="upStreamPortal">
+      <option *ngFor="let upstream of upStreamPortals;" [value]="upstream?.portalID">{{upstream?.portalName}}</option>
+      </select>
+    </div>
+    <div class="">
+      <button class="btn btn-primary loadSource" (click)="loadFromSource()">Load from source</button>
+    </div>
+  </div>
+</div>
+
+
 <!--    <div class="row mb-3">-->
 <!--      <div class="col-4">-->
 <!--        <select class="form-control" (change)="sortData($event.target.value)">-->
@@ -61,9 +56,7 @@
       <table>
         <thead>
         <tr>
-
           <th>S.No</th>
-          <th>Select</th>
           <th>Style</th>
           <th>Product Details</th>
 
@@ -88,13 +81,9 @@
         <tbody>
         <tr *ngFor="let item of pagedItems;let i =index;">
           <td align="center" class="snoTd">{{i + 1}}</td>
-          <td  align="center">
-            <input type="checkbox" (click)="selectProduct($event,item)">
-          </td>
           <td class="styleTd">
-            <div class="styleImg">
-              <img style="cursor:pointer;" (click)="details(item)"
-                                       [src]="getImage(item?.photos)"/></div>
+            <div class="styleImg"><img style="cursor:pointer;" (click)="details(item)"
+                                       [src]="item?.photos['Image 1.jpg']"/></div>
             <h6 style="cursor:pointer;" (click)="details(item?.id)" class="styleName">{{item?.title}}</h6>
           </td>
           <td class="pdTd" style="position: relative;">
@@ -106,18 +95,16 @@
     bottom: 0;
     text-align: center;
     right: 10px;
-    font-weight: bold;" (click)="selectDetIndex(item.productID)">...</span>
+    font-weight: bold;" (click)="selectDetIndex(item.id)">...</span>
             <!--            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>-->
           </td>
           <td class="ptTd">
             <select class="form-control tableInput" [(ngModel)]="item.productType">
-              <option>Select Type</option>
               <option *ngFor="let ptype of productTypes" [selected]="ptype === item?.productType">{{ptype}}</option>
             </select>
           </td>
           <td class="ptTd">
             <select class="form-control tableInput" [(ngModel)]="item.collections">
-              <option>Select Collection</option>
               <option *ngFor="let collection of collections"
                       [selected]="collection === item?.collections">{{collection}}</option>
             </select>
@@ -125,7 +112,7 @@
           <td class="ptTags">
             <div class="ribbonTd" *ngFor="let tag of item?.tags;let j =index;">
               <span style="cursor:pointer;position: absolute;
-    left: 5px;" (click)="removeFromList(item.productID,tag)">X</span>
+    left: 5px;" (click)="removeFromList(item.id,tag)">X</span>
               <span>  {{tag}}</span>
             </div>
             <p *ngIf="getTagsLength(item?.tags) > 2">...</p>
@@ -184,20 +171,11 @@
         <h4 class="modal-title">Add Tags</h4>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div class="col-md-6" >
-            <input #customtag class="form-control" type="text" placeholder="Add new tag">
-
-          </div>
-          <div class="col-md-6" >
-            <button class="btn btn-primary" (click)="addToTags(customtag)">Add</button>
-          </div>
-        </div>
-        <div style="margin-top:20px;" class="row" *ngIf="isProdSelected">
+        <div class="row" *ngIf="isProdSelected">
           <div class="col-md-6" *ngFor="let tag of tags">
             <input type="checkbox" class="tags" [checked]="hasValue(tag)"
                    (click)="addToList($event.target.checked,tag)">
-            <label style="margin-left: 10px !important; " >{{tag}}</label>
+            <label>{{tag}}</label>
 
           </div>
         </div>
