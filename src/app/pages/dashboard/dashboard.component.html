@@ -82,9 +82,10 @@
         <tr *ngFor="let item of pagedItems;let i =index;">
           <td align="center" class="snoTd">{{i + 1}}</td>
           <td class="styleTd">
-            <div class="styleImg"><img style="cursor:pointer;" (click)="details(item)"
-                                       [src]="item?.photos['Image 1.jpg']"/></div>
-            <h6 style="cursor:pointer;" (click)="details(item?.id)" class="styleName">{{item?.title}}</h6>
+            <div class="styleImg">
+              <img style="cursor:pointer;" (click)="details(item?.productID)"
+                                       [src]="getImage(item?.photos)"/></div>
+            <h6 style="cursor:pointer;" (click)="details(item?.productID)" class="styleName">{{item?.title}}</h6>
           </td>
           <td class="pdTd" style="position: relative;">
             <!--            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.-->
