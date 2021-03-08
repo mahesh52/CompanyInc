@@ -23,29 +23,29 @@ export class PortalsComponent implements OnInit {
 
   ngOnInit() {
     this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
-    if (this.userDetails.isCustomerSubscriptionActive) {
-      this.router.navigateByUrl('/dashboard');
-    } else {
-      this.utilService.getUserUpStreamPortals().subscribe(res => {
-        if(res.length > 0){
-          this.router.navigateByUrl('/subscription');
-        } else {
-          this.selectedUpStreamPortals = [];
-          this.selectedDownStreamPortals = [];
-          this.getUpStreamPortals();
-          this.getDownStreamPortals();
-        }
-
-      }, error => {
+    // if (this.userDetails.isCustomerSubscriptionActive) {
+    //   this.router.navigateByUrl('/dashboard');
+    // } else {
+    //   this.utilService.getUserUpStreamPortals().subscribe(res => {
+    //     if(res.length > 0){
+    //       this.router.navigateByUrl('/subscription');
+    //     } else {
+    //       this.selectedUpStreamPortals = [];
+    //       this.selectedDownStreamPortals = [];
+    //       this.getUpStreamPortals();
+    //       this.getDownStreamPortals();
+    //     }
+    //
+    //   }, error => {
         this.selectedUpStreamPortals = [];
         this.selectedDownStreamPortals = [];
         this.getUpStreamPortals();
         this.getDownStreamPortals();
         console.log('Error while getting the upstream portals');
-        console.log(error);
-      });
+        //console.log(error);
+    //  });
 
-    }
+   // }
 
   }
 

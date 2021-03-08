@@ -1,4 +1,4 @@
-<div class="bodycon pt-3 pb-3">
+<div class="bodycon pt-3 pb-3" style="padding-top: 4rem !important;">
   <div class="container-fluid">
 
 <div class="dashboardPage">
@@ -17,13 +17,13 @@
         <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
       </svg></button>
     </div>
-    <div class="ddpageFrom ddpageUpstream">
+    <div class="ddpageFrom ddpageUpstream" style="margin-left: 25px;">
       <label>UpstreamStream Portal &nbsp;</label>
       <select [(ngModel)]="upStreamPortal">
       <option *ngFor="let upstream of upStreamPortals;" [value]="upstream?.portalID">{{upstream?.portalName}}</option>
       </select>
     </div>
-    <div class="">
+    <div class="" style="margin-left: 25px;">
       <button class="btn btn-primary loadSource" (click)="loadFromSource()">Load from source</button>
     </div>
   </div>
@@ -57,6 +57,7 @@
         <thead>
         <tr>
           <th>S.No</th>
+          <th>Select</th>
           <th>Style</th>
           <th>Product Details</th>
 
@@ -81,6 +82,9 @@
         <tbody>
         <tr *ngFor="let item of pagedItems;let i =index;">
           <td align="center" class="snoTd">{{i + 1}}</td>
+          <td  align="center">
+            <input type="checkbox" (click)="selectProduct($event,item)">
+          </td>
           <td class="styleTd">
             <div class="styleImg">
               <img style="cursor:pointer;" (click)="details(item?.productID)"
@@ -101,11 +105,13 @@
           </td>
           <td class="ptTd">
             <select class="form-control tableInput" [(ngModel)]="item.productType">
+              <option>Select Type</option>
               <option *ngFor="let ptype of productTypes" [selected]="ptype === item?.productType">{{ptype}}</option>
             </select>
           </td>
           <td class="ptTd">
             <select class="form-control tableInput" [(ngModel)]="item.collections">
+              <option>Select Collection</option>
               <option *ngFor="let collection of collections"
                       [selected]="collection === item?.collections">{{collection}}</option>
             </select>
@@ -155,7 +161,7 @@
       <button class="btn btn-primary loadSource" (click)="uploadProducts()">Export to Destination</button>
       <ngb-pagination style="position: absolute;right: 0" [collectionSize]="pager.totalItems"
                       [pageSize]="pager.pageSize" [(page)]="pager.currentPage"
-                      [maxSize]="pager.totalPages" [rotate]="true" (pageChange)="setPage(pager.currentPage)"
+                      [maxSize]="5" [rotate]="true" (pageChange)="setPage(pager.currentPage)"
                       [boundaryLinks]="true"></ngb-pagination>
     </div>
 
@@ -172,11 +178,20 @@
         <h4 class="modal-title">Add Tags</h4>
       </div>
       <div class="modal-body">
-        <div class="row" *ngIf="isProdSelected">
+        <div class="row">
+          <div class="col-md-6" >
+            <input #customtag class="form-control" type="text" placeholder="Add new tag">
+
+          </div>
+          <div class="col-md-6" >
+            <button class="btn btn-primary" (click)="addToTags(customtag)">Add</button>
+          </div>
+        </div>
+        <div style="margin-top:20px;" class="row" *ngIf="isProdSelected">
           <div class="col-md-6" *ngFor="let tag of tags">
             <input type="checkbox" class="tags" [checked]="hasValue(tag)"
                    (click)="addToList($event.target.checked,tag)">
-            <label>{{tag}}</label>
+            <label style="margin-left: 10px !important; " >{{tag}}</label>
 
           </div>
         </div>

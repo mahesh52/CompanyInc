@@ -11,6 +11,7 @@ import {environment} from "../../../environments/environment";
 import {APICONFIG} from "../../common/APICONFIG";
 import {STORAGEKEY} from "../../common/STORAGEKEY";
 import {ToasterService} from "../../common/toaster.service";
+import {NotificationsService} from "../../services/notifications.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -46,7 +47,7 @@ export class DashboardComponent implements OnInit {
   userDetails: any;
   selectedProducts = [];
 
-  constructor(private toaster: ToasterService, private utilService: UtilsService, private router: Router, private paginationService: PaginationService,
+  constructor(private notificationService: NotificationsService,private toaster: ToasterService, private utilService: UtilsService, private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
               private http: HttpClient,
               private utils: UtilsService,
@@ -115,6 +116,8 @@ export class DashboardComponent implements OnInit {
       }
     });
     console.log(selectedItems);
+    this.downStreamPortal = sessionStorage.setItem('downStream',this.downStreamPortal);
+    this.upStreamPortal = sessionStorage.setItem('upStream',this.upStreamPortal);
     this.router.navigate(['/details', index]);
   }
 
@@ -455,6 +458,7 @@ export class DashboardComponent implements OnInit {
         //   }, error => {
         //     this.loading = false;
         //   });
+        this.toaster.show('success', 'Downloading', 'your down load is started');
         this.initListener(formDate, toDate);
       }
 
@@ -517,9 +521,10 @@ export class DashboardComponent implements OnInit {
 
   };
   handleServerEvent = (e) => {
-    console.log(e.data);
-    const json = JSON.parse(e.data);
-    console.log(json);
+  //  console.log(e.data);
+    this.notificationService.emitNotificationChanges(e.data);
+  //  const json = JSON.parse(e.data);
+   // console.log(json);
     // let newNotifications = this.state.newNotifications;
     // newNotifications.unshift({
     //   from: json.from,

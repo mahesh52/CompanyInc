@@ -3456,7 +3456,7 @@ ul.plan-def li span + span {
 .userProfileIcon {margin-left:5px; margin-top:5px;}
 .userProfileIcon svg{fill: #19366e; position: relative; top:-1px;}
 
-.mainBody {padding-top:45px;}
+/*.mainBody {padding-top:45px;}*/
 .udhMobile{display: none;}
 
 
@@ -3595,7 +3595,7 @@ padding:0px;}
 .navbar-nav.nnRight.ml-auto {padding-top:2px;}
 .nnRight li:last-child {margin-right:0px !important;}
 .navbar-2 {display:flex; align-items:center;}
-.navbar-2 .nav-item {margin:0px 13px;}  
+.navbar-2 .nav-item {margin:0px 13px;}
 .table-search-div{display:flex; align-items: center;}
 .table-search-div .form-group-item{margin-right:8px !important;}
 .form-group-item > label{margin-right:5px !important;}
@@ -3619,9 +3619,9 @@ padding:0px;}
 .lightGray{font-size: 16px !important;}
 .billing-info {width: 100%; padding: 0px 20px 0px 20px;}
 .column-2{margin-left: 115px !important;}
-  
-.sign-up-btn{width: auto;} 
-.mainNavbar .navbar-nav {margin-right:10px;} 
+
+.sign-up-btn{width: auto;}
+.mainNavbar .navbar-nav {margin-right:10px;}
 .mainNavbar.navbar-expand-lg .navbar-nav .nav-link{padding-right:1rem;
 padding-left:1rem;}
 .landing-page{height:100%; padding-bottom: 80px;}
@@ -3669,4 +3669,4 @@ padding-left:1rem;}
   .login-bg{display: block; padding-top:30px; padding-bottom:30px;}
   .login-container{margin:0px auto;}
   .g-btn{margin:15px 3px !important;}
-}  
+}
