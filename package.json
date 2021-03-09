@@ -22,7 +22,6 @@
     "@angular/router": "^8.2.14",
     "@ng-bootstrap/ng-bootstrap": "^5.2.2",
     "@types/jquery": "^3.3.31",
-    "@zoomus/websdk": "^1.8.0",
     "angular2-draggable": "^2.3.2",
     "aws-amplify": "^3.3.13",
     "bootstrap": "^4.3.1",
