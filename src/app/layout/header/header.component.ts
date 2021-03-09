@@ -14,6 +14,7 @@ export class HeaderComponent implements OnInit {
   currentUrl: string;
   isOpenNotifications = true;
   notifications = [];
+  uploadNotifications = [];
   upStreamPortals: any;
   downStreamPortals: any;
 
@@ -34,22 +35,23 @@ export class HeaderComponent implements OnInit {
     this.getDownStreamPortals();
     this.notificationService.notifications.subscribe((value) => {
       console.log(value);
-
       if (value) {
-        if (this.notifications.length === 0) {
+        if (this.notifications.length === 0 && this.uploadNotifications.length === 0) {
           document.getElementById("openModalButton").click();
         }
-        const notifications = {};
-        const val = value.split(',');
-        val.forEach((notification) => {
-          const notify = notification.split('=');
-          if (notify && notify.length === 2) {
-            notifications[notify[0].trim()] = notify[1].trim();
-          }
-        });
-        this.notifications.push(notifications);
+        this.notifications = [];
+        this.notifications.push(value);
+      }
+    });
 
+    this.notificationService.upLoadnotifications.subscribe((value) => {
 
+      if (value) {
+        if (this.notifications.length === 0 && this.uploadNotifications.length === 0) {
+          document.getElementById("openModalButton").click();
+        }
+        this.uploadNotifications = [];
+        this.uploadNotifications.push(value);
       }
     });
   }
@@ -79,7 +81,7 @@ export class HeaderComponent implements OnInit {
   }
 
   getPortalUrl(portalId, type) {
-    if (portalId !== 'null') {
+    if (portalId && portalId !== 'null') {
       if (type === 'up') {
         return this.upStreamPortals.filter((portal) => portal.portalID == portalId)[0].portalLogoURL;
       } else if (type === 'down') {

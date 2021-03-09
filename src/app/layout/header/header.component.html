@@ -64,12 +64,16 @@
         <li class="notificationSection">
           <a id ="openModalButton" class="notification-icon" data-toggle="collapse" data-target="#notificationCollapse">
             <img src="assets/images/ic_notifications_24px@3x.png"  alt="notification" height="19" class="bell-icon" />
-            <span *ngIf="notifications">{{notifications.length}}</span>
+            <span *ngIf="notifications || uploadNotifications">{{notifications.length+uploadNotifications.length}}</span>
           </a>
           <div class="collapse" id="notificationCollapse">
             <div class="card card-body">
               <div class="clearfix" *ngFor="let notification of notifications">
-                <div *ngIf="getPortalUrl(notification?.upstreamPortalId,'up')"><img width="50px" [src]="getPortalUrl(notification?.upstreamPortalId,'up')"/></div>
+              <div style="width: 100%;">
+                <div style="float: left;" *ngIf="getPortalUrl(notification?.upstreamPortalId,'up')"><img width="50px" [src]="getPortalUrl(notification?.upstreamPortalId,'up')"/></div>
+                <div style="float: right;"  *ngIf="getPortalUrl(notification?.downstreamPortalId,'down')"><img width="50px" [src]="getPortalUrl(notification?.downstreamPortalId,'down')"/></div>
+              </div>
+
                 <div class="progress" *ngIf="notification?.messageType==='PROGRESS'">
 
                   <div class="progress-bar bg-success"
@@ -78,9 +82,28 @@
                        aria-valuemax="100"
                        [attr.aria-valuenow] = "notification.percentFinish" [style.width]="notification.percentFinish + '%'"  ></div>
                 </div>
-                <div *ngIf="getPortalUrl(notification?.downstreamPortalId,'down')"><img width="50px" [src]="getPortalUrl(notification?.downstreamPortalId,'down')"/></div>
+
                 <p><small>{{notification?.message}}</small></p>
               </div>
+
+              <div class="clearfix" *ngFor="let upnotification of uploadNotifications">
+                <div style="width: 100%;">
+                  <div style="float: left;" *ngIf="getPortalUrl(upnotification?.upstreamPortalId,'up')"><img width="50px" [src]="getPortalUrl(upnotification?.upstreamPortalId,'up')"/></div>
+                  <div style="float: right;"  *ngIf="getPortalUrl(upnotification?.downstreamPortalId,'down')"><img width="50px" [src]="getPortalUrl(upnotification?.downstreamPortalId,'down')"/></div>
+                </div>
+
+                <div class="progress" *ngIf="upnotification?.messageType==='PROGRESS'">
+
+                  <div class="progress-bar bg-success"
+                       role="progressbar"
+                       aria-valuemin="0"
+                       aria-valuemax="100"
+                       [attr.aria-valuenow] = "upnotification.percentFinish" [style.width]="upnotification.percentFinish + '%'"  ></div>
+                </div>
+
+                <p><small>{{upnotification?.message}}</small></p>
+              </div>
+
             </div>
           </div>
         </li>

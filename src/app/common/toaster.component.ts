@@ -5,7 +5,7 @@ import { Toast } from './toast.interface';
   selector: 'app-toaster',
   template: `
     <div style="opacity: 100 !important;" class="toast toast-{{toast.type}}"
-      [style.top.px]="i*100">
+      [style.bottom.px]="i*100">
       <h4 class="toast-heading">{{toast.title}}</h4>
       <p>{{toast.body}}</p>
       <a class="close" (click)="remove.emit(i)">&times;</a>
@@ -16,7 +16,7 @@ import { Toast } from './toast.interface';
       position: fixed;
       right: 0;
       width: 300px;
-      height: 80px;
+      height: 130px;
       padding: .75rem 1.25rem;
       margin-top: 1rem;
       border: 1px solid transparent;

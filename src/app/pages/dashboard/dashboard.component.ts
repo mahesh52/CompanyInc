@@ -46,8 +46,12 @@ export class DashboardComponent implements OnInit {
   downStreamPortal: any;
   userDetails: any;
   selectedProducts = [];
+  downLoadEvent: any;
+  uploadLoadEvent: any;
+  isDownloadedStarted = false;
+  isUploadStarted = false;
 
-  constructor(private notificationService: NotificationsService,private toaster: ToasterService, private utilService: UtilsService, private router: Router, private paginationService: PaginationService,
+  constructor(private notificationService: NotificationsService, private toaster: ToasterService, private utilService: UtilsService, private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
               private http: HttpClient,
               private utils: UtilsService,
@@ -116,8 +120,8 @@ export class DashboardComponent implements OnInit {
       }
     });
     console.log(selectedItems);
-    this.downStreamPortal = sessionStorage.setItem('downStream',this.downStreamPortal);
-    this.upStreamPortal = sessionStorage.setItem('upStream',this.upStreamPortal);
+    this.downStreamPortal = sessionStorage.setItem('downStream', this.downStreamPortal);
+    this.upStreamPortal = sessionStorage.setItem('upStream', this.upStreamPortal);
     this.router.navigate(['/details', index]);
   }
 
@@ -340,7 +344,7 @@ export class DashboardComponent implements OnInit {
                 selectedIndex = index;
               }
             });
-            if(selectedIndex){
+            if (selectedIndex) {
               this.productDetails[selectedIndex] = item;
             } else {
               this.productDetails.push(item);
@@ -385,55 +389,61 @@ export class DashboardComponent implements OnInit {
     //   }, error => {
     //     this.loading = false;
     //   });
-
-    EventSource = SSE;
-    let url = environment.baseUrl + APICONFIG.upLoadProducts + this.upStreamPortal + '/' + this.downStreamPortal;
-    const user = JSON.parse(sessionStorage.getItem(STORAGEKEY.auth));
-    const headerValue = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + user['access_token'],
-    }
-    const payload = {
-      headers: headerValue,
-      payload: '["ALL"]'
-    };
-    if (this.selectedProducts.length > 0) {
-      payload.payload = JSON.stringify(this.selectedProducts.map(a => a.productID));
-    }
-    const eventSource = new SSE(url, payload);
-    // const eventSource = new EventSource("http://localhost:9192/UploadProductEmitter/u@2001/d@2003");
-    // eventSource.addEventListener('status', function (e) {
-    //   console.log('System status is now: ' + e.data);
-    // });
-
-    eventSource.addEventListener(
-      this.userDetails.customerID,
-      this.handleServerEvent,
-      false
-    );
-
-    eventSource.addEventListener(
-      'progress',
-      this.handleServerEvent,
-      false
-    );
-
-    eventSource.addEventListener("COMPLETE", function (evt) {
-      console.log(evt);
-      eventSource.close();
-    });
-    eventSource.stream();
-
-    eventSource.onopen = (e) => console.log("open");
-
-    eventSource.onerror = (e) => {
-      if (e.readyState == EventSource.CLOSED) {
-        console.log("close");
-      } else {
-        console.log(e);
+    if (!this.isUploadStarted) {
+      this.toaster.show('success', 'Uploads', 'Your upload is started please follow notifications to see the progress');
+      EventSource = SSE;
+      let url = environment.baseUrl + APICONFIG.upLoadProducts + this.upStreamPortal + '/' + this.downStreamPortal;
+      this.isUploadStarted = true;
+      const user = JSON.parse(sessionStorage.getItem(STORAGEKEY.auth));
+      const headerValue = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + user['access_token'],
       }
-      //  this.initListener();
-    };
+      const payload = {
+        headers: headerValue,
+        payload: '["ALL"]'
+      };
+      if (this.selectedProducts.length > 0) {
+        payload.payload = JSON.stringify(this.selectedProducts.map(a => a.productID));
+      }
+      this.uploadLoadEvent = new SSE(url, payload);
+      // const eventSource = new EventSource("http://localhost:9192/UploadProductEmitter/u@2001/d@2003");
+      // eventSource.addEventListener('status', function (e) {
+      //   console.log('System status is now: ' + e.data);
+      // });
+
+      this.uploadLoadEvent.addEventListener(
+        this.userDetails.customerID,
+        this.uploadServerEvent,
+        false
+      );
+
+      this.uploadLoadEvent.addEventListener(
+        'progress',
+        this.uploadServerEvent,
+        false
+      );
+
+      this.uploadLoadEvent.addEventListener("COMPLETE", function (evt) {
+        console.log(evt);
+        this.uploadLoadEvent.close();
+      });
+      this.uploadLoadEvent.stream();
+
+      this.uploadLoadEvent.onopen = (e) => console.log("open");
+
+      this.uploadLoadEvent.onerror = (e) => {
+        if (e.readyState == EventSource.CLOSED) {
+          console.log("close");
+        } else {
+          console.log(e);
+        }
+        //  this.initListener();
+      };
+    } else {
+      this.toaster.show('error', 'Errors', 'One upload is already in process please wait for the existing process to complete');
+    }
+
   }
 
   zeroPad(num, places) {
@@ -442,29 +452,35 @@ export class DashboardComponent implements OnInit {
   }
 
   loadFromSource() {
+    if (!this.isDownloadedStarted) {
+      if (this.fromDate && this.toDate) {
+        const time1 = moment(this.fromDate).format('YYYY-MM-DD');
+        const time2 = moment(this.toDate).format('YYYY-MM-DD');
+        if (time1 > time2) {
+          alert('To date must be greater than from date');
+        } else {
+          const formDate = this.zeroPad(this.fromDate['month'], 2) + '-' + this.zeroPad(this.fromDate['day'], 2) + '-' + this.fromDate['year'];
+          const toDate = this.zeroPad(this.toDate['month'], 2) + '-' + this.zeroPad(this.toDate['day'], 2) + '-' + this.toDate['year'];
+          // this.productService.downLoadProducts(this.upStreamPortal, formDate, toDate)
+          //   .subscribe(res => {
+          //     this.loading = false;
+          //     //  need to create SSE events
+          //   }, error => {
+          //     this.loading = false;
+          //   });
+          this.toaster.show('success', 'Downloading', 'your down load is started');
+          this.initListener(formDate, toDate);
+          this.isDownloadedStarted = true;
+        }
 
-    if (this.fromDate && this.toDate) {
-      const time1 = moment(this.fromDate).format('YYYY-MM-DD');
-      const time2 = moment(this.toDate).format('YYYY-MM-DD');
-      if (time1 > time2) {
-        alert('To date must be greater than from date');
       } else {
-        const formDate = this.zeroPad(this.fromDate['month'], 2) + '-' + this.zeroPad(this.fromDate['day'], 2) + '-' + this.fromDate['year'];
-        const toDate = this.zeroPad(this.toDate['month'], 2) + '-' + this.zeroPad(this.toDate['day'], 2) + '-' + this.toDate['year'];
-        // this.productService.downLoadProducts(this.upStreamPortal, formDate, toDate)
-        //   .subscribe(res => {
-        //     this.loading = false;
-        //     //  need to create SSE events
-        //   }, error => {
-        //     this.loading = false;
-        //   });
-        this.toaster.show('success', 'Downloading', 'your down load is started');
-        this.initListener(formDate, toDate);
+      //  alert('Please select from date and to date');
+        this.toaster.show('error', 'Errors ', 'Please select from date and to date');
       }
-
     } else {
-      alert('Please select from date and to date');
+      this.toaster.show('error', 'Errors', 'One download is already in process please wait for the existing process to complete');
     }
+
 
   }
 
@@ -480,36 +496,45 @@ export class DashboardComponent implements OnInit {
       'Authorization': 'Bearer ' + user['access_token'],
     }
 
-    const eventSource = new SSE(url, {
+    this.downLoadEvent = new SSE(url, {
       headers: headerValue,
       payload: ''
     });
-    // const eventSource = new EventSource("http://localhost:9192/UploadProductEmitter/u@2001/d@2003");
-    // eventSource.addEventListener('status', function (e) {
-    //   console.log('System status is now: ' + e.data);
-    // });
 
-    eventSource.addEventListener(
+
+    this.downLoadEvent.addEventListener(
       this.userDetails.customerID,
       this.handleServerEvent,
       false
     );
 
-    eventSource.addEventListener(
+    this.downLoadEvent.addEventListener(
       'progress',
       this.handleServerEvent,
+      // function (evt) {
+      // function (evt) {
+      //   console.log(evt.data);
+      //   const json = JSON.parse(evt.data);
+      //   this.notificationService.emitNotificationChanges(json);
+      //   console.log(json);
+      //   if(json.percentFinish && json.percentFinish == 100){
+      //     eventSource.close();
+      //     eventSource.removeEventListener("progress");
+      //
+      //   }
+      // },
       false
     );
 
-    eventSource.addEventListener("COMPLETE", function (evt) {
+    this.downLoadEvent.addEventListener("COMPLETE", function (evt) {
       console.log(evt);
-      eventSource.close();
+      this.downLoadEvent.close();
     });
-    eventSource.stream();
+    this.downLoadEvent.stream();
 
-    eventSource.onopen = (e) => console.log("open");
+    this.downLoadEvent.onopen = (e) => console.log("open");
 
-    eventSource.onerror = (e) => {
+    this.downLoadEvent.onerror = (e) => {
       if (e.readyState == EventSource.CLOSED) {
         console.log("close");
       } else {
@@ -520,11 +545,31 @@ export class DashboardComponent implements OnInit {
 
 
   };
+
+  uploadServerEvent = (e) => {
+    //  console.log(e.data);
+    const json = JSON.parse(e.data);
+    console.log(json);
+    if (json.percentFinish && json.percentFinish == 100) {
+      this.uploadLoadEvent.close();
+      this.uploadLoadEvent.removeEventListener("progress");
+      this.isUploadStarted = false;
+
+    }
+    this.notificationService.emitUploadNotificationChanges(json);
+  };
   handleServerEvent = (e) => {
-  //  console.log(e.data);
-    this.notificationService.emitNotificationChanges(e.data);
-  //  const json = JSON.parse(e.data);
-   // console.log(json);
+    //  console.log(e.data);
+    const json = JSON.parse(e.data);
+    console.log(json);
+    if (json.percentFinish && json.percentFinish == 100) {
+      this.downLoadEvent.close();
+      this.downLoadEvent.removeEventListener("progress");
+      this.isDownloadedStarted = false;
+
+    }
+    this.notificationService.emitNotificationChanges(json);
+
     // let newNotifications = this.state.newNotifications;
     // newNotifications.unshift({
     //   from: json.from,
