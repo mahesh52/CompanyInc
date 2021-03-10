@@ -3,6 +3,7 @@ import {NavigationEnd, Router} from "@angular/router";
 import {filter} from "rxjs/operators";
 import {NotificationsService} from "../../services/notifications.service";
 import {UtilsService} from "../../services/utils.service";
+import {ToasterService} from "../../common/toaster.service";
 
 @Component({
   selector: 'app-header',
@@ -17,8 +18,10 @@ export class HeaderComponent implements OnInit {
   uploadNotifications = [];
   upStreamPortals: any;
   downStreamPortals: any;
+  stopNotificationDownload = false;
+  stopNotificationUpload = false;
 
-  constructor(private utilService: UtilsService, private router: Router, private notificationService: NotificationsService) {
+  constructor(private toaster: ToasterService, private utilService: UtilsService, private router: Router, private notificationService: NotificationsService) {
     router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
@@ -40,7 +43,20 @@ export class HeaderComponent implements OnInit {
           document.getElementById("openModalButton").click();
         }
         this.notifications = [];
-        this.notifications.push(value);
+        if(!this.stopNotificationDownload){
+          this.notifications.push(value);
+        }
+
+        if (value.percentFinish == 100) {
+          this.stopNotificationDownload = false;
+          this.toaster.show('success', 'Download', 'Your download is completed please refresh the table to see updated products');
+          setTimeout((item) => {
+            this.notifications = [];
+            if(this.uploadNotifications.length === 0){
+              document.getElementById("openModalButton").click();
+            }
+          }, 3000);
+        }
       }
     });
 
@@ -51,9 +67,39 @@ export class HeaderComponent implements OnInit {
           document.getElementById("openModalButton").click();
         }
         this.uploadNotifications = [];
-        this.uploadNotifications.push(value);
+        if(!this.stopNotificationUpload){
+          this.uploadNotifications.push(value);
+        }
+
+
+        if (value.percentFinish == 100) {
+          this.stopNotificationUpload = false;
+          this.toaster.show('success', 'Upload', 'Your upload is completed please refresh the table to see updated products');
+          setTimeout((item) => {
+            if(this.notifications.length === 0){
+              document.getElementById("openModalButton").click();
+            }
+            this.uploadNotifications = [];
+          }, 3000);
+        }
       }
     });
+  }
+
+  stopNotifications() {
+    this.stopNotificationDownload = true;
+    this.notifications = [];
+    if(this.uploadNotifications.length === 0){
+      document.getElementById("openModalButton").click();
+    }
+  }
+
+  stopNotificationsUpload() {
+    this.stopNotificationUpload = true;
+    this.uploadNotifications = [];
+    if(this.notifications.length === 0){
+      document.getElementById("openModalButton").click();
+    }
   }
 
   getUpStreamPortals() {

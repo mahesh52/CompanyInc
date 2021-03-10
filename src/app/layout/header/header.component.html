@@ -1,132 +1,154 @@
-
 <div class="headerAfterLogin">
 
 
-<nav class="navbar mainNavbar navbar-expand-xl" *ngIf="currentUrl!=='/login' && currentUrl!=='/register' && currentUrl!=='/landing' && currentUrl!=='/forgotpwd'">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">COMPANY INC.</a>
-    <ul class="form-inline userDetailsHeader udhMobile">
-      <li>
-        <div class="search-sec">
-          <input type="text" placeholder="Search" class="form-control"/>
-          <img src="assets/images/ic_zoom_in_24px@3x.png" alt="search" height="18" />
-        </div>
-      </li>
-      <li>
-        <a (click)="toggleNotifications()" class="notification-icon">
-          <img src="assets/images/ic_notifications_24px@3x.png"  alt="notification" height="19" class="bell-icon" />
-          <span>3</span>
-        </a>
-      </li>
-
-      <li><a routerLink="/profile" class="userProfileIcon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
-        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-      </svg></a></li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-        aria-expanded="false">{{userDetails?.customerName | uppercase}}</a>
-      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink" >
-        <a class="dropdown-item"  routerLink="/profile" >My Profile</a>
-        <a class="dropdown-item" (click)="logoutUser()">Logout</a>
-      </div>
-      </li>
-    </ul>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-justify-right" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-4-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
-        </svg>
-      </span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto nnLeft">
-        <li class="nav-item" [routerLinkActive]="['active']">
-          <a class="nav-link homeIcon" [routerLinkActive]="['active']" routerLink="/dashboard">Home</a>
-        </li>
-        <li class="nav-item" [routerLinkActive]="['active']">
-          <a class="nav-link homeIcon" [routerLinkActive]="['active']" routerLink="/dashboard">Overview</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link dashboardIcon" routerLink="/dashboard">Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link helpCenterIcon" href="#">Help Center</a>
-        </li>
-      </ul>
-      <ul class="form-inline userDetailsHeader">
+  <nav class="navbar mainNavbar navbar-expand-xl"
+       *ngIf="currentUrl!=='/login' && currentUrl!=='/register' && currentUrl!=='/landing' && currentUrl!=='/forgotpwd'">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">COMPANY INC.</a>
+      <ul class="form-inline userDetailsHeader udhMobile">
         <li>
           <div class="search-sec">
             <input type="text" placeholder="Search" class="form-control"/>
-            <img src="assets/images/ic_zoom_in_24px@3x.png" alt="search" height="18" />
+            <img src="assets/images/ic_zoom_in_24px@3x.png" alt="search" height="18"/>
           </div>
         </li>
-        <li class="notificationSection">
-          <a id ="openModalButton" class="notification-icon" data-toggle="collapse" data-target="#notificationCollapse">
-            <img src="assets/images/ic_notifications_24px@3x.png"  alt="notification" height="19" class="bell-icon" />
-            <span *ngIf="notifications || uploadNotifications">{{notifications.length+uploadNotifications.length}}</span>
+        <li>
+          <a class="notification-icon">
+            <img src="assets/images/ic_notifications_24px@3x.png" alt="notification" height="19" class="bell-icon"/>
+            <span>3</span>
           </a>
-          <div class="collapse" id="notificationCollapse">
-            <div class="card card-body">
-              <div class="clearfix" *ngFor="let notification of notifications">
-              <div style="width: 100%;">
-                <div style="float: left;" *ngIf="getPortalUrl(notification?.upstreamPortalId,'up')"><img width="50px" [src]="getPortalUrl(notification?.upstreamPortalId,'up')"/></div>
-                <div style="float: right;"  *ngIf="getPortalUrl(notification?.downstreamPortalId,'down')"><img width="50px" [src]="getPortalUrl(notification?.downstreamPortalId,'down')"/></div>
-              </div>
-
-                <div class="progress" *ngIf="notification?.messageType==='PROGRESS'">
-
-                  <div class="progress-bar bg-success"
-                       role="progressbar"
-                       aria-valuemin="0"
-                       aria-valuemax="100"
-                       [attr.aria-valuenow] = "notification.percentFinish" [style.width]="notification.percentFinish + '%'"  ></div>
-                </div>
-
-                <p><small>{{notification?.message}}</small></p>
-              </div>
-
-              <div class="clearfix" *ngFor="let upnotification of uploadNotifications">
-                <div style="width: 100%;">
-                  <div style="float: left;" *ngIf="getPortalUrl(upnotification?.upstreamPortalId,'up')"><img width="50px" [src]="getPortalUrl(upnotification?.upstreamPortalId,'up')"/></div>
-                  <div style="float: right;"  *ngIf="getPortalUrl(upnotification?.downstreamPortalId,'down')"><img width="50px" [src]="getPortalUrl(upnotification?.downstreamPortalId,'down')"/></div>
-                </div>
-
-                <div class="progress" *ngIf="upnotification?.messageType==='PROGRESS'">
-
-                  <div class="progress-bar bg-success"
-                       role="progressbar"
-                       aria-valuemin="0"
-                       aria-valuemax="100"
-                       [attr.aria-valuenow] = "upnotification.percentFinish" [style.width]="upnotification.percentFinish + '%'"  ></div>
-                </div>
-
-                <p><small>{{upnotification?.message}}</small></p>
-              </div>
-
-            </div>
-          </div>
         </li>
 
-        <li><a routerLink="/profile" class="userProfileIcon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
-          <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-        </svg></a></li>
+        <li><a routerLink="/profile" class="userProfileIcon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-person-fill"
+               viewBox="0 0 16 16">
+            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+          </svg>
+        </a></li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-          aria-expanded="false">{{userDetails?.customerName | uppercase}}</a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink" >
-          <a class="dropdown-item"  routerLink="/profile" >My Profile</a>
-          <a class="dropdown-item" (click)="logoutUser()">Logout</a>
-        </div>
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+             aria-haspopup="true"
+             aria-expanded="false">{{userDetails?.customerName | uppercase}}</a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" routerLink="/profile">My Profile</a>
+            <a class="dropdown-item" (click)="logoutUser()">Logout</a>
+          </div>
         </li>
       </ul>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-justify-right"
+             viewBox="0 0 16 16">
+        <path fill-rule="evenodd"
+              d="M6 12.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-4-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+        </svg>
+      </span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto nnLeft">
+          <li class="nav-item" [routerLinkActive]="['active']">
+            <a class="nav-link homeIcon" [routerLinkActive]="['active']" routerLink="/dashboard">Home</a>
+          </li>
+          <li class="nav-item" [routerLinkActive]="['active']">
+            <a class="nav-link homeIcon" [routerLinkActive]="['active']" routerLink="/dashboard">Overview</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link dashboardIcon" routerLink="/dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link helpCenterIcon" href="#">Help Center</a>
+          </li>
+        </ul>
+        <ul class="form-inline userDetailsHeader">
+          <li>
+            <div class="search-sec">
+              <input type="text" placeholder="Search" class="form-control"/>
+              <img src="assets/images/ic_zoom_in_24px@3x.png" alt="search" height="18"/>
+            </div>
+          </li>
+          <li class="notificationSection">
+            <a id="openModalButton" class="notification-icon" data-toggle="collapse"
+               data-target="#notificationCollapse">
+              <img src="assets/images/ic_notifications_24px@3x.png" alt="notification" height="19" class="bell-icon"/>
+              <span
+                *ngIf="notifications || uploadNotifications">{{notifications.length + uploadNotifications.length}}</span>
+            </a>
+            <div class="collapse" id="notificationCollapse">
+              <div class="card card-body">
+                <div class="clearfix" *ngFor="let notification of notifications">
+                  <div style="cursor: pointer;" (click)="stopNotifications()" style="float: right;margin-left: 15px;">X
+                  </div>
+                  <div style="width: 100%;">
+                    <div style="float: left;" *ngIf="getPortalUrl(notification?.upstreamPortalId,'up')"><img
+                      width="50px" [src]="getPortalUrl(notification?.upstreamPortalId,'up')"/></div>
+                    <div style="float: right;" *ngIf="getPortalUrl(notification?.downstreamPortalId,'down')"><img
+                      width="50px" [src]="getPortalUrl(notification?.downstreamPortalId,'down')"/></div>
+                  </div>
+
+                  <div class="progress" *ngIf="notification?.messageType==='PROGRESS'">
+
+                    <div class="progress-bar bg-success"
+                         role="progressbar"
+                         aria-valuemin="0"
+                         aria-valuemax="100"
+                         [attr.aria-valuenow]="notification.percentFinish"
+                         [style.width]="notification.percentFinish + '%'"></div>
+                  </div>
+
+                  <p><small>{{notification?.message}}</small></p>
+                </div>
+
+                <div class="clearfix" *ngFor="let upnotification of uploadNotifications">
+                  <div style="cursor: pointer;" (click)="stopNotificationsUpload()" style="float: right;margin-left: 15px;">X
+                  </div>
+                  <div style="width: 100%;">
+                    <div style="float: left;" *ngIf="getPortalUrl(upnotification?.upstreamPortalId,'up')"><img
+                      width="50px" [src]="getPortalUrl(upnotification?.upstreamPortalId,'up')"/></div>
+                    <div style="float: right;" *ngIf="getPortalUrl(upnotification?.downstreamPortalId,'down')"><img
+                      width="50px" [src]="getPortalUrl(upnotification?.downstreamPortalId,'down')"/></div>
+                  </div>
+
+                  <div class="progress" *ngIf="upnotification?.messageType==='PROGRESS'">
+
+                    <div class="progress-bar bg-success"
+                         role="progressbar"
+                         aria-valuemin="0"
+                         aria-valuemax="100"
+                         [attr.aria-valuenow]="upnotification.percentFinish"
+                         [style.width]="upnotification.percentFinish + '%'"></div>
+                  </div>
+
+                  <p><small>{{upnotification?.message}}</small></p>
+                </div>
+
+              </div>
+            </div>
+          </li>
+
+          <li><a routerLink="/profile" class="userProfileIcon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-person-fill"
+                 viewBox="0 0 16 16">
+              <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+            </svg>
+          </a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+               aria-haspopup="true"
+               aria-expanded="false">{{userDetails?.customerName | uppercase}}</a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" routerLink="/profile">My Profile</a>
+              <a class="dropdown-item" (click)="logoutUser()">Logout</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+
     </div>
 
-
-
-  </div>
-
-</nav>
+  </nav>
 
 </div>
 
