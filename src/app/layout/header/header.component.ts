@@ -43,10 +43,7 @@ export class HeaderComponent implements OnInit {
           document.getElementById("openModalButton").click();
         }
         this.notifications = [];
-        if(!this.stopNotificationDownload){
           this.notifications.push(value);
-        }
-
         if (value.percentFinish == 100) {
           this.stopNotificationDownload = false;
           this.toaster.show('success', 'Download', 'Your download is completed please refresh the table to see updated products');
@@ -67,9 +64,8 @@ export class HeaderComponent implements OnInit {
           document.getElementById("openModalButton").click();
         }
         this.uploadNotifications = [];
-        if(!this.stopNotificationUpload){
           this.uploadNotifications.push(value);
-        }
+
 
 
         if (value.percentFinish == 100) {
@@ -89,6 +85,7 @@ export class HeaderComponent implements OnInit {
   stopNotifications() {
     this.stopNotificationDownload = true;
     this.notifications = [];
+    this.notificationService.emitStopNotificationChanges(true);
     if(this.uploadNotifications.length === 0){
       document.getElementById("openModalButton").click();
     }
@@ -97,6 +94,7 @@ export class HeaderComponent implements OnInit {
   stopNotificationsUpload() {
     this.stopNotificationUpload = true;
     this.uploadNotifications = [];
+    this.notificationService.emitStopUploadNotificationChanges(true);
     if(this.notifications.length === 0){
       document.getElementById("openModalButton").click();
     }

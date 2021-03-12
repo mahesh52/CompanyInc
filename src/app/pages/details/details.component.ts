@@ -165,8 +165,8 @@ export class DetailsComponent implements OnInit {
     let request = {
       "productID": this.selectedProduct.productID,
       "details": this.selectedProduct.details,
-      "productType": this.selectedProduct.productType,
-      "collections": this.selectedProduct.collections,
+      "productType": this.selectedProduct.productType === 'other' ? this.selectedProduct.productTypeOther : this.selectedProduct.productType,
+      "collections": this.selectedProduct.collections === 'other' ? this.selectedProduct.collectionOther : this.selectedProduct.collections,
       "tags": this.selectedProduct.tags,
       "markup": this.selectedProduct.markup.replace('%', '').replace(),
       "orderNumber": this.selectedProduct.orderNumber,
@@ -179,6 +179,14 @@ export class DetailsComponent implements OnInit {
     this.loading = true;
     this.productService.updateProduct(this.selectedProduct.id, request,this.downStreamPortal,this.upStreamPortal)
       .subscribe(res => {
+        if(this.selectedProduct.productType=== 'other'){
+          this.productTypes.push(this.selectedProduct.productTypeOther);
+        }
+        if(this.selectedProduct.collections=== 'other'){
+          this.collections.push(this.selectedProduct.collectionOther);
+        }
+        this.selectedProduct.productType = this.selectedProduct.productTypeOther;
+        this.selectedProduct.collections = this.selectedProduct.collectionOther;
         if (res && res.length > 0) {
           res.forEach((item) => {
             let selectedIndex;
@@ -214,5 +222,11 @@ export class DetailsComponent implements OnInit {
     this.selectedProduct.tags = selectedItems;
     this.productDetails[this.selectedId] = this.selectedProduct;
     sessionStorage.setItem('products', JSON.stringify(this.productDetails));
+  }
+  checkStatus(status){
+    if(status.toUpperCase().indexOf('CREATED')>=0){
+      return true;
+    }
+    return false;
   }
 }

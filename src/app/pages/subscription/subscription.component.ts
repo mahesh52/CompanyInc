@@ -5,6 +5,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {UtilsService} from "../../services/utils.service";
 import * as moment from "moment";
+import {Constants} from "../../common/Constants";
+import {ToasterService} from "../../common/toaster.service";
 
 @Component({
   selector: 'app-subscription',
@@ -18,13 +20,18 @@ export class SubscriptionComponent implements OnInit {
   selectedValue: any;
   userDetails: any;
   loading = false;
-  constructor(private utilService: UtilsService, private user: UsersService, private http: HttpClient, private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
+  contryList = Constants.countryList;
+  isPaymentCompleted = false;
+  constructor(private toaster: ToasterService,private utilService: UtilsService, private user: UsersService, private http: HttpClient, private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
+    this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
+    console.log(this.userDetails)
     this.paymentForm = fb.group({
-      'cname': ['', Validators.required],
-      'address': ['', Validators.required],
-      'country': ['', Validators.required],
-      'city': ['', Validators.required],
-      'zipcode': ['', Validators.required],
+      'cname': [this.userDetails.customerName, Validators.required],
+      'address': [this.userDetails.customerBillingAddress.BillingAddress, Validators.required],
+      'line2': [],
+      'country': [this.userDetails.customerBillingAddress.Country, Validators.required],
+      'city': [this.userDetails.customerBillingAddress.City, Validators.required],
+      'zipcode': [this.userDetails.customerBillingAddress.ZipCode, Validators.required],
       'cardName': ['', Validators.required],
       'card': ['', Validators.required],
       'validity': ['', Validators.required],
@@ -49,6 +56,7 @@ export class SubscriptionComponent implements OnInit {
   }
 
   proceedToPayment() {
+    this.loading = true;
     const expiry = this.paymentForm.value.validity.split('/');
     (<any>window).Stripe.card.createToken({
       number: this.paymentForm.value.card,
@@ -57,6 +65,7 @@ export class SubscriptionComponent implements OnInit {
       cvc: this.paymentForm.value.cvv
     }, (status: number, response: any) => {
       if (status === 200) {
+        this.loading = false;
         let token = response.id;
         this.chargeCard(token);
       } else {
@@ -87,12 +96,24 @@ export class SubscriptionComponent implements OnInit {
       this.utilService.chargeCustomer(token, payload, amount).subscribe(res => {
         console.log(res);
         console.log(res);
-        this.loading = false;
-        this.router.navigateByUrl('payment');
+        if(res){
+          this.loading = false;
+          this.router.navigate(['payment'])
+            .then(() => {
+              window.location.reload();
+            });
+        } else {
+          this.loading = false;
+          this.toaster.show('error', '', 'Payment is failed please try again !!');
+        }
+
       }, error => {
         this.loading = false;
         // todo handle error and remove below line
-        this.router.navigateByUrl('payment');
+        this.router.navigate(['payment'])
+          .then(() => {
+            window.location.reload();
+          });
         console.log('Error while charging customer');
       })
     }, error => {

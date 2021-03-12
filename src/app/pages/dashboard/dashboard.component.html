@@ -1,174 +1,221 @@
-<div class="bodycon pt-3 pb-3" style="padding-top: 4rem !important;">
-  <div class="container-fluid">
+<section class="container-fluid">
 
-<div class="dashboardPage">
-  <div class="d-flex mb-3 dpFromInline">
-    <div class="ddpageFrom">
-      <label>From &nbsp;</label>
-      <input id="datepicker" width="220" placeholder="yyyy-mm-dd" [(ngModel)]="fromDate" name="dp" ngbDatepicker #d="ngbDatepicker">
-      <button id="calender" (click)="d.toggle()" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
-        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-      </svg></button>
-    </div>
-    <div class="ddpageFrom ddpageTo">
-      <label>To &nbsp;</label>
-      <input id="datepicker1" width="140" placeholder="yyyy-mm-dd" [(ngModel)]="toDate" name="dp" ngbDatepicker #d1="ngbDatepicker">
-      <button id="calender1" (click)="d1.toggle()" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
-        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-      </svg></button>
-    </div>
-    <div class="ddpageFrom ddpageUpstream" style="margin-left: 25px;">
-      <label>UpstreamStream Portal &nbsp;</label>
-      <select [(ngModel)]="upStreamPortal">
-      <option *ngFor="let upstream of upStreamPortals;" [value]="upstream?.portalID">{{upstream?.portalName}}</option>
-      </select>
-    </div>
-    <div class="" style="margin-left: 25px;">
-      <button class="btn btn-primary loadSource" (click)="loadFromSource()">Load from source</button>
-    </div>
-  </div>
-  <div style="float: right"><a style="cursor: pointer;" (click)="getProducts()">Refresh</a> </div>
-</div>
+  <section class="workspace-sec">
+    <div class="bodycon pb-3 mb-5">
+      <div class="container-fluid">
+        <div class="d-inline" *ngFor="let upstream of upStreamPortals;">
+          <button (click)="upStreamPortal=upstream?.portalID;getProducts()" style="height: 40px;margin-right: -4px;" class="btn tab-btn active">{{upstream?.portalName}}</button>
+        </div>
+        <section class="table-search-div">
 
+          <div class="date-search">
+            <div class="form-group-item">
+              <label>From</label>
+              <div class="">
+                <input (click)="d.toggle()" id="datepicker" width="220" placeholder="yyyy-mm-dd" [(ngModel)]="fromDate"
+                       name="dp" ngbDatepicker
+                       #d="ngbDatepicker">
+              </div>
+            </div>
+            <div class="form-group-item">
+              <label>To</label>
+              <div class="">
+                <input (click)="d1.toggle()" id="datepicker1" width="140" placeholder="yyyy-mm-dd" [(ngModel)]="toDate"
+                       name="dp" ngbDatepicker
+                       #d1="ngbDatepicker">
+              </div>
+            </div>
+            <div class="form-group mb-0">
+              <button class="btn load-from-source" (click)="loadFromSource()">
+                Load From Source
+              </button>
+            </div>
+          </div>
+          <div class="keyword-search">
+            <div class="form-group mb-0">
+              <form class="form-inline" name ="searchForm" action="">
+                <label for="email">
+                  <span class="Keyword mr-2">Keyword</span>
+                </label>
+                <input
+                  type="text"
+                  name = "orderNumber"
+                  [(ngModel)]="orderNumber"
+                  class="form-control mr-3 keyinput-val"
+                  placeholder="Enter keyword"
+                  id="email"
+                />
+                <button *ngIf="!isSearched" (click)="filterByOrderNumber()" class="btn search-btn">Search</button>
+                <button type="submit" *ngIf="isSearched" class="btn btn-primary loadSource" (click)="clearTableData()">Clear</button>
+              </form>
+            </div>
+            <div class="form-group mb-0"></div>
+          </div>
+          <div class="sortby-search">
+            <div class="row">
+              <div class="col-8">
+                <div class="form-group-item-2">
+                  <label><span class="sort-by-txt">Sort By</span></label>
+                  <select class="select-bg" (change)="sortData($event.target.value)">
+                    <option value="">Select</option>
+                    <option value="collections">Collections</option>
+                    <option value="details">Details</option>
+                    <option value="markup">Markup</option>
+                    <option value="orderNumber">Order Number</option>
+                    <option value="productType">Product Type</option>
+                    <option value="title">Style</option>
+                    <option value="unitPriceWithShippingFee">Unit Price</option>
+                  </select>
+                </div>
+                <div class="form-group-item-2">
+                  <label><span class="status-txt">Status</span></label>
+                  <select class="select-bg" (change)="filterData($event.target.value)" >
+                    <option value="">Select</option>
+                    <option *ngFor="let status of uniqueStatuses">{{status}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="d-flex align-items-center mh90">
+                  <button class="btn refresh-btn" (click)="getProducts()">Refresh</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-<!--    <div class="row mb-3">-->
-<!--      <div class="col-4">-->
-<!--        <select class="form-control" (change)="sortData($event.target.value)">-->
-<!--          <option value="">Sort by</option>-->
-<!--          <option value="id">Order Number</option>-->
-<!--          <option value="price">Unit Price</option>-->
-<!--          <option value="styleTitle">Style</option>-->
-<!--          <option value="markup">Mark up</option>-->
-<!--        </select>-->
+        <div class="tableFixHead d-block">
+          <table>
+            <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Select</th>
+              <th>Style</th>
+              <th>Product Details</th>
 
-<!--      </div>-->
-<!--      <div class="col-md-3 ">-->
-<!--        <input type="email" class="form-control mr-3 orderNumber" name="orderNumber" [(ngModel)]="orderNumber"-->
-<!--               placeholder="Enter Order Number" id="email">-->
-<!--        <button type="submit" *ngIf="!isSearched" class="btn btn-primary loadSource" (click)="filterByOrderNumber()">-->
-<!--          Search-->
-<!--        </button>-->
-<!--        <button type="submit" *ngIf="isSearched" class="btn btn-primary loadSource" (click)="clearTableData()">Clear-->
-<!--        </button>-->
+              <th>Product Type</th>
 
-<!--      </div>-->
-<!--    </div>-->
-    <div class="tableFixHead">
-      <table>
-        <thead>
-        <tr>
-          <th>S.No</th>
-          <th>Select</th>
-          <th>Style</th>
-          <th>Product Details</th>
+              <th>Collection</th>
+              <th>Tags</th>
+              <th>SKU</th>
+              <th>Unit Price
+                <small>(Inc. shipping)</small></th>
+              <th>Markup</th>
 
-          <th>Product Type</th>
-
-          <th>Collection</th>
-          <th>Tags</th>
-          <th>Unit Price
-            <small>(Inc. shipping)</small></th>
-          <th>Markup</th>
-
-          <th>Sale Price</th>
-          <th>Order
-            Number
-          </th>
-          <th>Status</th>
-          <th>Action</th>
-
-
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let item of pagedItems;let i =index;">
-          <td align="center" class="snoTd">{{i + 1}}</td>
-          <td  align="center">
-            <input type="checkbox" (click)="selectProduct($event,item)">
-          </td>
-          <td class="styleTd">
-            <div class="styleImg">
-              <img style="cursor:pointer;" (click)="details(item?.productID)"
-                                       [src]="getImage(item?.photos)"/></div>
-            <h6 style="cursor:pointer;" (click)="details(item?.productID)" class="styleName">{{item?.title}}</h6>
-          </td>
-          <td class="pdTd" style="position: relative;">
-            <!--            <p class="productDetailsText" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">A classic Chelsea boot shape gets a lifted edge with a chunky treaded rubber sole. Edgy, yet classic, the JESSIE is easy to slide into with elastic side panelling. Featuring a lightweight synthetic sole, it’s flexible and soft with wear. Set on our signature padded footbed, they’re a must for all day comfort.-->
-            <!--              LabelUnspecified</p>-->
-            <textarea style="width:100%;resize: none;font-size: 10px" rows=3 cols=22
-                      [(ngModel)]="item.details">{{item?.details}}</textarea>
-            <span data-toggle="modal" data-target="#myModal1" style="    position: absolute;cursor: pointer;
+              <th>Sale Price</th>
+              <th>Order
+                Number
+              </th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of pagedItems;let i =index;">
+              <td align="center" class="snoTd">{{i + 1}}</td>
+              <td align="center">
+                <input type="checkbox" (click)="selectProduct($event,item)">
+              </td>
+              <td class="styleTd">
+                <div class="styleImg">
+                  <img style="cursor:pointer;" (click)="details(item?.productID)"
+                       [src]="getImage(item?.photos)"/></div>
+                <h6 style="cursor:pointer;" (click)="details(item?.productID)" class="styleName">{{item?.title}}</h6>
+              </td>
+              <td class="pdTd">
+               <textarea style="width:100%;resize: none;font-size: 10px" rows=10 cols=40
+                         [(ngModel)]="item.details">{{item?.details}}</textarea>
+                <span data-toggle="modal" data-target="#myModal1" style="cursor: pointer;
     bottom: 0;
     text-align: center;
     right: 10px;
-    font-weight: bold;" (click)="selectDetIndex(item.id)">...</span>
-            <!--            <button class="readMoreBtn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span>...</span></button>-->
-          </td>
-          <td class="ptTd">
-            <select class="form-control tableInput" [(ngModel)]="item.productType">
-              <option>Select Type</option>
-              <option *ngFor="let ptype of productTypes" [selected]="ptype === item?.productType">{{ptype}}</option>
-            </select>
-          </td>
-          <td class="ptTd">
-            <select class="form-control tableInput" [(ngModel)]="item.collections">
-              <option>Select Collection</option>
-              <option *ngFor="let collection of collections"
-                      [selected]="collection === item?.collections">{{collection}}</option>
-            </select>
-          </td>
-          <td class="ptTags">
-            <div class="ribbonTd" *ngFor="let tag of item?.tags;let j =index;">
+    font-weight: bold;" (click)="selectDetIndex(item.productID)">...</span>
+              </td>
+              <td class="ptTd">
+                <select class="form-control tableInput" [(ngModel)]="item.productType">
+                  <option>Select Type</option>
+                  <option *ngFor="let ptype of productTypes" [selected]="ptype === item?.productType">{{ptype}}</option>
+                  <option value="other">Other</option>
+                </select>
+                <br>
+                <input *ngIf="item.productType === 'other'" type="text" class="form-control"
+                       [(ngModel)]="item.productTypeOther">
+              </td>
+              <td class="ptTd">
+                <select class="form-control tableInput" [(ngModel)]="item.collections">
+                  <option>Select Collection</option>
+                  <option *ngFor="let collection of collections"
+                          [selected]="collection === item?.collections">{{collection}}</option>
+                  <option value="other">Other</option>
+                </select>
+                <br>
+                <input *ngIf="item.collections === 'other'" type="text" class="form-control"
+                       [(ngModel)]="item.collectionOther">
+              </td>
+              <td class="ptTags">
+                <div class="ribbonTd" *ngFor="let tag of item?.tags;let j =index;">
               <span style="cursor:pointer;position: absolute;
     left: 5px;" (click)="removeFromList(item.id,tag)">X</span>
-              <span>  {{tag}}</span>
-            </div>
-            <p *ngIf="getTagsLength(item?.tags) > 2">...</p>
-            <div class="ribbonTd1">
+                  <span>  {{tag}}</span>
+                </div>
+                <p *ngIf="getTagsLength(item?.tags) > 2">...</p>
+                <div class="ribbonTd1">
               <span style="cursor:pointer;width: 18px;
     height: 18px;" data-toggle="modal" data-target="#myModal"
                     (click)="selectIndex(item.productID)">+</span>
 
+                </div>
+              </td>
+              <td class="ptTd">
+                <input *ngIf="!checkStatus(item?.downstreamStatus)" [title]="item.skuDownstream" type="text" class="form-control" [(ngModel)]="item.skuDownstream">
+                <span *ngIf="checkStatus(item?.downstreamStatus)" >{{item.skuDownstream}}</span>
+              </td>
+              <td class="unitPrice"><p>$ {{item?.unitPriceWithShippingFee}} </p></td>
+              <td><input type="text" class="form-control markupInput" [(ngModel)]="item.markup"></td>
+              <td align="center"><p>$ {{getSalePrice(item?.unitPriceWithShippingFee, item?.markup)}} </p></td>
+              <td><p>{{item?.orderNumber}}</p></td>
+              <td><p>{{item?.downstreamStatus || 'N/A'}}</p></td>
+              <td>
+                <button (click)="saveData(item)" class="btn saveBtn">Save</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tablePagination mt-4 pt-1">
+          <div class="table-footer-sec">
+            <div class="item-1" >
+              <div class="exported-txt">
+                Last exported on 7th Dec 2020, 12:18:32 PM
+              </div>
+
             </div>
-          </td>
-          <td class="unitPrice"><p>$ {{item?.unitPriceWithShippingFee}} </p></td>
-          <td><input type="text" class="form-control markupInput" [(ngModel)]="item.markup"></td>
+            <div class="item-2">
+              <div class="export-type">
+                <select class="select-bg"  style="margin-right:30px;" [(ngModel)]="downStreamPortal" (change)="getProducts()">
+                  <option *ngFor="let downStream of downStreamPortals;"
+                          [value]="downStream?.portalID">{{downStream?.portalName}}</option>
+                </select>
+              </div>
+              <button (click)="uploadProducts()" class="btn exportDestination">
+                Export to Destination
+              </button>
+            </div>
+            <ngb-pagination style="position: absolute;right: 0" [collectionSize]="pager.totalItems"
+                            [pageSize]="pager.pageSize" [(page)]="pager.currentPage"
+                            [maxSize]="3" [rotate]="false" (pageChange)="setPage(pager.currentPage)"
+                            [boundaryLinks]="false"></ngb-pagination>
 
-          <td align="center"><p>$ {{getSalePrice(item?.unitPriceWithShippingFee, item?.markup)}} </p></td>
-          <td><p>{{item?.orderNumber}}</p></td>
-          <td><p>{{item?.downstreamStatus || 'N/A'}}</p></td>
-          <td>
-            <button (click)="saveData(item)" class="btn btn-primary loadSource">Save</button>
-          </td>
-
-        </tr>
-
-        </tbody>
-      </table>
+          </div>
 
 
+        </div>
+      </div>
     </div>
+  </section>
+</section>
 
-
-    <div class="tablePagination mt-3 pt-1">
-
-        <strong class="from">DownstreamStream Portal &nbsp;</strong>
-        <select style="margin-right:30px;" [(ngModel)]="downStreamPortal">
-          <option *ngFor="let downStream of downStreamPortals;"
-                  [value]="downStream?.portalID">{{downStream?.portalName}}</option>
-        </select>
-
-
-      <button class="btn btn-primary loadSource" (click)="uploadProducts()">Export to Destination</button>
-      <ngb-pagination style="position: absolute;right: 0" [collectionSize]="pager.totalItems"
-                      [pageSize]="pager.pageSize" [(page)]="pager.currentPage"
-                      [maxSize]="5" [rotate]="true" (pageChange)="setPage(pager.currentPage)"
-                      [boundaryLinks]="true"></ngb-pagination>
-    </div>
-
-
-  </div>
-</div>
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -180,11 +227,11 @@
       </div>
       <div class="modal-body">
         <div class="row">
-          <div class="col-md-6" >
+          <div class="col-md-6">
             <input #customtag class="form-control" type="text" placeholder="Add new tag">
 
           </div>
-          <div class="col-md-6" >
+          <div class="col-md-6">
             <button class="btn btn-primary" (click)="addToTags(customtag)">Add</button>
           </div>
         </div>
@@ -192,7 +239,7 @@
           <div class="col-md-6" *ngFor="let tag of tags">
             <input type="checkbox" class="tags" [checked]="hasValue(tag)"
                    (click)="addToList($event.target.checked,tag)">
-            <label style="margin-left: 10px !important; " >{{tag}}</label>
+            <label style="margin-left: 10px !important; ">{{tag}}</label>
 
           </div>
         </div>

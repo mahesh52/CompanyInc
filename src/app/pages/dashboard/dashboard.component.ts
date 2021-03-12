@@ -12,6 +12,7 @@ import {APICONFIG} from "../../common/APICONFIG";
 import {STORAGEKEY} from "../../common/STORAGEKEY";
 import {ToasterService} from "../../common/toaster.service";
 import {NotificationsService} from "../../services/notifications.service";
+import * as jQuery from 'jquery';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,7 +32,8 @@ export class DashboardComponent implements OnInit {
   pagedItems: any[];
   error = '';
   page = 1;
-  originalList = []
+  originalList = [];
+  uniqueStatuses:any;
 
   selectedItems = [];
   isProdSelected = false;
@@ -60,6 +62,16 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.notificationService.stopnotifications.subscribe((value) => {
+      this.downLoadEvent.close();
+      this.isDownloadedStarted = false;
+      this.downLoadEvent.removeEventListener("progress");
+    });
+    this.notificationService.stopupLoadnotifications.subscribe((value) => {
+      this.uploadLoadEvent.close();
+      this.uploadLoadEvent.removeEventListener("progress");
+      this.isUploadStarted = false;
+    });
     this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
     this.getUpStreamPortals();
   }
@@ -93,13 +105,17 @@ export class DashboardComponent implements OnInit {
     this.utilService.getUserDownStreamPortals().subscribe(res => {
       this.downStreamPortals = res;
       this.downStreamPortal = res[0].portalID;
-      this.getProducts();
+    //  this.getProducts();
+      this.getGlobalConfigurations();
       if (sessionStorage.getItem('products') !== '' && sessionStorage.getItem('products') !== null && sessionStorage.getItem('products') !== undefined) {
         const res1 = JSON.parse(sessionStorage.getItem('products'));
         this.productDetails = res1;
         this.originalList = res1;
         this.totalProducts = res1.length;
         this.setPage(1);
+        let result = this.productDetails.map(a => a.downstreamStatus);
+        this.uniqueStatuses = [...new Set(result)];
+
       } else {
         this.getProducts();
       }
@@ -112,10 +128,10 @@ export class DashboardComponent implements OnInit {
   details(id) {
     let index = 0;
     const selectedItems = this.productDetails.filter(function (item, index) {
-      return item.id === id
+      return item.productID === id
     });
     this.productDetails.forEach((item, i) => {
-      if (item.id === id) {
+      if (item.productID === id) {
         index = i;
       }
     });
@@ -132,16 +148,33 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
         console.log(res);
         //res[0].ShopifyStatus = 'Published';
-        this.getGlobalConfigurations();
+
         let res1 = [];
         res.forEach((item) => {
           item.markup = item.markup + ' %';
+          if (item.collections) {
+            const checkCollection = this.collections.filter((collection) => collection === item.collections);
+            if (checkCollection.length === 0) {
+              item.collectionOther = item.collections;
+              item.collections = 'other';
+
+            }
+          }
+          if (item.productType) {
+            const checkPtype = this.productTypes.filter((ptype) => ptype === item.productType);
+            if (checkPtype.length === 0) {
+              item.productTypeOther = item.productType;
+              item.productType = 'other';
+            }
+          }
           res1.push(item);
         });
         sessionStorage.setItem('products', JSON.stringify(res1));
         this.productDetails = res1;
         this.originalList = res1;
         this.totalProducts = res1.length;
+        let result = this.productDetails.map(a => a.downstreamStatus);
+        this.uniqueStatuses = [...new Set(result)];
         this.setPage(1);
 
       }, error => {
@@ -265,25 +298,12 @@ export class DashboardComponent implements OnInit {
 
   filterData(value) {
     if (value) {
-      if (value === 'New') {
         const items = this.originalList.filter(function (item) {
-          if (!item.ShopifyStatus) {
-            item.ShopifyStatus = '';
-          }
-          return item.ShopifyStatus.toUpperCase() === value.toUpperCase() || item.ShopifyStatus === '' || item.ShopifyStatus === null
-
+          return item.downstreamStatus.toUpperCase() === value.toUpperCase()
         });
         this.productDetails = items;
         this.pager = {};
         this.setPage(1);
-      } else {
-        const items = this.originalList.filter(function (item) {
-          return item.ShopifyStatus.toUpperCase() === value.toUpperCase()
-        });
-        this.productDetails = items;
-        this.pager = {};
-        this.setPage(1);
-      }
     } else {
       this.productDetails = this.originalList;
       this.pager = {};
@@ -323,8 +343,8 @@ export class DashboardComponent implements OnInit {
     let request = {
       "productID": item.productID,
       "details": item.details,
-      "productType": item.productType,
-      "collections": item.collections,
+      "productType": item.productType === 'other' ? item.productTypeOther : item.productType,
+      "collections": item.collections === 'other' ? item.collectionOther : item.collections,
       "tags": item.tags,
       "markup": item.markup.replace('%', '').replace(),
       "orderNumber": item.orderNumber,
@@ -333,6 +353,7 @@ export class DashboardComponent implements OnInit {
       "upstreamPortalID": this.upStreamPortal,
       "downstreamPortalId": this.downStreamPortal,
     }
+
     this.loading = true;
     this.productService.updateProduct(item.productID, request, this.downStreamPortal, this.upStreamPortal)
       .subscribe(res => {
@@ -350,6 +371,14 @@ export class DashboardComponent implements OnInit {
               this.productDetails.push(item);
             }
           });
+          if(item.productType=== 'other'){
+            this.productTypes.push(item.productTypeOther);
+          }
+          if(item.collections=== 'other'){
+            this.collections.push(item.collectionOther);
+          }
+          item.productType = item.productTypeOther;
+          item.collections = item.collectionOther;
         }
         this.loading = false;
         sessionStorage.setItem('products', JSON.stringify(this.productDetails));
@@ -474,7 +503,7 @@ export class DashboardComponent implements OnInit {
         }
 
       } else {
-      //  alert('Please select from date and to date');
+        //  alert('Please select from date and to date');
         this.toaster.show('error', 'Errors ', 'Please select from date and to date');
       }
     } else {
@@ -622,5 +651,11 @@ export class DashboardComponent implements OnInit {
       customtag.value = '';
     }
 
+  }
+  checkStatus(status){
+    if(status.toUpperCase().indexOf('CREATED')>=0){
+      return true;
+    }
+    return false;
   }
 }

@@ -8,7 +8,7 @@ import { Toast } from './toast.interface';
       [style.bottom.px]="i*100">
       <h4 class="toast-heading">{{toast.title}}</h4>
       <p>{{toast.body}}</p>
-      <a class="close" (click)="remove.emit(i)">&times;</a>
+      <a class="close" style="color: #ccc !important;" (click)="remove.emit(i)">&times;</a>
     </div>
   `,
   styles: [`
@@ -25,8 +25,8 @@ import { Toast } from './toast.interface';
     }
 
     .toast-success {
-      color: #155724;
-      background-color: #d4edda;
+      color: #fff;
+      background-color: #0a2052;
       border-color: #c3e6cb;
     }
 

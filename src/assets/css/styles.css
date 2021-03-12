@@ -120,10 +120,10 @@
   color: #a3a0fb !important;
 }
 
-.mainBody {
-  background: #f0f0f7;
-  min-height: 100vh;
-}
+/*.mainBody {*/
+/*  background: #f0f0f7;*/
+/*  min-height: 100vh;*/
+/*}*/
 
 .register-photo {
   background: #fff;
@@ -3262,10 +3262,10 @@ ul.plan-def li span + span {
   border-radius: 24px;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.27);
   background-color: #ffffff;
-  margin: 96px auto 48px auto;
+  margin: 48px auto 48px auto;
   position: relative;
 }
-.workspace-sec .tab-btn{background: #ffffff !important;white-space: nowrap;font-size: 13px;}
+
 .tableFixHead {
   clear: both;
   border: solid 0.5px #0a2052 !important;
@@ -3429,7 +3429,6 @@ ul.plan-def li span + span {
 /********* NAGARAJU KOMMA *********/
 
 .carousel-inner:focus, .col-lg-6:focus, div:focus{outline: none !important;}
-.carousel-control-prev, .carousel-control-next{display: none;}
 .carousel-indicators{bottom:-170px;}
 *:focus{outline: none !important;}
 

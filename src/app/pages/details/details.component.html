@@ -60,9 +60,12 @@
           <div class="carousel-inner">
             <ngb-carousel #carousel [interval]="false" [keyboard]="false" [wrap]="false" [showNavigationArrows]="true"
                           [pauseOnHover]="pauseOnHover" (slide)="onSlide($event)">
-              <ng-template ngbSlide *ngFor="let image of getImages(selectedProduct?.photos)">
-                <img [src]="selectedProduct?.photos[image]" alt="Los Angeles">
-              </ng-template>
+             <div *ngFor="let image of getImages(selectedProduct?.photos)">
+               <ng-template ngbSlide >
+                 <img [src]="selectedProduct?.photos[image]" alt="Los Angeles">
+               </ng-template>
+             </div>
+
             </ngb-carousel>
 
 
@@ -137,7 +140,16 @@
     top: -4px;">+</span></div>
           </div>
         </div>
-
+        <div class="row mt-3">
+          <div class="col-md-1"></div>
+          <div class="col-md-2 text-center">
+            <h5 class="detailsTitleH5 mt-2">SKU</h5>
+          </div>
+          <div class="col-md-3">
+            <input *ngIf="!checkStatus(selectedProduct?.downstreamStatus)" [title]="selectedProduct.skuDownstream" type="text" class="form-control" [(ngModel)]="selectedProduct.skuDownstream">
+            <span *ngIf="checkStatus(selectedProduct?.downstreamStatus)" >{{selectedProduct.skuDownstream}}</span>
+          </div>
+        </div>
         <div class="row mt-3">
           <div class="col-md-1"></div>
           <div class="col-md-2 text-center">
@@ -151,7 +163,11 @@
                         [(ngModel)]="selectedProduct.productType">
                   <option *ngFor="let ptype of productTypes"
                           [selected]="ptype === selectedProduct?.productType">{{ptype}}</option>
+                  <option value="other">Other</option>
                 </select>
+                <br>
+                <input *ngIf="selectedProduct.productType === 'other'" type="text" class="form-control"
+                       [(ngModel)]="selectedProduct.productTypeOther">
               </div>
               <div class="col-md-8">
                 <div class="row">
@@ -163,7 +179,11 @@
                             [(ngModel)]="selectedProduct.collections">
                       <option *ngFor="let collection of collections"
                               [selected]="collection === selectedProduct?.collections">{{collection}}</option>
+                      <option value="other">Other</option>
                     </select>
+                    <br>
+                    <input *ngIf="selectedProduct.collections === 'other'" type="text" class="form-control"
+                           [(ngModel)]="selectedProduct.collectionOther">
                   </div>
                 </div>
 

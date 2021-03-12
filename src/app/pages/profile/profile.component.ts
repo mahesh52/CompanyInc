@@ -30,6 +30,7 @@ export class ProfileComponent implements OnInit {
       'email': [this.userDetails.customerEmailAddress, [Validators.required, Validators.email]],
       'mobile': [this.userDetails.customerMobileNumber, [Validators.required, Validators.minLength(10), Validators.maxLength(12)]],
       'address': [this.userDetails.customerBillingAddress.BillingAddress, Validators.required],
+      'line2': [this.userDetails.customerBillingAddress.line2, Validators.required],
       'country': [this.userDetails.customerBillingAddress.Country, Validators.required],
       'city': [this.userDetails.customerBillingAddress.City, Validators.required],
       'zipcode': [this.userDetails.customerBillingAddress.ZipCode, Validators.required],
