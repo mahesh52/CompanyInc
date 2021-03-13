@@ -82,9 +82,9 @@
                   </div>
                   <div style="width: 100%;">
                     <div style="float: left;" *ngIf="getPortalUrl(notification?.upstreamPortalId,'up')"><img
-                      width="50px" [src]="getPortalUrl(notification?.upstreamPortalId,'up')"/></div>
+                      width="30px" [src]="getPortalUrl(notification?.upstreamPortalId,'up')"/></div>
                     <div style="float: right;" *ngIf="getPortalUrl(notification?.downstreamPortalId,'down')"><img
-                      width="50px" [src]="getPortalUrl(notification?.downstreamPortalId,'down')"/></div>
+                      width="30px" [src]="getPortalUrl(notification?.downstreamPortalId,'down')"/></div>
                   </div>
 
                   <div class="progress" *ngIf="notification?.messageType==='PROGRESS'">
@@ -105,9 +105,9 @@
                   </div>
                   <div style="width: 100%;">
                     <div style="float: left;" *ngIf="getPortalUrl(upnotification?.upstreamPortalId,'up')"><img
-                      width="50px" [src]="getPortalUrl(upnotification?.upstreamPortalId,'up')"/></div>
+                      width="30px" [src]="getPortalUrl(upnotification?.upstreamPortalId,'up')"/></div>
                     <div style="float: right;" *ngIf="getPortalUrl(upnotification?.downstreamPortalId,'down')"><img
-                      width="50px" [src]="getPortalUrl(upnotification?.downstreamPortalId,'down')"/></div>
+                      width="30px" [src]="getPortalUrl(upnotification?.downstreamPortalId,'down')"/></div>
                   </div>
 
                   <div class="progress" *ngIf="upnotification?.messageType==='PROGRESS'">

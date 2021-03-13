@@ -4,7 +4,9 @@
     <div class="bodycon pb-3 mb-5">
       <div class="container-fluid">
         <div class="d-inline" *ngFor="let upstream of upStreamPortals;">
-          <button (click)="upStreamPortal=upstream?.portalID;getProducts()" style="height: 40px;margin-right: -4px;" class="btn tab-btn active">{{upstream?.portalName}}</button>
+          <button (click)="upStreamPortal=upstream?.portalID;getProducts()" style="height: 40px;margin-right: -4px;" [class.active]="upStreamPortal==upstream?.portalID" class="btn tab-btn ">
+           <img [src]="upstream?.portalLogoIconURL"  width="20px"/> {{upstream?.portalName}}
+          </button>
         </div>
         <section class="table-search-div">
 

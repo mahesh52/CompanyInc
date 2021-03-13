@@ -127,9 +127,9 @@ export class HeaderComponent implements OnInit {
   getPortalUrl(portalId, type) {
     if (portalId && portalId !== 'null') {
       if (type === 'up') {
-        return this.upStreamPortals.filter((portal) => portal.portalID == portalId)[0].portalLogoURL;
+        return this.upStreamPortals.filter((portal) => portal.portalID == portalId)[0].portalLogoIconURL;
       } else if (type === 'down') {
-        return this.downStreamPortals.filter((portal) => portal.portalID == portalId)[0].portalLogoURL;
+        return this.downStreamPortals.filter((portal) => portal.portalID == portalId)[0].portalLogoIconURL;
 
       }
     }
