@@ -24,14 +24,14 @@ export class SubscriptionComponent implements OnInit {
   isPaymentCompleted = false;
   constructor(private toaster: ToasterService,private utilService: UtilsService, private user: UsersService, private http: HttpClient, private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
     this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
-    console.log(this.userDetails)
+    console.log(this.userDetails);
     this.paymentForm = fb.group({
       'cname': [this.userDetails.customerName, Validators.required],
-      'address': [this.userDetails.customerBillingAddress.BillingAddress, Validators.required],
-      'line2': [],
-      'country': [this.userDetails.customerBillingAddress.Country, Validators.required],
-      'city': [this.userDetails.customerBillingAddress.City, Validators.required],
-      'zipcode': [this.userDetails.customerBillingAddress.ZipCode, Validators.required],
+      'address': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.BillingAddress?this.userDetails.customerBillingAddress.BillingAddress:'', Validators.required],
+      'line2': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.line2?this.userDetails.customerBillingAddress.line2:''],
+      'country': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.Country?this.userDetails.customerBillingAddress.Country:'', Validators.required],
+      'city': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.City?this.userDetails.customerBillingAddress.City:'', Validators.required],
+      'zipcode': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.ZipCode?this.userDetails.customerBillingAddress.ZipCode:'', Validators.required],
       'cardName': ['', Validators.required],
       'card': ['', Validators.required],
       'validity': ['', Validators.required],
