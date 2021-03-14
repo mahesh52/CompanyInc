@@ -460,7 +460,7 @@ border:none !important;
 
 .tableFixHead {
   overflow-y: auto;
-  height: 500px;
+  height: calc( 100vh - 282px );
 }
 .tableFixHead thead th {
   position: sticky;
@@ -561,17 +561,17 @@ th {
   top: 0px;
   right: -10px;
   border-top: 15px solid transparent;
-  border-bottom: 10px solid transparent;
+  border-bottom:9px solid transparent;
   border-left: 10px solid #7b94cc;
 }
-.ribbonTd:before {
+/* .ribbonTd:before {
   width: 0;
   height: 0;
   position: absolute;
   content: "x";
   top: 2px;
   left: 5px;
-}
+} */
 .ribbonTd span {
   position: relative;
   font-family: "Lato";
@@ -591,9 +591,11 @@ th {
   height: 4px;
   border-radius: 10px;
   background: #fff;
-  right: -32px;
+  right: -24px;
   top: 8px;
 }
+
+.ribbonTd .closeIconSec:after{display: none;}
 
 .ribbonTd1 {
   background: #7b94cc;
@@ -3269,7 +3271,6 @@ ul.plan-def li span + span {
 .tableFixHead {
   clear: both;
   border: solid 0.5px #0a2052 !important;
-  border-radius: 10px;
 }
 .tableFixHead thead th,
 .tableFixHead tr td {
@@ -3281,7 +3282,7 @@ ul.plan-def li span + span {
   font-weight: 500;
   font-stretch: normal;
   font-style: normal;
-  line-height: 1.15;
+  line-height: 1;
   letter-spacing: normal;
   text-align: center;
   color: #ffffff;
@@ -3314,12 +3315,11 @@ ul.plan-def li span + span {
   margin-bottom: 0px;
 }
 .form-group-item input {
-  width: 148px;
-  height: 27px;
-  border-radius: 6px;
-  border: solid 0.5px #0a2052;
-  background-color: rgba(123, 148, 204, 0.16);
-}
+  width:148px;
+  height:27px;
+  border-radius:6px;
+  border:solid 1px #0a2052;
+  background-color:rgba(123, 148, 204, 0.16); font-size: 13px; padding:2px 8px 5px 8px; height:27px;}
 .form-group-item .gj-datepicker-bootstrap [role="right-icon"] button {
   width: 38px;
   position: relative;
@@ -3372,7 +3372,7 @@ ul.plan-def li span + span {
   font-weight: 500;
   font-stretch: normal;
   font-style: normal;
-  line-height: 1.25;
+  line-height:2.0;
   letter-spacing: normal;
   text-align: right;
   color: #0a2052;
@@ -3380,19 +3380,17 @@ ul.plan-def li span + span {
   margin-right: 10px;
 }
 .select-bg {
-  width: 119px;
-  height: 28px;
+  width:119px;
+  height:27px;
   font-family: "Source Sans Pro", sans-serif;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: normal;
   font-stretch: normal;
   font-style: normal;
-  line-height: 1.75;
-  letter-spacing: 0.32px;
   text-align: left;
   color: #0a2052;
   border-radius: 6px;
-  border: solid 0.5px #0a2052;
+  border: solid 1px #0a2052;
   background-color: rgba(123, 148, 204, 0.16);
 }
 .refresh-btn {
@@ -3465,7 +3463,13 @@ ul.plan-def li span + span {
 .billingInfo .biForm .form-group .input-box{width: calc(100% - 160px); display: inline-block; min-width: auto;}
 
 
-.mainBodyWithBg{background: url('../images/login-bg.jpg') no-repeat;}
+.mainBodyWithBg{background: url('../images/login-bg.jpg') no-repeat; padding-bottom: 40px; background-size: contain;}
+.mainBackgroundBg{background: url('../images/login-bg.jpg') no-repeat; min-height: 100vh; padding-top:15px; padding-bottom: 20px;}
+.mainBackgroundBg .workspace-sec{margin-top:0px; margin-bottom:0px;}
+
+.mainBackgroundBg .dashboardTabButtons{padding-left:30px; margin-top:40px; padding-left:40px;
+margin-top:45px; display:block !important;}
+.mainBackgroundBg .dashboardTabButtons .btn{font-size:14px; height:38px; width:120px;}
 
 .dpFromInline label{ font-family: "Lato"; font-size: 16px; font-weight: bold;  text-align: right;
   color: #0a2052;  z-index: 2;}
@@ -3476,10 +3480,37 @@ ul.plan-def li span + span {
 .dpFromInline input::placeholder { color: #0a2052 !important; }
 
 
+#notificationCollapse .card{background:transparent !important; border:none; padding:0px 0px 15px 0px;}
+#notificationCollapse .card p{color:#fff;}
 .notificationSection{position: relative;}
 .notificationSection a{cursor: pointer;}
-.notificationSection #notificationCollapse{position:absolute; top:34px; right:0px; width:320px;  box-shadow: 10px 10px 10px rgba(123, 148, 204, 0.16);}
-.notificationSection #notificationCollapse .card.card-body{max-height:300px; overflow-y:auto;}
+.notificationSection #notificationCollapse{position:absolute; top:34px; right:0px; width:420px;  box-shadow: 10px 10px 10px rgba(123, 148, 204, 0.16);}
+.notificationSection #notificationCollapse .card.card-body{max-height:400px; overflow-y:auto;}
+
+.mainNavbar .nnLeft > li a img{max-width:16px; margin-right:6px;}
+
+.table-footer-sec .pagination{margin-right:15px;}
+.table-footer-sec .pagination .page-link{border:none !important; margin:0px 4px !important; width:32px; height:32px; border-radius:4px; padding:0.5rem .05rem !important; font-size:14px;}
+
+.export-type select{border-radius: 100px; padding:6px 10px; height:36px;}
+
+.progressToggle{position:fixed; bottom:0px; left:30px;}
+.progressToggle .btn.btn-primary{background:#0a2052; border-color:#0a2052;}
+.progressToggle .collapse,.progressToggle .collapse.show{position:absolute !important; bottom:50px !important; width:440px;}
+.progressToggle .progress{height: 10px !important;}
+
+.progressSection{position: relative; margin:22px 0px; padding:0px 10px;}
+.progressSection .progress{width:330px;}
+.crossIcon{position:absolute; top:-3px; right:0px;}
+.progressMessage{font-size:13px; color:#fff; display: flex; align-items: center;}
+.progressSection .progress-bar{background-color:#7b94cc;}
+.collapseCloseIcon{position:absolute; right:16px; top:16px;}
+
+.progressMessage img{max-width:24px; border:solid 1px rgba(255,255,255,0.2); margin-right:6px; margin-top:4px;}
+
+.fromtoInput{position: relative;}
+.fromtoInput input{background:url(../images/calendarIcon.png) no-repeat right center; cursor: pointer;}
+.fromtoInput svg{position:absolute; right:8px; z-index:999; top:6px;}
 
 /* {margin-left: -28px;
 border: none;
