@@ -36,50 +36,50 @@ export class HeaderComponent implements OnInit {
       this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
     }
     this.getDownStreamPortals();
-    this.notificationService.notifications.subscribe((value) => {
-      console.log(value);
-      if (value) {
-        if (this.notifications.length === 0 && this.uploadNotifications.length === 0) {
-          document.getElementById("openModalButton").click();
-        }
-        this.notifications = [];
-          this.notifications.push(value);
-        if (value.percentFinish == 100) {
-          this.stopNotificationDownload = false;
-          this.toaster.show('success', 'Download', 'Your download is completed please refresh the table to see updated products');
-          setTimeout((item) => {
-            this.notifications = [];
-            if(this.uploadNotifications.length === 0){
-              document.getElementById("openModalButton").click();
-            }
-          }, 3000);
-        }
-      }
-    });
+    // this.notificationService.notifications.subscribe((value) => {
+    //   console.log(value);
+    //   if (value) {
+    //     if (this.notifications.length === 0 && this.uploadNotifications.length === 0) {
+    //       document.getElementById("openModalButton").click();
+    //     }
+    //     this.notifications = [];
+    //       this.notifications.push(value);
+    //     if (value.percentFinish == 100) {
+    //       this.stopNotificationDownload = false;
+    //       this.toaster.show('success', 'Download', 'Your download is completed please refresh the table to see updated products');
+    //       setTimeout((item) => {
+    //         this.notifications = [];
+    //         if(this.uploadNotifications.length === 0){
+    //           document.getElementById("openModalButton").click();
+    //         }
+    //       }, 3000);
+    //     }
+    //   }
+    // });
 
-    this.notificationService.upLoadnotifications.subscribe((value) => {
-
-      if (value) {
-        if (this.notifications.length === 0 && this.uploadNotifications.length === 0) {
-          document.getElementById("openModalButton").click();
-        }
-        this.uploadNotifications = [];
-          this.uploadNotifications.push(value);
-
-
-
-        if (value.percentFinish == 100) {
-          this.stopNotificationUpload = false;
-          this.toaster.show('success', 'Upload', 'Your upload is completed please refresh the table to see updated products');
-          setTimeout((item) => {
-            if(this.notifications.length === 0){
-              document.getElementById("openModalButton").click();
-            }
-            this.uploadNotifications = [];
-          }, 3000);
-        }
-      }
-    });
+    // this.notificationService.upLoadnotifications.subscribe((value) => {
+    //
+    //   if (value) {
+    //     if (this.notifications.length === 0 && this.uploadNotifications.length === 0) {
+    //       document.getElementById("openModalButton").click();
+    //     }
+    //     this.uploadNotifications = [];
+    //       this.uploadNotifications.push(value);
+    //
+    //
+    //
+    //     if (value.percentFinish == 100) {
+    //       this.stopNotificationUpload = false;
+    //       this.toaster.show('success', 'Upload', 'Your upload is completed please refresh the table to see updated products');
+    //       setTimeout((item) => {
+    //         if(this.notifications.length === 0){
+    //           document.getElementById("openModalButton").click();
+    //         }
+    //         this.uploadNotifications = [];
+    //       }, 3000);
+    //     }
+    //   }
+    // });
   }
 
   stopNotifications() {
