@@ -124,7 +124,7 @@ export class DashboardComponent implements OnInit {
         this.productDetails = res1;
         this.originalList = res1;
         this.totalProducts = res1.length;
-        if(sessionStorage.getItem('currentPage') && sessionStorage.getItem('currentPage') !== ''){
+        if (sessionStorage.getItem('currentPage') && sessionStorage.getItem('currentPage') !== '') {
           this.setPage(Number(sessionStorage.getItem('currentPage')));
           sessionStorage.removeItem('currentPage');
         } else {
@@ -135,14 +135,15 @@ export class DashboardComponent implements OnInit {
         this.uniqueStatuses = [...new Set(result)];
 
       } else {
-          this.getProducts();
+        this.getProducts();
       }
     }, error => {
       console.log('Error while getting the downstream portals');
       console.log(error);
     });
   }
-  getProductIndx(prodId){
+
+  getProductIndx(prodId) {
     let index = 0;
 
     this.productDetails.forEach((item, i) => {
@@ -150,8 +151,9 @@ export class DashboardComponent implements OnInit {
         index = i;
       }
     });
-    return index+1;
+    return index + 1;
   }
+
   details(id) {
     let index = 0;
     const selectedItems = this.productDetails.filter(function (item, index) {
@@ -165,7 +167,7 @@ export class DashboardComponent implements OnInit {
     console.log(selectedItems);
     this.downStreamPortal = sessionStorage.setItem('downStream', this.downStreamPortal);
     this.upStreamPortal = sessionStorage.setItem('upStream', this.upStreamPortal);
-    sessionStorage.setItem('currentPage',this.pager.currentPage );
+    sessionStorage.setItem('currentPage', this.pager.currentPage);
 
     this.router.navigate(['/details', index]);
   }
@@ -181,7 +183,7 @@ export class DashboardComponent implements OnInit {
         let res1 = [];
         res.forEach((item) => {
           item.markup = item.markup + ' %';
-          item.unitPriceWithShippingFee = '$ '+item.unitPriceWithShippingFee ;
+          item.unitPriceWithShippingFee = '$ ' + item.unitPriceWithShippingFee;
           if (item.collections) {
             const checkCollection = this.collections.filter((collection) => collection === item.collections);
             if (checkCollection.length === 0) {
@@ -219,7 +221,7 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  refreshToken(path?:string) {
+  refreshToken(path?: string) {
     var user = JSON.parse(sessionStorage.getItem(STORAGEKEY.auth));
     let formData = new URLSearchParams();
     formData.set('grant_type', 'refresh_token');
@@ -239,11 +241,14 @@ export class DashboardComponent implements OnInit {
 
         //this.router.navigateByUrl('/portals');
         // window.location.reload();
-        if(path){
-          if(path ==='download'){
+        if (path) {
+          if (path === 'download') {
             this.loadFromSource();
-          } else if (path ==='upload'){
+          } else if (path === 'upload') {
             this.uploadProducts();
+          } else if (path === 'save') {
+            this.saveData(JSON.parse(sessionStorage.getItem('productItem')));
+            sessionStorage.removeItem('productItem');
           }
         } else {
           this.getUpStreamPortals();
@@ -265,9 +270,9 @@ export class DashboardComponent implements OnInit {
     if (isNaN(page)) {
       page = 1;
     }
-   // if(this.pager.currentPage != page){
-      const matTable= document.getElementById('productsTable');
-      matTable.scrollIntoView(true);
+    // if(this.pager.currentPage != page){
+    const matTable = document.getElementById('productsTable');
+    matTable.scrollIntoView(true);
     //}
 
     this.pager = this.paginationService.getPager(this.productDetails.length, page);
@@ -452,13 +457,13 @@ export class DashboardComponent implements OnInit {
           // });
           this.getProducts();
           if (item.productType === 'other') {
-            if(!this.productTypes){
+            if (!this.productTypes) {
               this.productTypes = [];
             }
             this.productTypes.push(item.productTypeOther);
           }
           if (item.collections === 'other') {
-            if(!this.collections){
+            if (!this.collections) {
               this.collections = [];
             }
             this.collections.push(item.collectionOther);
@@ -469,10 +474,14 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
         sessionStorage.setItem('products', JSON.stringify(this.productDetails));
         console.log(res);
-        this.toaster.show('success', '', 'Product details updated successfully!');
+        this.toaster.show('success', 'Saving', 'Product details updated successfully!');
       }, error => {
+        if (error.status === 403) {
+          sessionStorage.setItem('productItem', JSON.stringify(item));
+          this.refreshToken('save')
+        }
         this.loading = false;
-        this.toaster.show('error', '', 'Something went wrong try again !!');
+        this.toaster.show('error', 'Saving', 'Something went wrong try again !!');
       });
   }
 
@@ -559,7 +568,7 @@ export class DashboardComponent implements OnInit {
           this.isUploadStarted = false;
           this.selectedProducts = [];
           this.uploadLoadEvent.removeEventListener("progress");
-          if(e.source && e.source.xhr && e.source.xhr.status && e.source.xhr.status === 403){
+          if (e.source && e.source.xhr && e.source.xhr.status && e.source.xhr.status === 403) {
             this.refreshToken('upload');
           }
         } else {
@@ -567,7 +576,7 @@ export class DashboardComponent implements OnInit {
           this.isUploadStarted = false;
           this.selectedProducts = [];
           this.uploadLoadEvent.removeEventListener("progress");
-          if(e.source && e.source.xhr && e.source.xhr.status && e.source.xhr.status === 403){
+          if (e.source && e.source.xhr && e.source.xhr.status && e.source.xhr.status === 403) {
             this.refreshToken('upload');
           }
         }
@@ -679,14 +688,14 @@ export class DashboardComponent implements OnInit {
         console.log("close");
         this.isDownloadedStarted = false;
         this.downLoadEvent.removeEventListener("progress");
-        if(e.source && e.source.xhr && e.source.xhr.status && e.source.xhr.status === 403){
+        if (e.source && e.source.xhr && e.source.xhr.status && e.source.xhr.status === 403) {
           this.refreshToken('download');
         }
       } else {
         this.isDownloadedStarted = false;
         this.downLoadEvent.removeEventListener("progress");
         console.log(e);
-        if(e.source && e.source.xhr && e.source.xhr.status && e.source.xhr.status === 403){
+        if (e.source && e.source.xhr && e.source.xhr.status && e.source.xhr.status === 403) {
           this.refreshToken('download');
         }
       }
@@ -863,9 +872,10 @@ export class DashboardComponent implements OnInit {
       }
     }
   }
-  getPortalName(portalId){
-    if(this.downStreamPortals){
-      return this.downStreamPortals.filter((obj)=>obj.portalID == portalId)[0].portalName;
+
+  getPortalName(portalId) {
+    if (this.downStreamPortals) {
+      return this.downStreamPortals.filter((obj) => obj.portalID == portalId)[0].portalName;
     }
     return 'Downstream';
   }
