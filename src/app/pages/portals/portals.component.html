@@ -14,7 +14,7 @@
             style="width:100px;height:30px;"
           />
           <label class="chkbox">
-            <span class="d-block Fashion-Go">{{upPortal?.portalName}}</span>
+<!--            <span class="d-block Fashion-Go">{{upPortal?.portalName}}</span>-->
             <input type="checkbox" (click)="onClick($event,upPortal)"/>
             <span class="checkmark home"></span>
           </label>
@@ -79,9 +79,11 @@
           <div class="col-md-6">
             <div
               class="home-login-sec d-flex align-items-center justify-content-center"
-              *ngFor="let selectedUp of selectedUpStreamPortals">
+              *ngFor="let selectedUp of selectedUpStreamPortals;let i=index">
+
               <div
                 class="d-flex align-items-center justify-content-center">
+
                 <div class="px-3">
                   <img
                     [src]="selectedUp?.portalLogoURL"
@@ -91,6 +93,8 @@
                 </div>
                 <div >
                   <form method="post" class="login-form-sec px-3">
+                    <div style="color: red;margin-left: -125px;" class="d-flex align-items-center justify-content-center" *ngIf="selectedUp?.errorMessage">{{selectedUp?.errorMessage}}</div>
+                    <div style="color: green;margin-left: -125px;" class="d-flex align-items-center justify-content-center" *ngIf="selectedUp?.succesMessage">{{selectedUp?.succesMessage}}</div>
                     <div class="form-group">
                             <span class="form-icon"
                             ><img
@@ -122,7 +126,7 @@
                       />
                     </div>
                     <div class="form-group">
-                      <button class="btn verify-btn" *ngIf="!selectedUp?.isVerified" (click)="verifyPortal(selectedUp)">Verify</button>
+                      <button class="btn verify-btn" *ngIf="!selectedUp?.isVerified" [disabled]="!selectedUp.username || !selectedUp.password" (click)="verifyPortal(selectedUp,i)">Verify</button>
                       <button class="btn verify-btn" *ngIf="selectedUp?.isVerified" >Verified</button>
                     </div>
                   </form>
@@ -134,7 +138,7 @@
           <div class="col-md-6">
             <div
               class="home-login-sec d-flex align-items-center justify-content-center"
-              *ngFor="let selectedDown of selectedDownStreamPortals"
+              *ngFor="let selectedDown of selectedDownStreamPortals;let i=index"
             >
               <div
                 class="d-flex align-items-center justify-content-center"
@@ -148,7 +152,9 @@
                 </div>
                 <div>
                   <form method="post" class="login-form-sec px-3">
-                    <div class="form-group">
+                    <div style="color: red;margin-left: -125px;" class="d-flex align-items-center justify-content-center" *ngIf="selectedDown?.errorMessage">{{selectedDown?.errorMessage}}</div>
+                    <div style="color: green;margin-left: -125px;" class="d-flex align-items-center justify-content-center" *ngIf="selectedDown?.succesMessage">{{selectedDown?.succesMessage}}</div>
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
                             <span class="form-icon"
                             ><img
                               src="assets/images/ic_vpn_key_24px@3x.png"
@@ -164,7 +170,7 @@
                       />
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
                             <span class="form-icon"
                             ><img
                               src="assets/images/ic_lock_24px@3x.png"
@@ -181,7 +187,7 @@
                       />
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
                             <span class="form-icon"
                             ><img
                               src="assets/images/ic_store_24px@3x.png"
@@ -196,8 +202,8 @@
                         [(ngModel)]="selectedDown.storeName"
                       />
                     </div>
-                    <div class="form-group">
-                      <button class="btn verify-btn" *ngIf="!selectedDown?.isVerified" (click)="verifyDownStreamPortal(selectedDown)" >Verify</button>
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                      <button class="btn verify-btn"  [disabled]="!selectedDown.apikey || !selectedDown.password || !selectedDown.storeName"  *ngIf="!selectedDown?.isVerified" (click)="verifyDownStreamPortal(selectedDown,i)" >Verify</button>
                       <button class="btn verify-btn" *ngIf="selectedDown?.isVerified" >Verified</button>
                     </div>
                   </form>

@@ -78,7 +78,11 @@ export class DashboardComponent implements OnInit {
     //   this.isUploadStarted = false;
     // });
     this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
-    this.getUpStreamPortals();
+    if (!this.userDetails.isCustomerSubscriptionActive) {
+      this.router.navigateByUrl('/subscription');
+    } else {
+      this.getUpStreamPortals();
+    }
   }
 
   getGlobalConfigurations() {
@@ -120,19 +124,34 @@ export class DashboardComponent implements OnInit {
         this.productDetails = res1;
         this.originalList = res1;
         this.totalProducts = res1.length;
-        this.setPage(1);
+        if(sessionStorage.getItem('currentPage') && sessionStorage.getItem('currentPage') !== ''){
+          this.setPage(Number(sessionStorage.getItem('currentPage')));
+          sessionStorage.removeItem('currentPage');
+        } else {
+          this.setPage(1);
+        }
+
         let result = this.productDetails.map(a => a.downstreamStatus);
         this.uniqueStatuses = [...new Set(result)];
 
       } else {
-        this.getProducts();
+          this.getProducts();
       }
     }, error => {
       console.log('Error while getting the downstream portals');
       console.log(error);
     });
   }
+  getProductIndx(prodId){
+    let index = 0;
 
+    this.productDetails.forEach((item, i) => {
+      if (item.productID === prodId) {
+        index = i;
+      }
+    });
+    return index+1;
+  }
   details(id) {
     let index = 0;
     const selectedItems = this.productDetails.filter(function (item, index) {
@@ -146,6 +165,8 @@ export class DashboardComponent implements OnInit {
     console.log(selectedItems);
     this.downStreamPortal = sessionStorage.setItem('downStream', this.downStreamPortal);
     this.upStreamPortal = sessionStorage.setItem('upStream', this.upStreamPortal);
+    sessionStorage.setItem('currentPage',this.pager.currentPage );
+
     this.router.navigate(['/details', index]);
   }
 
@@ -160,6 +181,7 @@ export class DashboardComponent implements OnInit {
         let res1 = [];
         res.forEach((item) => {
           item.markup = item.markup + ' %';
+          item.unitPriceWithShippingFee = '$ '+item.unitPriceWithShippingFee ;
           if (item.collections) {
             const checkCollection = this.collections.filter((collection) => collection === item.collections);
             if (checkCollection.length === 0) {
@@ -183,11 +205,14 @@ export class DashboardComponent implements OnInit {
         this.totalProducts = res1.length;
         let result = this.productDetails.map(a => a.downstreamStatus);
         this.uniqueStatuses = [...new Set(result)];
+        this.pager.totalPages = undefined;
         this.setPage(1);
 
-      }, error => { if (error.status === 403) {
-        this.refreshToken()
-      }
+
+      }, error => {
+        if (error.status === 403) {
+          this.refreshToken()
+        }
 
         this.loading = false;
         console.log('Err: while getting products');
@@ -200,8 +225,8 @@ export class DashboardComponent implements OnInit {
     formData.set('grant_type', 'refresh_token');
     formData.set('client_id', environment.amplify.Auth.userPoolWebClientId);
     formData.set('refresh_token', user['refreshToken']);
-   let headers =  new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-    headers.set('Authorization','Bearer ' + user['access_token'])
+    let headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+    headers.set('Authorization', 'Bearer ' + user['access_token'])
     let options = {
       headers: headers
     };
@@ -213,7 +238,7 @@ export class DashboardComponent implements OnInit {
         //this.auth.getLoginUser();
 
         //this.router.navigateByUrl('/portals');
-       // window.location.reload();
+        // window.location.reload();
         this.getUpStreamPortals();
 
       },
@@ -223,12 +248,18 @@ export class DashboardComponent implements OnInit {
   }
 
   setPage(page: number) {
+    this.pager.totalPages = this.productDetails.length;
+
     if (page < 1 || page > this.pager.totalPages) {
       return;
     }
     if (isNaN(page)) {
       page = 1;
     }
+   // if(this.pager.currentPage != page){
+      const matTable= document.getElementById('productsTable');
+      matTable.scrollIntoView(true);
+    //}
 
     this.pager = this.paginationService.getPager(this.productDetails.length, page);
 
@@ -397,23 +428,30 @@ export class DashboardComponent implements OnInit {
     this.productService.updateProduct(item.productID, request, this.downStreamPortal, this.upStreamPortal)
       .subscribe(res => {
         if (res && res.length > 0) {
-          res.forEach((item) => {
-            let selectedIndex;
-            this.productDetails.forEach((prod, index) => {
-              if (prod.productID === item.productID) {
-                selectedIndex = index;
-              }
-            });
-            if (selectedIndex) {
-              this.productDetails[selectedIndex] = item;
-            } else {
-              this.productDetails.push(item);
-            }
-          });
+          // res.forEach((item) => {
+          //   let selectedIndex;
+          //   this.productDetails.forEach((prod, index) => {
+          //     if (prod.productID === item.productID) {
+          //       selectedIndex = index;
+          //     }
+          //   });
+          //   if (selectedIndex) {
+          //     this.productDetails[selectedIndex] = item;
+          //   } else {
+          //     this.productDetails.push(item);
+          //   }
+          // });
+          this.getProducts();
           if (item.productType === 'other') {
+            if(!this.productTypes){
+              this.productTypes = [];
+            }
             this.productTypes.push(item.productTypeOther);
           }
           if (item.collections === 'other') {
+            if(!this.collections){
+              this.collections = [];
+            }
             this.collections.push(item.collectionOther);
           }
           item.productType = item.productTypeOther;
@@ -499,6 +537,8 @@ export class DashboardComponent implements OnInit {
       this.uploadLoadEvent.addEventListener("COMPLETE", function (evt) {
         console.log(evt);
         this.uploadLoadEvent.close();
+        this.uploadLoadEvent.removeEventListener("progress");
+        this.selectedProducts = [];
       });
       this.uploadLoadEvent.stream();
 
@@ -507,8 +547,14 @@ export class DashboardComponent implements OnInit {
       this.uploadLoadEvent.onerror = (e) => {
         if (e.readyState == EventSource.CLOSED) {
           console.log("close");
+          this.isUploadStarted = false;
+          this.selectedProducts = [];
+          this.uploadLoadEvent.removeEventListener("progress");
         } else {
           console.log(e);
+          this.isUploadStarted = false;
+          this.selectedProducts = [];
+          this.uploadLoadEvent.removeEventListener("progress");
         }
         //  this.initListener();
       };
@@ -606,6 +652,8 @@ export class DashboardComponent implements OnInit {
     this.downLoadEvent.addEventListener("COMPLETE", function (evt) {
       console.log(evt);
       this.downLoadEvent.close();
+      this.downLoadEvent.removeEventListener("progress");
+
     });
     this.downLoadEvent.stream();
 
@@ -614,7 +662,11 @@ export class DashboardComponent implements OnInit {
     this.downLoadEvent.onerror = (e) => {
       if (e.readyState == EventSource.CLOSED) {
         console.log("close");
+        this.isDownloadedStarted = false;
+        this.downLoadEvent.removeEventListener("progress");
       } else {
+        this.isDownloadedStarted = false;
+        this.downLoadEvent.removeEventListener("progress");
         console.log(e);
       }
       //  this.initListener();
@@ -638,6 +690,7 @@ export class DashboardComponent implements OnInit {
       this.uploadLoadEvent.close();
       this.uploadLoadEvent.removeEventListener("progress");
       this.isUploadStarted = false;
+      this.selectedProducts = [];
       this.toaster.show('success', 'Upload', 'Your upload is completed please refresh the table to see updated products');
       setTimeout((item) => {
         this.uploadNotifications = [];
@@ -694,6 +747,7 @@ export class DashboardComponent implements OnInit {
   getSalePrice(price, markup) {
     if (price && markup) {
       markup = markup.replace('%', '').trim();
+      price = price.replace('$', '').trim();
       return (price * (1 + (markup / 100))).toFixed(2);
     }
     return '';
@@ -787,5 +841,11 @@ export class DashboardComponent implements OnInit {
         document.getElementById("openModalButtonDownload").click();
       }
     }
+  }
+  getPortalName(portalId){
+    if(this.downStreamPortals){
+      return this.downStreamPortals.filter((obj)=>obj.portalID == portalId)[0].portalName;
+    }
+    return 'Downstream';
   }
 }

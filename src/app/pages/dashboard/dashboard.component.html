@@ -92,7 +92,7 @@
         </section>
 
         <div class="tableFixHead d-block">
-          <table>
+          <table id = "productsTable">
             <thead>
             <tr>
               <th>S.No</th>
@@ -104,7 +104,7 @@
 
               <th>Collection</th>
               <th>Tags</th>
-              <th>SKU</th>
+              <th>{{getPortalName(downStreamPortal)}} SKU</th>
               <th>Unit Price
                 <small>(Inc. shipping)</small></th>
               <th>Markup</th>
@@ -113,13 +113,13 @@
               <th>Order
                 Number
               </th>
-              <th>Status</th>
+              <th>{{getPortalName(downStreamPortal)}} Status</th>
               <th>Action</th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let item of pagedItems;let i =index;">
-              <td align="center" class="snoTd">{{i + 1}}</td>
+              <td align="center" class="snoTd">{{getProductIndx(item?.productID)}}</td>
               <td align="center">
                 <input type="checkbox" (click)="selectProduct($event,item)">
               </td>
@@ -140,7 +140,7 @@
               </td>
               <td class="ptTd">
                 <select class="form-control tableInput" [(ngModel)]="item.productType">
-                  <option>Select Type</option>
+                  <option>Select</option>
                   <option *ngFor="let ptype of productTypes" [selected]="ptype === item?.productType">{{ptype}}</option>
                   <option value="other">Other</option>
                 </select>
@@ -150,7 +150,7 @@
               </td>
               <td class="ptTd">
                 <select class="form-control tableInput" [(ngModel)]="item.collections">
-                  <option>Select Collection</option>
+                  <option>Select</option>
                   <option *ngFor="let collection of collections"
                           [selected]="collection === item?.collections">{{collection}}</option>
                   <option value="other">Other</option>
@@ -178,7 +178,10 @@
                        class="form-control" [(ngModel)]="item.skuDownstream">
                 <span *ngIf="checkStatus(item?.downstreamStatus)">{{item.skuDownstream}}</span>
               </td>
-              <td class="unitPrice"><p>$ {{item?.unitPriceWithShippingFee}} </p></td>
+              <td class="unitPrice">
+                <input  type="text"
+                       class="form-control" [(ngModel)]="item.unitPriceWithShippingFee">
+               </td>
               <td><input type="text" class="form-control markupInput" [(ngModel)]="item.markup"></td>
               <td align="center"><p>$ {{getSalePrice(item?.unitPriceWithShippingFee, item?.markup)}} </p></td>
               <td><p>{{item?.orderNumber}}</p></td>
@@ -225,15 +228,15 @@
 
     <div class="progressToggle">
       <div class="collapse" id="collapseExample"
-           style="background-color:#0a2052; border-radius:10px; width:400px; padding:45px 15px 0px;">
-        <a data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
-           aria-controls="collapseExample">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#fff" class="bi bi-x-circle-fill"
-               viewBox="0 0 16 16" class="collapseCloseIcon">
-            <path
-              d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
-          </svg>
-        </a>
+           style="background-color:#0a2052; border-radius:10px; width:400px; padding:20px 15px 0px;">
+<!--        <a data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"-->
+<!--           aria-controls="collapseExample">-->
+<!--          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#fff" class="bi bi-x-circle-fill"-->
+<!--               viewBox="0 0 16 16" class="collapseCloseIcon">-->
+<!--            <path-->
+<!--              d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>-->
+<!--          </svg>-->
+<!--        </a>-->
         <div *ngIf="checkNotifications()" >
           <div class="progressSection" *ngFor="let notification of notifications">
             <div class="progress" *ngIf="notification?.messageType==='PROGRESS'">
@@ -271,8 +274,10 @@
               <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
             </svg>
             <div class="progressMessage">
+              <img [src]="getPortalUrl(upnotify?.upstreamPortalId,'up')"   alt="search"/>
+              <img style="background-color: #fff;" src="assets/images/right-arrow1.png" width="20px" />
               <img  [src]="getPortalUrl(upnotify?.downstreamPortalId,'down')"  alt="search"/>
-              <img [src]="getPortalUrl(upnotify?.upstreamPortalId,'up')"  src="assets/images/google@3x.jpg" alt="search"/>
+
               {{upnotify?.message}}
             </div>
           </div>

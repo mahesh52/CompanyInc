@@ -65,10 +65,11 @@ export class DetailsComponent implements OnInit {
   }
 
   getSalePrice() {
-    const price = this.selectedProduct.unitPriceWithShippingFee;
+    let price = this.selectedProduct.unitPriceWithShippingFee;
     let markup = this.selectedProduct.markup;
     if (price && markup) {
       markup = markup.replace('%', '').trim();
+      price = price.replace('$', '').trim();
       this.selectedProduct.salePrice =  (price * (1 + (markup / 100))).toFixed(2);
       console.log( this.selectedProduct.salePrice );
     }

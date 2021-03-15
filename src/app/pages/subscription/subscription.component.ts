@@ -7,40 +7,55 @@ import {UtilsService} from "../../services/utils.service";
 import * as moment from "moment";
 import {Constants} from "../../common/Constants";
 import {ToasterService} from "../../common/toaster.service";
+import {error} from "util";
+import {expiryDatevalidator, onlyNumericValidator} from "../register/username.validators";
 
 @Component({
   selector: 'app-subscription',
   templateUrl: './subscription.component.html',
-  styleUrls: ['./subscription.component.sass']
+  styleUrls: ['./subscription.component.scss']
 })
 export class SubscriptionComponent implements OnInit {
+  get paymentInprocess(): boolean {
+    return this._paymentInprocess;
+  }
+
+  set paymentInprocess(value: boolean) {
+    this._paymentInprocess = value;
+  }
+
   paymentForm: FormGroup;
   subscriptions: any;
   selectedSubscription: any;
   selectedValue: any;
   userDetails: any;
   loading = false;
+  private _paymentInprocess = false;
   contryList = Constants.countryList;
   isPaymentCompleted = false;
-  constructor(private toaster: ToasterService,private utilService: UtilsService, private user: UsersService, private http: HttpClient, private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
+
+  constructor(private toaster: ToasterService, private utilService: UtilsService, private user: UsersService, private http: HttpClient, private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
     this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
     console.log(this.userDetails);
     this.paymentForm = fb.group({
       'cname': [this.userDetails.customerName, Validators.required],
-      'address': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.BillingAddress?this.userDetails.customerBillingAddress.BillingAddress:'', Validators.required],
-      'line2': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.line2?this.userDetails.customerBillingAddress.line2:''],
-      'country': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.Country?this.userDetails.customerBillingAddress.Country:'', Validators.required],
-      'city': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.City?this.userDetails.customerBillingAddress.City:'', Validators.required],
-      'zipcode': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.ZipCode?this.userDetails.customerBillingAddress.ZipCode:'', Validators.required],
+      'address': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.line1 ? this.userDetails.customerBillingAddress.line1 : '', Validators.required],
+      'line2': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.line2 ? this.userDetails.customerBillingAddress.line2 : ''],
+      'country': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.Country ? this.userDetails.customerBillingAddress.Country : '', Validators.required],
+      'city': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.City ? this.userDetails.customerBillingAddress.City : '', Validators.required],
+      'zipcode': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.ZipCode ? this.userDetails.customerBillingAddress.ZipCode : '', [Validators.required, Validators.minLength(5), Validators.maxLength(6), onlyNumericValidator]],
       'cardName': ['', Validators.required],
-      'card': ['', Validators.required],
-      'validity': ['', Validators.required],
-      'cvv': ['', Validators.required],
+      'card': ['', [Validators.required, Validators.minLength(16), Validators.maxLength(16), onlyNumericValidator]],
+      'validity': ['', [Validators.required, expiryDatevalidator]],
+      'cvv': ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3), onlyNumericValidator]],
     })
   }
 
   ngOnInit() {
     this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
+    if (this.userDetails.isCustomerSubscriptionActive) {
+      this.router.navigateByUrl('/dashboard');
+    }
     this.getSubscriptions();
   }
 
@@ -56,7 +71,10 @@ export class SubscriptionComponent implements OnInit {
   }
 
   proceedToPayment() {
-    this.loading = true;
+    setTimeout(() => {
+      this._paymentInprocess = false;
+    }, 4000);
+    this._paymentInprocess = true;
     const expiry = this.paymentForm.value.validity.split('/');
     (<any>window).Stripe.card.createToken({
       number: this.paymentForm.value.card,
@@ -69,13 +87,15 @@ export class SubscriptionComponent implements OnInit {
         let token = response.id;
         this.chargeCard(token);
       } else {
+        //  alert('Payment is failed please try again !!');
+        this.toaster.show('error', '', 'Payment failed please try again!!');
         console.log(response.error.message);
       }
     });
   }
 
   chargeCard(token: string) {
-    this.loading = true;
+
     let payload = {
       "customerID": this.userDetails.customerID,
       "customerName": this.paymentForm.value.cname,
@@ -83,42 +103,54 @@ export class SubscriptionComponent implements OnInit {
       "customerSubscriptionStartDate": moment().format("YYYY-MM-DD HH:mm:ss").replace(' ', 'T'),
       "customerSubscriptionEndDate": null,
       "customerBillingAddress": {
-        "BillingAddress": this.paymentForm.value.address,
+        "line1": this.paymentForm.value.address,
         "ZipCode": this.paymentForm.value.zipcode,
         "Country": this.paymentForm.value.country,
         "CustomerName": this.paymentForm.value.cname,
         "City": this.paymentForm.value.city,
+        "line2": this.paymentForm.value.line2,
       }
     };
-   this.utilService.updateCustomer(payload).subscribe(response => {
+    this.utilService.updateCustomer(payload).subscribe(response => {
       let amount = this.selectedSubscription.subscriptionCost;
       console.log(token);
       this.utilService.chargeCustomer(token, payload, amount).subscribe(res => {
         console.log(res);
         console.log(res);
-        if(res){
-          this.loading = false;
-          this.router.navigate(['payment'])
-            .then(() => {
-              window.location.reload();
-            });
+        if (res) {
+          this.user.getUserDetails().subscribe((result) => {
+            sessionStorage.setItem('userDetails', JSON.stringify(result));
+            this.user.emitUserInfo(true);
+            this._paymentInprocess = false;
+            this.router.navigate(['payment'])
+              .then(() => {
+                window.location.reload();
+              });
+          }, error => {
+            this._paymentInprocess = false;
+            this.router.navigate(['payment'])
+              .then(() => {
+                window.location.reload();
+              });
+          });
+
         } else {
-          this.loading = false;
+          this._paymentInprocess = false;
+          //  alert('Payment is failed please try again !!');
           this.toaster.show('error', '', 'Payment is failed please try again !!');
         }
 
       }, error => {
-        this.loading = false;
-        // todo handle error and remove below line
-        this.router.navigate(['payment'])
-          .then(() => {
-            window.location.reload();
-          });
+        this._paymentInprocess = false;
+        alert('Payment is failed please try again !!');
+        this.toaster.show('error', 'Payment', 'Payment failed please try again!!');
         console.log('Error while charging customer');
       })
     }, error => {
-      this.loading = false;
-     console.log('error while doing payment')
+      this._paymentInprocess = false;
+      //  alert('Payment is failed please try again !!');
+      this.toaster.show('error', '', 'Payment failed please try again!!');
+      console.log('error while doing payment')
     });
 
 

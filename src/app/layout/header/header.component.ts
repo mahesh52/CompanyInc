@@ -4,6 +4,7 @@ import {filter} from "rxjs/operators";
 import {NotificationsService} from "../../services/notifications.service";
 import {UtilsService} from "../../services/utils.service";
 import {ToasterService} from "../../common/toaster.service";
+import {UsersService} from "../../services/users.service";
 
 @Component({
   selector: 'app-header',
@@ -21,7 +22,7 @@ export class HeaderComponent implements OnInit {
   stopNotificationDownload = false;
   stopNotificationUpload = false;
 
-  constructor(private toaster: ToasterService, private utilService: UtilsService, private router: Router, private notificationService: NotificationsService) {
+  constructor(private user: UsersService, private toaster: ToasterService, private utilService: UtilsService, private router: Router, private notificationService: NotificationsService) {
     router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
@@ -35,6 +36,9 @@ export class HeaderComponent implements OnInit {
       && sessionStorage.getItem('userDetails') !== '') {
       this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
     }
+    this.user.userInfo.subscribe((value) => {
+      this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
+    });
     this.getDownStreamPortals();
     // this.notificationService.notifications.subscribe((value) => {
     //   console.log(value);
@@ -86,7 +90,7 @@ export class HeaderComponent implements OnInit {
     this.stopNotificationDownload = true;
     this.notifications = [];
     this.notificationService.emitStopNotificationChanges(true);
-    if(this.uploadNotifications.length === 0){
+    if (this.uploadNotifications.length === 0) {
       document.getElementById("openModalButton").click();
     }
   }
@@ -95,7 +99,7 @@ export class HeaderComponent implements OnInit {
     this.stopNotificationUpload = true;
     this.uploadNotifications = [];
     this.notificationService.emitStopUploadNotificationChanges(true);
-    if(this.notifications.length === 0){
+    if (this.notifications.length === 0) {
       document.getElementById("openModalButton").click();
     }
   }

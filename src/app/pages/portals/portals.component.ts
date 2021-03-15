@@ -27,8 +27,25 @@ export class PortalsComponent implements OnInit {
       this.router.navigateByUrl('/dashboard');
     } else {
       this.utilService.getUserUpStreamPortals().subscribe(res => {
-        if(res.length > 0){
-          this.router.navigateByUrl('/subscription');
+        if (res.length > 0) {
+          this.utilService.getUserDownStreamPortals().subscribe(res => {
+            if (res.length > 0) {
+              this.router.navigateByUrl('/subscription');
+            } else {
+              this.selectedUpStreamPortals = [];
+              this.selectedDownStreamPortals = [];
+              this.getUpStreamPortals();
+              this.getDownStreamPortals();
+            }
+          }, error => {
+            this.selectedUpStreamPortals = [];
+            this.selectedDownStreamPortals = [];
+            this.getUpStreamPortals();
+            this.getDownStreamPortals();
+            console.log('Error while getting the upstream portals');
+            //console.log(error);
+          });
+
         } else {
           this.selectedUpStreamPortals = [];
           this.selectedDownStreamPortals = [];
@@ -44,7 +61,7 @@ export class PortalsComponent implements OnInit {
         console.log('Error while getting the upstream portals');
         //console.log(error);
       });
-
+      console.log('Error while getting the upstream portals');
     }
 
   }
@@ -100,7 +117,7 @@ export class PortalsComponent implements OnInit {
     console.log(this.selectedDownStreamPortals);
   }
 
-  verifyPortal(upPortal) {
+  verifyPortal(upPortal, index) {
     console.log(upPortal);
     const payload = {
       "customerID": this.userDetails.customerID,
@@ -118,20 +135,32 @@ export class PortalsComponent implements OnInit {
     this.utilService.postVerifyUpStreamPortal(payload).subscribe(res => {
       this.loading = false;
       upPortal.isVerified = true;
+      this.selectedUpStreamPortals[index].succesMessage = 'Congrats, Your upstream portal verified';
+      setTimeout(() => {
+        this.selectedUpStreamPortals[index].succesMessage = null;
+      }, 8000)
       console.log(res);
     }, error => {
-      // todo once service is working
       this.loading = false;
       //  upPortal.isVerified = true;
       if (error && error.status === 200) {
         upPortal.isVerified = true;
+        this.selectedUpStreamPortals[index].succesMessage = 'Congrats, Your upstream portal verified';
+        setTimeout(() => {
+          this.selectedUpStreamPortals[index].succesMessage = null;
+        }, 8000)
+      } else {
+        this.selectedUpStreamPortals[index].errorMessage = 'Failed to verify upstream portal please review your credentials';
+        setTimeout(() => {
+          this.selectedUpStreamPortals[index].errorMessage = null;
+        }, 12000)
       }
       console.log('Error while verifying the upstream portals');
       console.log(error);
     });
   }
 
-  verifyDownStreamPortal(downPortal) {
+  verifyDownStreamPortal(downPortal,index) {
     const payload = {
       "customerID": this.userDetails.customerID,
       "portalType": "Downstream",
@@ -149,13 +178,24 @@ export class PortalsComponent implements OnInit {
       this.loading = false;
       downPortal.isVerified = true;
       console.log(res);
+      this.selectedDownStreamPortals[index].succesMessage = 'Congrats, Your downstream portal is verified';
+      setTimeout(() => {
+        this.selectedDownStreamPortals[index].succesMessage = null;
+      }, 8000)
     }, error => {
       this.loading = false;
       if (error && error.status === 200) {
         downPortal.isVerified = true;
+        this.selectedDownStreamPortals[index].succesMessage = 'Congrats, Your downstream portal is verified';
+        setTimeout(() => {
+          this.selectedDownStreamPortals[index].succesMessage = null;
+        }, 8000)
+      }else {
+        this.selectedDownStreamPortals[index].errorMessage = 'Failed to verify downstream portal please review your credentials';
+        setTimeout(() => {
+          this.selectedDownStreamPortals[index].errorMessage = null;
+        }, 12000)
       }
-      //todo needs to remove after services working
-      //downPortal.isVerified = true;
       console.log('Error while verifying the downPortal portals');
       console.log(error);
     });

@@ -6,11 +6,12 @@ import * as moment from "moment";
 import {UtilsService} from "../../services/utils.service";
 import {ToasterService} from "../../common/toaster.service";
 import {UsersService} from "../../services/users.service";
+import {onlyNumericValidator} from "../register/username.validators";
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.sass']
+  styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
   userDetails: any;
@@ -26,14 +27,14 @@ export class ProfileComponent implements OnInit {
     console.log(this.userDetails)
     this.registerForm = fb.group({
       'name': [this.userDetails.customerName, Validators.required],
-      'username': [this.userDetails.customerID, Validators.required],
+      'username': [this.userDetails.customerUsername, Validators.required],
       'email': [this.userDetails.customerEmailAddress, [Validators.required, Validators.email]],
-      'mobile': [this.userDetails.customerMobileNumber, [Validators.required, Validators.minLength(10), Validators.maxLength(12)]],
-      'address': [this.userDetails.customerBillingAddress.BillingAddress, Validators.required],
+      'mobile': [this.userDetails.customerMobileNumber, [Validators.required, Validators.minLength(10), Validators.maxLength(12), onlyNumericValidator]],
+      'address': [this.userDetails.customerBillingAddress.line1, Validators.required],
       'line2': [this.userDetails.customerBillingAddress.line2],
       'country': [this.userDetails.customerBillingAddress.Country, Validators.required],
       'city': [this.userDetails.customerBillingAddress.City, Validators.required],
-      'zipcode': [this.userDetails.customerBillingAddress.ZipCode, Validators.required],
+      'zipcode': [this.userDetails.customerBillingAddress && this.userDetails.customerBillingAddress.ZipCode ? this.userDetails.customerBillingAddress.ZipCode : '', [Validators.required, Validators.minLength(5), Validators.maxLength(6), onlyNumericValidator]],
     })
   }
 
@@ -67,7 +68,7 @@ export class ProfileComponent implements OnInit {
       "customerID": this.registerForm.value.username,
       "customerName": this.registerForm.value.name,
       "customerBillingAddress": {
-        "BillingAddress": this.registerForm.value.address,
+        "line1": this.registerForm.value.address,
         "ZipCode": this.registerForm.value.zipcode,
         "Country": this.registerForm.value.country,
         "City": this.registerForm.value.city,
@@ -84,7 +85,9 @@ export class ProfileComponent implements OnInit {
       this.user.getUserDetails().subscribe(
         result => {
           this.loading = false;
+
           sessionStorage.setItem('userDetails', JSON.stringify(result));
+          this.user.emitUserInfo(true);
         },
         error => {
           this.loading = false;

@@ -203,8 +203,9 @@
             <div class="row">
               <div class="col-md-2">
 
-                <input style="font-size: 13px;" class="form-control" disabled
-                       [value]="'$'+selectedProduct?.unitPriceWithShippingFee">
+                <input style="font-size: 13px;" class="form-control"
+                       [(ngModel)]="selectedProduct.unitPriceWithShippingFee"
+                       (ngModelChange)="getSalePrice()" >
               </div>
               <div class="col-md-8">
                 <div class="row">

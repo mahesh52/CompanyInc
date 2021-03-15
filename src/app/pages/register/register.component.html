@@ -93,9 +93,13 @@
             name="Username"
             formControlName="username"
             placeholder="Username"
+            maxlength="15"
           />
           <div class="error-text" *ngIf="registerForm.get('username').touched && registerForm.get('username').hasError('required')">
             Username can't be blank
+          </div>
+          <div class="error-text" *ngIf="registerForm.get('username').touched && registerForm.get('username').hasError('alphaNumericError')">
+            Username must be alphanumeric with max 15 characters
           </div>
         </div>
         <div class="form-group">
@@ -112,6 +116,9 @@
           <div class="error-text" *ngIf="registerForm.get('email').touched && registerForm.get('email').hasError('required')">
             E-mail can't be blank
           </div>
+          <div class="error-text" *ngIf="registerForm.get('email').touched && registerForm.get('email').hasError('email')">
+           please enter valid email
+          </div>
         </div>
         <div class="form-group">
               <span class="form-icon"
@@ -119,13 +126,21 @@
               /></span>
           <input
             class="form-control"
-            type="input"
+            type="text"
             name="mobile"
             formControlName="mobile"
+            minlength="10"
+            maxlength="12"
             placeholder="Mobile"
           />
           <div class="error-text" *ngIf="registerForm.get('mobile').touched && registerForm.get('mobile').hasError('required')">
             Mobile number can't be blank
+          </div>
+          <div class="error-text" *ngIf="registerForm.get('mobile').touched && registerForm.get('mobile').hasError('NumericError')">
+           Enter valid mobile number
+          </div>
+          <div class="error-text" *ngIf="registerForm.get('mobile').touched && registerForm.get('mobile').hasError('minlength')">
+            Mobile number must be minimum of 10 numbers and max of 12 numbers
           </div>
         </div>
 
@@ -154,17 +169,16 @@
             {{registerForm.get('password').errors['passwordStrength']}}
           </div>
         </div>
-
         <div class="form-group">
           <div class="form-check">
             <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" />I agree with terms and conditions</label
+              <input class="form-check-input" type="checkbox" formControlName="termsnConditions" />I agree with terms and conditions</label
             >
           </div>
         </div>
         <div class="row">
           <div class="col-md-12 text-center">
-            <button class="btn form-btn btn-block mx-auto" [disabled]="!registerForm.valid" type="submit">
+            <button class="btn form-btn btn-block mx-auto" [disabled]="!registerForm.get('termsnConditions').value || !registerForm.valid" type="submit">
               Sign Up
             </button>
             <a routerLink="/login" class="termsofUse-txt"
@@ -205,7 +219,7 @@
         class="form-group d-flex text-center justify-content-center mt-3 mb-0"
       >
         <p class="hyper_link_txt">Didn’t receive a link?</p>
-        <a  class="hyper_link" (click)="resendLink()">Resend it</a>
+        <a style="cursor:pointer;"  class="hyper_link" (click)="resendLink()">Resend</a>
       </div>
     </div>
   </div>

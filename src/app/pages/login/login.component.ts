@@ -27,6 +27,10 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
 
   ngOnInit() {
+    const userDetails = sessionStorage.getItem('userDetails');
+    if (userDetails && userDetails != null) {
+      this.router.navigateByUrl('/portals');
+    }
   }
 
   signUp() {
@@ -62,6 +66,7 @@ export class LoginComponent implements OnInit {
     this.user.getUserDetails().subscribe(
       result => {
         sessionStorage.setItem('userDetails', JSON.stringify(result));
+        this.user.emitUserInfo(true);
         this.router.navigateByUrl('/portals')
       },
       error => {

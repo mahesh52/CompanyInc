@@ -7,6 +7,7 @@ import {environment} from "../../../environments/environment";
 import {HttpHeaders, HttpClient} from "@angular/common/http";
 import {UsersService} from "../../services/users.service";
 import {STORAGEKEY} from "../../common/STORAGEKEY";
+import {alphaNumericValidator, onlyNumericValidator} from "./username.validators";
 
 @Component({
   selector: 'app-register',
@@ -22,11 +23,14 @@ export class RegisterComponent implements OnInit {
   constructor(private user: UsersService, private http: HttpClient, private route: ActivatedRoute, private router: Router, private fb: FormBuilder, private auth: AuthService) {
     this.registerForm = fb.group({
       'name': ['', Validators.required],
-      'username': ['', Validators.required],
+      'username': ['', [Validators.required, Validators.minLength(2), Validators.maxLength(15), alphaNumericValidator]],
       'email': ['', [Validators.required, Validators.email]],
-      'mobile': ['', [Validators.required, Validators.minLength(10), Validators.maxLength(12)]],
+      'mobile': ['', [Validators.required, Validators.minLength(10), Validators.maxLength(12), onlyNumericValidator]],
       'password': ['',
         [Validators.required, PasswordStrengthValidator]
+      ],
+      'termsnConditions': ['',
+        [Validators.required]
       ]
     })
   }
@@ -35,6 +39,10 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit() {
     const code: string = this.route.snapshot.queryParamMap.get('code');
+    const userDetails = sessionStorage.getItem('userDetails');
+    if (userDetails && userDetails != null) {
+      this.router.navigateByUrl('/portals');
+    }
     //  console.log(code);
     if (code && code !== '') {
       let formData = new URLSearchParams();
@@ -86,6 +94,7 @@ export class RegisterComponent implements OnInit {
               result => {
                 sessionStorage.setItem('userDetails', JSON.stringify(result));
                 console.log(result);
+                this.user.emitUserInfo(true);
                 this.router.navigateByUrl('/portals');
               },
               error => {
@@ -164,6 +173,7 @@ export class RegisterComponent implements OnInit {
             this.user.getUserDetails().subscribe(
               result => {
                 sessionStorage.setItem('userDetails', JSON.stringify(result));
+                this.user.emitUserInfo(true);
                 console.log(result);
                 this.router.navigateByUrl('/portals');
               },

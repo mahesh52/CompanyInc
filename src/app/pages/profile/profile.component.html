@@ -15,6 +15,9 @@
               <div class="form-group">
                 <label for="cname">*Customer Name</label>
                 <input  type="text" id="cname" name="cname" formControlName="name" class="form-control input-box" />
+                <div class="error-text" *ngIf="registerForm.get('name').touched && registerForm.get('name').hasError('required')">
+                  Name can't be blank
+                </div>
               </div>
               <div class="form-group">
                 <label for="uname">User Name</label>
@@ -23,6 +26,7 @@
                   id="uname"
                   placeholder="user_name"
                   name="uname"
+                  disabled
                   formControlName="username"
                   class="form-control input-box"
                 />
@@ -54,6 +58,15 @@
                   formControlName="mobile"
                   class="form-control input-box"
                 />
+                <div class="error-text" *ngIf="registerForm.get('mobile').touched && registerForm.get('mobile').hasError('required')">
+                  Mobile number can't be blank
+                </div>
+                <div class="error-text" *ngIf="registerForm.get('mobile').touched && registerForm.get('mobile').hasError('NumericError')">
+                  Enter valid mobile number
+                </div>
+                <div class="error-text" *ngIf="registerForm.get('mobile').touched && registerForm.get('mobile').hasError('minlength')">
+                  Mobile number must be minimum of 10 numbers and max of 12 numbers
+                </div>
               </div>
               <div class="form-group">
                 <label for="mail">E-mail</label>
@@ -65,6 +78,12 @@
                   formControlName="email"
                   class="form-control input-box"
                 />
+                <div class="error-text" *ngIf="registerForm.get('email').touched && registerForm.get('email').hasError('required')">
+                  E-mail can't be blank
+                </div>
+                <div class="error-text" *ngIf="registerForm.get('email').touched && registerForm.get('email').hasError('email')">
+                  please enter valid email
+                </div>
               </div>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -78,6 +97,9 @@
                   formControlName="address"
                   class="form-control input-box w320"
                 />
+                <div   class="error-text" *ngIf="registerForm.get('address').touched && registerForm.get('address').hasError('required')">
+                  Line 1 can't be blank
+                </div>
               </div>
               <div class="form-group">
                 <label for="address">Line 2</label>
@@ -105,14 +127,32 @@
                         <option *ngFor="let country of contryList" [value]="country.value">{{country.label}}</option>
 
                       </select>
+                      <div   class="error-text" *ngIf="registerForm.get('country').touched && registerForm.get('country').hasError('required')">
+                        Country can't be blank
+                      </div>
                     </div>
                     <div class="form-group pull-left">
                       <label for="city" class="col2">*City</label>
                       <input  type="text" id="city"  name="city" formControlName="city" class="form-control input-box" />
+                      <div   class="error-text" *ngIf="registerForm.get('city').touched && registerForm.get('city').hasError('required')">
+                        City can't be blank
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="code">*Zip Code</label>
                       <input type="text" id="code" name="code" formControlName="zipcode" class="form-control input-box" />
+                      <div style="margin-top: -7px !important;" class="error-text" *ngIf="registerForm.get('zipcode').touched && registerForm.get('zipcode').hasError('required')">
+                        Zip Code can't be blank
+                      </div>
+                      <div style="margin-top: -7px !important;" class="error-text" *ngIf="registerForm.get('zipcode').touched && registerForm.get('zipcode').hasError('minlength')">
+                        Zip Code must be 5 to 6 digits
+                      </div>
+                      <div style="margin-top: -7px !important;" class="error-text" *ngIf="registerForm.get('zipcode').touched && registerForm.get('zipcode').hasError('maxlength')">
+                        Zip Code must be 5 to 6 digits
+                      </div>
+                      <div style="margin-top: -7px !important;" class="error-text" *ngIf="registerForm.get('zipcode').touched && registerForm.get('zipcode').hasError('NumericError')">
+                        Only numbers allowed
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -149,7 +189,7 @@
           <div class="part1">
             <label class="plan-name-txt" >{{selectedSubscription[0]?.subscriptionName}} Plan</label>
 
-            <ul class="list-unstyled plan-def">
+            <ul class="list plan-def">
               <li *ngFor="let feature of selectedSubscription[0]?.featureList">
                 <label>
             <span style="width: 100% !important;font-size: 15px !important;" class="lable-txt">

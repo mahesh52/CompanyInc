@@ -20,7 +20,7 @@ export class ToasterContainerComponent implements OnInit {
   ngOnInit() {
     this.toaster.toast$
       .subscribe(toast => {
-        this.toasts = [toast, ...this.toasts];
+        this.toasts = [toast];
        setTimeout(() => this.toasts.pop(), toast.delay || 6000);
       });
   }
