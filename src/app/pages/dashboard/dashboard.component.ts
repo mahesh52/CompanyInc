@@ -219,7 +219,7 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  refreshToken() {
+  refreshToken(path?:string) {
     var user = JSON.parse(sessionStorage.getItem(STORAGEKEY.auth));
     let formData = new URLSearchParams();
     formData.set('grant_type', 'refresh_token');
@@ -239,7 +239,16 @@ export class DashboardComponent implements OnInit {
 
         //this.router.navigateByUrl('/portals');
         // window.location.reload();
-        this.getUpStreamPortals();
+        if(path){
+          if(path ==='download'){
+            this.loadFromSource();
+          } else if (path ==='upload'){
+            this.uploadProducts();
+          }
+        } else {
+          this.getUpStreamPortals();
+        }
+
 
       },
       error => {
@@ -550,11 +559,17 @@ export class DashboardComponent implements OnInit {
           this.isUploadStarted = false;
           this.selectedProducts = [];
           this.uploadLoadEvent.removeEventListener("progress");
+          if(e.source && e.source.xhr && e.source.xhr.status && e.source.xhr.status === 403){
+            this.refreshToken('upload');
+          }
         } else {
           console.log(e);
           this.isUploadStarted = false;
           this.selectedProducts = [];
           this.uploadLoadEvent.removeEventListener("progress");
+          if(e.source && e.source.xhr && e.source.xhr.status && e.source.xhr.status === 403){
+            this.refreshToken('upload');
+          }
         }
         //  this.initListener();
       };
@@ -664,10 +679,16 @@ export class DashboardComponent implements OnInit {
         console.log("close");
         this.isDownloadedStarted = false;
         this.downLoadEvent.removeEventListener("progress");
+        if(e.source && e.source.xhr && e.source.xhr.status && e.source.xhr.status === 403){
+          this.refreshToken('download');
+        }
       } else {
         this.isDownloadedStarted = false;
         this.downLoadEvent.removeEventListener("progress");
         console.log(e);
+        if(e.source && e.source.xhr && e.source.xhr.status && e.source.xhr.status === 403){
+          this.refreshToken('download');
+        }
       }
       //  this.initListener();
     };
