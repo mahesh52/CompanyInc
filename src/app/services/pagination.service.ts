@@ -11,7 +11,7 @@ export class PaginationService {
   getPager(
     totalItems: number,
     currentPage: number = 1,
-    pageSize: number = 10
+    pageSize: number = 15
   ) {
     // calculate total pages
     const totalPages = Math.ceil(totalItems / pageSize);
