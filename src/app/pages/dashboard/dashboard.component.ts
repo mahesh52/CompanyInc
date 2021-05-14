@@ -57,6 +57,10 @@ export class DashboardComponent implements OnInit {
   uploadNotifications = [];
   stopNotificationDownload = false;
   stopNotificationUpload = false;
+  dropdownList = [];
+  selectedDropItems = [];
+  selectedCols = [];
+  dropdownSettings = {};
 
   constructor(private user: UsersService, private notificationService: NotificationsService, private toaster: ToasterService, private utilService: UtilsService, private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
@@ -83,6 +87,28 @@ export class DashboardComponent implements OnInit {
     } else {
       this.getUpStreamPortals();
     }
+    this.dropdownList = [
+      {item_id: 'Product Details', item_text: 'Product Details'},
+      {item_id: 'Product Type', item_text: 'Product Type'},
+      {item_id: 'Collection', item_text: 'Collection'},
+      {item_id: 'Tags', item_text: 'Tags'},
+      {item_id: 'SKU', item_text: 'SKU'},
+      {item_id: 'Unit Price', item_text: 'Unit Price'},
+      {item_id: 'Markup', item_text: 'Markup'},
+      {item_id: 'Sale Price', item_text: 'Sale Price'},
+      {item_id: 'Order Number', item_text: 'Order Number'}
+    ];
+
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'item_id',
+      textField: 'item_text',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 3,
+      allowSearchFilter: false,
+      enableCheckAll:false
+    };
   }
 
   getGlobalConfigurations() {
@@ -878,5 +904,16 @@ export class DashboardComponent implements OnInit {
       return this.downStreamPortals.filter((obj) => obj.portalID == portalId)[0].portalName;
     }
     return 'Downstream';
+  }
+
+  onItemSelect(item: any) {
+    this.selectedDropItems.push(item.item_id);
+  }
+
+  onItemDeselect(item: any) {
+    const index = this.selectedDropItems.indexOf(item.item_id);
+    if (index !== -1) {
+      this.selectedDropItems.splice(index, 1);
+    }
   }
 }

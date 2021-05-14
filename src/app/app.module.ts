@@ -72,7 +72,7 @@ import { ToasterService} from "./common/toaster.service";
     ToastrModule.forRoot(),
     ToastContainerModule,
     NgMultiSelectDropDownModule,
-    NgbModule,
+    NgbModule
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

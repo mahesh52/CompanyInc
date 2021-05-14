@@ -58,24 +58,35 @@
 
           <!-- The slideshow -->
           <div class="carousel-inner">
-            <ngb-carousel #carousel [interval]="false" [keyboard]="false" [wrap]="false" [showNavigationArrows]="true"
-                          [pauseOnHover]="pauseOnHover" (slide)="onSlide($event)">
-             <div *ngFor="let image of getImages(selectedProduct?.photos)">
-               <ng-template ngbSlide >
-                 <img [src]="selectedProduct?.photos[image]" alt="Los Angeles">
-               </ng-template>
+<!--            <ngb-carousel #carousel [interval]="false" [keyboard]="false" [wrap]="false" [showNavigationArrows]="false"-->
+<!--                          [activeId]="activeSliderId"  [pauseOnHover]="pauseOnHover" (slide)="onSlide($event)">-->
+<!--            *ngFor="let image of getImages(selectedProduct?.photos)"-->
+             <div >
+<!--               <ng-template  >-->
+
+                 <img  [src]="selectedProduct?.photos[primaryImageSrc]" alt="Los Angeles">
+<!--               </ng-template>-->
              </div>
 
-            </ngb-carousel>
+<!--            </ngb-carousel>-->
+            <button (click)="previousImages()">Prev</button>
+            <ul class="carousel-thumbnail">
 
+              <li class="carousel-thumbnail__item list-inline-item" *ngFor="let photo of copyData;let i = index" (click)="cycleToSlide(photo)">
+                <a class="selected">
+                  <img width="30px" class="carousel-thumbnail__img" [src]="selectedProduct?.photos[photo]">
+                </a>
+              </li>
 
+            </ul>
+            <button (click)="nextImages()">Next</button>
           </div>
 
           <!-- Left and right controls -->
-          <a class="carousel-control-prev" href="#demo" data-slide="prev">
+          <a *ngIf="selectedImageIndex > 0" class="carousel-control-prev" href="#demo" data-slide="prev" (click)="prevImage()">
             <span class="carousel-control-prev-icon"></span>
           </a>
-          <a class="carousel-control-next" href="#demo" data-slide="next">
+          <a *ngIf="selectedImageIndex < selectedProduct?.formattedImages?.length-1" class="carousel-control-next" href="#demo" data-slide="next" (click)="nextImage()">
             <span class="carousel-control-next-icon"></span>
           </a>
 

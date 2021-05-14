@@ -23,16 +23,21 @@ export class DetailsComponent implements OnInit {
   collections = [];
   selectedItems = [];
   colors = [];
+  copyData: any;
   variants = [];
   productDetails = [];
   selectedId: string;
   salePrice = '';
   downStreamPortal: any;
   upStreamPortal: any;
-  selectedColor:any;
+  selectedColor: any;
+  page: number = 0;
+  primaryImageSrc = '';
   @ViewChild('carousel', {static: true}) carousel: NgbCarousel;
+  activeSliderId = "ngb-slide-0";
+  selectedImageIndex = 0;
 
-  constructor(private toaster: ToasterService,private utilService: UtilsService,private route: ActivatedRoute, private router: Router, private utils: UtilsService, private productService: ProductService) {
+  constructor(private toaster: ToasterService, private utilService: UtilsService, private route: ActivatedRoute, private router: Router, private utils: UtilsService, private productService: ProductService) {
   }
 
   ngOnInit() {
@@ -47,9 +52,12 @@ export class DetailsComponent implements OnInit {
     this.selectedColor = this.selectedProduct.variantColors[0];
     this.getGlobalConfigurations();
     this.selectedItems = this.selectedProduct.tags;
-
+    this.primaryImageSrc = Object.keys(this.selectedProduct.photos)[0];
+    this.selectedProduct.formattedImages = this.getImages(this.selectedProduct.photos);
+    this.copyData = this.selectedProduct.formattedImages.slice(0, 5);
     this.getSalePrice();
   }
+
   getGlobalConfigurations() {
     this.utilService.getGlobalConfigurations(this.downStreamPortal).subscribe(res => {
       if (res && res.length > 0) {
@@ -70,21 +78,64 @@ export class DetailsComponent implements OnInit {
     if (price && markup) {
       markup = markup.replace('%', '').trim();
       price = price.replace('$', '').trim();
-      this.selectedProduct.salePrice =  (price * (1 + (markup / 100))).toFixed(2);
-      console.log( this.selectedProduct.salePrice );
+      this.selectedProduct.salePrice = (price * (1 + (markup / 100))).toFixed(2);
+      console.log(this.selectedProduct.salePrice);
     }
   }
 
   getTags(tags) {
-    if(tags){
+    if (tags) {
       return tags.split(',').filter(item => item);
     }
 
   }
 
+  prevImage() {
+
+      this.selectedImageIndex = this.selectedImageIndex-1;
+      this.primaryImageSrc = this.selectedProduct.formattedImages[this.selectedImageIndex];
+
+
+  }
+
+  nextImage() {
+    this.selectedImageIndex = this.selectedImageIndex+1;
+    this.primaryImageSrc = this.selectedProduct.formattedImages[this.selectedImageIndex];
+  }
+  previousImages() {
+    this.page = this.page - 1;
+    if (this.page >= 0 && (this.page - 1) * 5 <= this.selectedProduct.formattedImages.length) {
+      this.copyData = this.selectedProduct.formattedImages.slice((this.page) * 5, (this.page + 1) * 5);
+    } else {
+      this.page = this.page + 1;
+    }
+  }
+  nextImages() {
+    this.page = this.page + 1;
+    if ((this.page) * 5 < this.selectedProduct.formattedImages.length) {
+      this.copyData = this.selectedProduct.formattedImages.slice((this.page) * 5, (this.page + 1) * 5);
+    } else {
+      this.page = this.page - 1;
+    }
+  }
+  cycleToSlide(photo) {
+    // console.log(photo.id - 1);
+    // let slideId = photo.id - 1;
+    let indexSelected;
+    this.selectedProduct.formattedImages.forEach((img,index)=>{
+      if(img=== photo){
+        indexSelected = index;
+      }
+    });
+    this.selectedImageIndex = indexSelected;
+    this.primaryImageSrc = this.selectedProduct.formattedImages[this.selectedImageIndex];
+
+    // this.activeSliderId = "ngb-slide-" + photo;
+  }
+
   hasValue(value) {
     let hasFound = false;
-    if(this.selectedItems){
+    if (this.selectedItems) {
       this.selectedItems.forEach((item) => {
         if (item === value) {
           hasFound = true;
@@ -97,6 +148,7 @@ export class DetailsComponent implements OnInit {
 
     return false;
   }
+
   addToTags(customtag) {
     if (customtag.value && customtag.value !== '') {
       const tagChecking = this.tags.filter((tag) => tag.toLowerCase() === customtag.value.toLowerCase())
@@ -107,6 +159,7 @@ export class DetailsComponent implements OnInit {
     }
 
   }
+
   onSlide(slideEvent: NgbSlideEvent) {
     if (this.unpauseOnArrow && slideEvent.paused &&
       (slideEvent.source === NgbSlideEventSource.ARROW_LEFT || slideEvent.source === NgbSlideEventSource.ARROW_RIGHT)) {
@@ -125,9 +178,11 @@ export class DetailsComponent implements OnInit {
     }
     return 'N/A';
   }
-  getImages(images){
+
+  getImages(images) {
     return Object.keys(images);
   }
+
   togglePaused() {
     if (this.paused) {
       this.carousel.cycle();
@@ -139,7 +194,7 @@ export class DetailsComponent implements OnInit {
 
   addToList(checked, value) {
     if (checked) {
-      if(!this.selectedItems){
+      if (!this.selectedItems) {
         this.selectedItems = [];
       }
       this.selectedItems.push(value);
@@ -178,12 +233,12 @@ export class DetailsComponent implements OnInit {
     }
 
     this.loading = true;
-    this.productService.updateProduct(this.selectedProduct.id, request,this.downStreamPortal,this.upStreamPortal)
+    this.productService.updateProduct(this.selectedProduct.id, request, this.downStreamPortal, this.upStreamPortal)
       .subscribe(res => {
-        if(this.selectedProduct.productType=== 'other'){
+        if (this.selectedProduct.productType === 'other') {
           this.productTypes.push(this.selectedProduct.productTypeOther);
         }
-        if(this.selectedProduct.collections=== 'other'){
+        if (this.selectedProduct.collections === 'other') {
           this.collections.push(this.selectedProduct.collectionOther);
         }
         this.selectedProduct.productType = this.selectedProduct.productTypeOther;
@@ -196,7 +251,7 @@ export class DetailsComponent implements OnInit {
                 selectedIndex = index;
               }
             });
-            if(selectedIndex){
+            if (selectedIndex) {
               this.productDetails[selectedIndex] = item;
             } else {
               this.productDetails.push(item);
@@ -224,8 +279,9 @@ export class DetailsComponent implements OnInit {
     this.productDetails[this.selectedId] = this.selectedProduct;
     sessionStorage.setItem('products', JSON.stringify(this.productDetails));
   }
-  checkStatus(status){
-    if(status.toUpperCase().indexOf('CREATED')>=0){
+
+  checkStatus(status) {
+    if (status.toUpperCase().indexOf('CREATED') >= 0) {
       return true;
     }
     return false;

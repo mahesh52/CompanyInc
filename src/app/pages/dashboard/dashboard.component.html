@@ -88,6 +88,15 @@
                 </div>
               </div>
             </div>
+            <ng-multiselect-dropdown
+              [placeholder]="'Select Preferences'"
+              [settings]="dropdownSettings"
+              [data]="dropdownList"
+              [(ngModel)]="selectedCols"
+              (onSelect)="onItemSelect($event)"
+              (onDeSelect)="onItemDeselect($event)"
+            >
+            </ng-multiselect-dropdown>
           </div>
         </section>
 
@@ -98,20 +107,19 @@
               <th>S.No</th>
               <th>Select</th>
               <th>Style</th>
-              <th>Product Details</th>
+              <th *ngIf="selectedDropItems.indexOf('Product Details')>=0">Product Details</th>
 
-              <th>Product Type</th>
+              <th *ngIf="selectedDropItems.indexOf('Product Type')>=0">Product Type</th>
 
-              <th>Collection</th>
-              <th>Tags</th>
-              <th>{{getPortalName(downStreamPortal)}} SKU</th>
-              <th>Unit Price
+              <th *ngIf="selectedDropItems.indexOf('Collection')>=0">Collection</th>
+              <th *ngIf="selectedDropItems.indexOf('Tags')>=0">Tags</th>
+              <th *ngIf="selectedDropItems.indexOf('SKU')>=0">{{getPortalName(downStreamPortal)}} SKU</th>
+              <th *ngIf="selectedDropItems.indexOf('Unit Price')>=0">Unit Price
                 <small>(Inc. shipping)</small></th>
-              <th>Markup</th>
+              <th *ngIf="selectedDropItems.indexOf('Markup')>=0">Markup</th>
 
-              <th>Sale Price</th>
-              <th>Order
-                Number
+              <th *ngIf="selectedDropItems.indexOf('Sale Price')>=0">Sale Price</th>
+              <th *ngIf="selectedDropItems.indexOf('Order Number')>=0">Order Number
               </th>
               <th>{{getPortalName(downStreamPortal)}} Status</th>
               <th>Action</th>
@@ -129,7 +137,7 @@
                        [src]="getImage(item?.photos)"/></div>
                 <h6 style="cursor:pointer;" (click)="details(item?.productID)" class="styleName">{{item?.title}}</h6>
               </td>
-              <td class="pdTd">
+              <td class="pdTd" *ngIf="selectedDropItems.indexOf('Product Details')>=0">
                <textarea style="width:100%;resize: none;font-size: 10px" rows=10 cols=40
                          [(ngModel)]="item.details">{{item?.details}}</textarea>
                 <span data-toggle="modal" data-target="#myModal1" style="cursor: pointer;
@@ -138,7 +146,7 @@
     right: 10px;
     font-weight: bold;" (click)="selectDetIndex(item.productID)">...</span>
               </td>
-              <td class="ptTd">
+              <td class="ptTd" *ngIf="selectedDropItems.indexOf('Product Type')>=0">
                 <select class="form-control tableInput" [(ngModel)]="item.productType">
                   <option>Select</option>
                   <option *ngFor="let ptype of productTypes" [selected]="ptype === item?.productType">{{ptype}}</option>
@@ -148,7 +156,7 @@
                 <input *ngIf="item.productType === 'other'" type="text" class="form-control"
                        [(ngModel)]="item.productTypeOther">
               </td>
-              <td class="ptTd">
+              <td class="ptTd" *ngIf="selectedDropItems.indexOf('Collection')>=0">
                 <select class="form-control tableInput" [(ngModel)]="item.collections">
                   <option>Select</option>
                   <option *ngFor="let collection of collections"
@@ -159,7 +167,7 @@
                 <input *ngIf="item.collections === 'other'" type="text" class="form-control"
                        [(ngModel)]="item.collectionOther">
               </td>
-              <td class="ptTags">
+              <td class="ptTags" *ngIf="selectedDropItems.indexOf('Tags')>=0">
                 <div class="ribbonTd" *ngFor="let tag of item?.tags;let j =index;">
               <span style="cursor:pointer;position: absolute;
     left: 5px;" class="closeIconSec" (click)="removeFromList(item.id,tag)">X</span>
@@ -173,18 +181,18 @@
 
                 </div>
               </td>
-              <td class="ptTd">
+              <td class="ptTd" *ngIf="selectedDropItems.indexOf('SKU')>=0">
                 <input *ngIf="!checkStatus(item?.downstreamStatus)" [title]="item.skuDownstream" type="text"
                        class="form-control" [(ngModel)]="item.skuDownstream">
                 <span *ngIf="checkStatus(item?.downstreamStatus)">{{item.skuDownstream}}</span>
               </td>
-              <td class="unitPrice">
+              <td class="unitPrice" *ngIf="selectedDropItems.indexOf('Unit Price')>=0">
                 <input  type="text"
                        class="form-control" [(ngModel)]="item.unitPriceWithShippingFee">
                </td>
-              <td><input type="text" class="form-control markupInput" [(ngModel)]="item.markup"></td>
-              <td align="center"><p>$ {{getSalePrice(item?.unitPriceWithShippingFee, item?.markup)}} </p></td>
-              <td><p>{{item?.orderNumber}}</p></td>
+              <td *ngIf="selectedDropItems.indexOf('Markup')>=0">><input type="text" class="form-control markupInput" [(ngModel)]="item.markup"></td>
+              <td align="center"*ngIf="selectedDropItems.indexOf('Sale Price')>=0"><p>$ {{getSalePrice(item?.unitPriceWithShippingFee, item?.markup)}} </p></td>
+              <td *ngIf="selectedDropItems.indexOf('Order Number')>=0"><p>{{item?.orderNumber}}</p></td>
               <td><p>{{item?.downstreamStatus || 'N/A'}}</p></td>
               <td>
                 <button (click)="saveData(item)" class="btn saveBtn">Save</button>

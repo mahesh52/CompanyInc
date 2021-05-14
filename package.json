@@ -29,7 +29,7 @@
     "jquery-ui": "^1.12.1",
     "moment": "^2.24.0",
     "ng-lazyload-image": "^7.0.1",
-    "ng-multiselect-dropdown": "^0.2.10",
+    "ng-multiselect-dropdown": "^0.2.14",
     "ng2-pdf-viewer": "^6.0.2",
     "ng2-slider-component": "^1.0.9",
     "ng2-tooltip-directive": "^2.8.17",
