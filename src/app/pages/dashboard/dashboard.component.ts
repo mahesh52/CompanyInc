@@ -916,4 +916,10 @@ export class DashboardComponent implements OnInit {
       this.selectedDropItems.splice(index, 1);
     }
   }
+  getOnly3tags(tags){
+   if(tags && tags.length > 3){
+     return tags.splice(0, tags.length-3);
+   }
+   return tags;
+  }
 }

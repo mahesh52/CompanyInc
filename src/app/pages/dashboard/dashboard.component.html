@@ -168,10 +168,13 @@
                        [(ngModel)]="item.collectionOther">
               </td>
               <td class="ptTags" *ngIf="selectedDropItems.indexOf('Tags')>=0">
-                <div class="ribbonTd" *ngFor="let tag of item?.tags;let j =index;">
-              <span style="cursor:pointer;position: absolute;
+                <div *ngFor="let tag of item?.tags;let j =index;">
+                  <div class="ribbonTd"  *ngIf="j<=2">
+                    <span style="cursor:pointer;position: absolute;
     left: 5px;" class="closeIconSec" (click)="removeFromList(item.id,tag)">X</span>
-                  <span>  {{tag}}</span>
+                    <span>  {{tag}}</span>
+                  </div>
+
                 </div>
                 <p *ngIf="getTagsLength(item?.tags) > 2">...</p>
                 <div class="ribbonTd1">
