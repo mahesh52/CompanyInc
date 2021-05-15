@@ -5,6 +5,8 @@ import {ProductService} from "../../services/product.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import * as moment from "moment";
 import {ToasterService} from "../../common/toaster.service";
+import * as _ from 'underscore';
+
 
 @Component({
   selector: 'app-details',
@@ -33,11 +35,20 @@ export class DetailsComponent implements OnInit {
   selectedColor: any;
   page: number = 0;
   primaryImageSrc = '';
+  minDate: any;
   @ViewChild('carousel', {static: true}) carousel: NgbCarousel;
   activeSliderId = "ngb-slide-0";
   selectedImageIndex = 0;
+  selectedProductDetails: any;
 
   constructor(private toaster: ToasterService, private utilService: UtilsService, private route: ActivatedRoute, private router: Router, private utils: UtilsService, private productService: ProductService) {
+    const current = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+
+    this.minDate = {
+      year: current.getFullYear(),
+      month: current.getMonth() + 1,
+      day: current.getDate()
+    };
   }
 
   ngOnInit() {
@@ -45,6 +56,7 @@ export class DetailsComponent implements OnInit {
     this.selectedId = this.route.snapshot.paramMap.get('id');
     this.productDetails = JSON.parse(sessionStorage.getItem('products'));
     this.selectedProduct = this.productDetails[this.selectedId];
+    //   this.selectedProductDetails = this.productDetails[this.selectedId];
     this.downStreamPortal = sessionStorage.getItem('downStream');
     this.upStreamPortal = sessionStorage.getItem('upStream');
     console.log(this.selectedId);
@@ -92,16 +104,17 @@ export class DetailsComponent implements OnInit {
 
   prevImage() {
 
-      this.selectedImageIndex = this.selectedImageIndex-1;
-      this.primaryImageSrc = this.selectedProduct.formattedImages[this.selectedImageIndex];
+    this.selectedImageIndex = this.selectedImageIndex - 1;
+    this.primaryImageSrc = this.selectedProduct.formattedImages[this.selectedImageIndex];
 
 
   }
 
   nextImage() {
-    this.selectedImageIndex = this.selectedImageIndex+1;
+    this.selectedImageIndex = this.selectedImageIndex + 1;
     this.primaryImageSrc = this.selectedProduct.formattedImages[this.selectedImageIndex];
   }
+
   previousImages() {
     this.page = this.page - 1;
     if (this.page >= 0 && (this.page - 1) * 5 <= this.selectedProduct.formattedImages.length) {
@@ -110,6 +123,7 @@ export class DetailsComponent implements OnInit {
       this.page = this.page + 1;
     }
   }
+
   nextImages() {
     this.page = this.page + 1;
     if ((this.page) * 5 < this.selectedProduct.formattedImages.length) {
@@ -118,12 +132,13 @@ export class DetailsComponent implements OnInit {
       this.page = this.page - 1;
     }
   }
+
   cycleToSlide(photo) {
     // console.log(photo.id - 1);
     // let slideId = photo.id - 1;
     let indexSelected;
-    this.selectedProduct.formattedImages.forEach((img,index)=>{
-      if(img=== photo){
+    this.selectedProduct.formattedImages.forEach((img, index) => {
+      if (img === photo) {
         indexSelected = index;
       }
     });
@@ -171,12 +186,11 @@ export class DetailsComponent implements OnInit {
   }
 
   getDate(date) {
-    if (date !== '') {
-      date = date.split('T');
-      let returndate = date[0].split('-');
-      return returndate[2] + '/' + returndate[1] + '/' + returndate[0];
+    if (date) {
+      return date['day'] + '/' + date['month'] + '/' + date['year'];
     }
     return 'N/A';
+    // return date;
   }
 
   getImages(images) {
@@ -213,8 +227,49 @@ export class DetailsComponent implements OnInit {
     sessionStorage.setItem('products', JSON.stringify(this.productDetails));
   }
 
+  shallowEqual(object1, object2) {
+
+    let request = {
+      "productID": this.selectedProduct.productID,
+      "details": this.selectedProduct.details,
+      "productType": this.selectedProduct.productType === 'other' ? this.selectedProduct.productTypeOther : this.selectedProduct.productType,
+      "collections": this.selectedProduct.collections === 'other' ? this.selectedProduct.collectionOther : this.selectedProduct.collections,
+      "tags": this.selectedProduct.tags,
+      "markup": this.selectedProduct.markup.replace('%', '').replace(),
+      "orderNumber": this.selectedProduct.orderNumber,
+      "skuUpstream": this.selectedProduct.skuUpstream,
+      "skuDownstream": this.selectedProduct.skuDownstream,
+      "upstreamPortalID": this.upStreamPortal,
+      "downstreamPortalId": this.downStreamPortal,
+    }
+    const keys1 = Object.keys(request);
+    for (let key of keys1) {
+      if (Array.isArray(object1[key])) {
+        if (object1[key].join(',') !== object2[key].join(',')) {
+          return false;
+        }
+      } else {
+        if (object1[key] !== object2[key]) {
+          return false;
+        }
+      }
+
+    }
+
+    return true;
+  }
+
   back() {
-    this.router.navigate(['dashboard']);
+    const prodDetails = JSON.parse(sessionStorage.getItem('products'));
+
+    if (!this.shallowEqual(prodDetails[this.selectedId], this.selectedProduct)) {
+      if (confirm("The changes made are saved and lost, do you want to continue? ")) {
+        this.router.navigate(['dashboard']);
+      }
+    } else {
+      this.router.navigate(['dashboard']);
+    }
+
   }
 
   saveData() {
@@ -230,6 +285,8 @@ export class DetailsComponent implements OnInit {
       "skuDownstream": this.selectedProduct.skuDownstream,
       "upstreamPortalID": this.upStreamPortal,
       "downstreamPortalId": this.downStreamPortal,
+      "unitPriceWithShippingFee": this.selectedProduct.unitPriceWithShippingFee.replace('$', '').trim(),
+      "publishingDate": this.selectedProduct.publishingDate['year'] + '-' + ('0'+this.selectedProduct.publishingDate['month']).slice(-2) + '-' + ('0'+this.selectedProduct.publishingDate['day']).slice(-2),
     }
 
     this.loading = true;

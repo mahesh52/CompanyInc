@@ -1,18 +1,12 @@
 
-.carousel-thumbnail {
-  list-style-type: none;
-  padding: 0;
-  margin: 1rem 0 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+.carousel-thumbnail {list-style-type:none; padding:0; margin:1rem 0 0; display:flex; justify-content:center;
+  align-items: center;}
 
-.carousel-thumbnail__item {
-  cursor: pointer;
-}
+.carousel-thumbnail__item { cursor: pointer; width:50px; background-color: #ccc; height:50px; }
 
-.carousel-thumbnail__img {
-  width: 80px;
-  height: 60px;
-}
+.carousel-thumbnail__img { display: block; margin: 0px auto; max-height:50px;}
+
+.carouselThumbnail{position: relative;}
+.prevBtnCarousel{position:absolute; left:0px; top:12px;  width:26px; height:26px;}
+.nextBtnCarousel{position:absolute; right:0px; top:12px; width:26px; height:26px;}
+

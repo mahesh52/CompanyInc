@@ -38,7 +38,11 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { ToasterContainerComponent} from "./common/toaster-container.component";
 import { ToasterComponent} from "./common/toaster.component";
 import { ToasterService} from "./common/toaster.service";
+import { PortalsUpdateComponent } from './pages/portals-update/portals-update.component';
 
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 @NgModule({
     declarations: [
         AppComponent,
@@ -57,7 +61,7 @@ import { ToasterService} from "./common/toaster.service";
         SubscriptionComponent,
         PaymentConfirmComponent,
         ProfileComponent,
-      ToasterContainerComponent, ToasterComponent
+      ToasterContainerComponent, ToasterComponent, PortalsUpdateComponent
     ],
   imports: [
     BrowserModule,

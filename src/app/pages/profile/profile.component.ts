@@ -7,6 +7,7 @@ import {UtilsService} from "../../services/utils.service";
 import {ToasterService} from "../../common/toaster.service";
 import {UsersService} from "../../services/users.service";
 import {onlyNumericValidator} from "../register/username.validators";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-profile',
@@ -22,7 +23,7 @@ export class ProfileComponent implements OnInit {
   loading = false;
   activeSection = 'profile';
 
-  constructor(private user: UsersService, private toaster: ToasterService, private fb: FormBuilder, private utilService: UtilsService) {
+  constructor( private route: ActivatedRoute, private router: Router,private user: UsersService, private toaster: ToasterService, private fb: FormBuilder, private utilService: UtilsService) {
     this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
     console.log(this.userDetails)
     this.registerForm = fb.group({
@@ -98,5 +99,8 @@ export class ProfileComponent implements OnInit {
       this.loading = false;
       this.toaster.show('success', 'Profile Update', 'Something went wrong!');
     });
+  }
+  renewSubScription(){
+    this.router.navigateByUrl('subscription/1');
   }
 }

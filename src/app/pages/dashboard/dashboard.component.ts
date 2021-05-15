@@ -14,6 +14,7 @@ import {ToasterService} from "../../common/toaster.service";
 import {NotificationsService} from "../../services/notifications.service";
 import * as jQuery from 'jquery';
 import {UsersService} from "../../services/users.service";
+import {NgbDate} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-dashboard',
@@ -46,6 +47,8 @@ export class DashboardComponent implements OnInit {
   upStreamPortals: any;
   downStreamPortals: any;
   upStreamPortal: any;
+  selectedUpStreamPortal: any;
+  selectedDownStreamPortal: any
   downStreamPortal: any;
   userDetails: any;
   selectedProducts = [];
@@ -61,12 +64,21 @@ export class DashboardComponent implements OnInit {
   selectedDropItems = [];
   selectedCols = [];
   dropdownSettings = {};
+  filteredKey: any;
+  minDate: any;
 
   constructor(private user: UsersService, private notificationService: NotificationsService, private toaster: ToasterService, private utilService: UtilsService, private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
               private http: HttpClient,
               private utils: UtilsService,
               private sortUtilsService: SortUtilsService) {
+    const current = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+
+    this.minDate = {
+      year: current.getFullYear(),
+      month: current.getMonth() + 1,
+      day: current.getDate()
+    };
 
   }
 
@@ -83,7 +95,7 @@ export class DashboardComponent implements OnInit {
     // });
     this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
     if (!this.userDetails.isCustomerSubscriptionActive) {
-      this.router.navigateByUrl('/subscription');
+      this.router.navigateByUrl('/subscription/0');
     } else {
       this.getUpStreamPortals();
     }
@@ -92,11 +104,14 @@ export class DashboardComponent implements OnInit {
       {item_id: 'Product Type', item_text: 'Product Type'},
       {item_id: 'Collection', item_text: 'Collection'},
       {item_id: 'Tags', item_text: 'Tags'},
-      {item_id: 'SKU', item_text: 'SKU'},
+      {item_id: 'DownStream SKU', item_text: 'DownStream SKU'},
       {item_id: 'Unit Price', item_text: 'Unit Price'},
       {item_id: 'Markup', item_text: 'Markup'},
       {item_id: 'Sale Price', item_text: 'Sale Price'},
-      {item_id: 'Order Number', item_text: 'Order Number'}
+      {item_id: 'Order Number', item_text: 'Order Number'},
+      {item_id: 'UpStream SKU', item_text: 'UpStream SKU'},
+      {item_id: 'Vendor', item_text: 'Vendor'},
+      {item_id: 'Publishing date', item_text: 'Publishing date'}
     ];
 
     this.dropdownSettings = {
@@ -107,8 +122,16 @@ export class DashboardComponent implements OnInit {
       unSelectAllText: 'UnSelect All',
       itemsShowLimit: 3,
       allowSearchFilter: false,
-      enableCheckAll:false
+      enableCheckAll: false
     };
+  }
+
+  getDate(date) {
+    if (date) {
+      return date['day'] + '/' + date['month'] + '/' + date['year'];
+    }
+    return 'N/A';
+    // return date;
   }
 
   getGlobalConfigurations() {
@@ -150,15 +173,20 @@ export class DashboardComponent implements OnInit {
         this.productDetails = res1;
         this.originalList = res1;
         this.totalProducts = res1.length;
-        if (sessionStorage.getItem('currentPage') && sessionStorage.getItem('currentPage') !== '') {
-          this.setPage(Number(sessionStorage.getItem('currentPage')));
-          sessionStorage.removeItem('currentPage');
-        } else {
-          this.setPage(1);
-        }
-
         let result = this.productDetails.map(a => a.downstreamStatus);
         this.uniqueStatuses = [...new Set(result)];
+        if (sessionStorage.getItem('filter') && sessionStorage.getItem('filter') !== '') {
+          this.filterData(sessionStorage.getItem('filter'));
+          sessionStorage.removeItem('filter');
+        } else {
+          if (sessionStorage.getItem('currentPage') && sessionStorage.getItem('currentPage') !== '') {
+            this.setPage(Number(sessionStorage.getItem('currentPage')));
+            sessionStorage.removeItem('currentPage');
+          } else {
+            this.setPage(1);
+          }
+        }
+
 
       } else {
         this.getProducts();
@@ -182,10 +210,11 @@ export class DashboardComponent implements OnInit {
 
   details(id) {
     let index = 0;
-    const selectedItems = this.productDetails.filter(function (item, index) {
+    const productDetails = JSON.parse(sessionStorage.getItem('products'))
+    const selectedItems = productDetails.filter(function (item, index) {
       return item.productID === id
     });
-    this.productDetails.forEach((item, i) => {
+    productDetails.forEach((item, i) => {
       if (item.productID === id) {
         index = i;
       }
@@ -194,14 +223,22 @@ export class DashboardComponent implements OnInit {
     this.downStreamPortal = sessionStorage.setItem('downStream', this.downStreamPortal);
     this.upStreamPortal = sessionStorage.setItem('upStream', this.upStreamPortal);
     sessionStorage.setItem('currentPage', this.pager.currentPage);
+    if (this.filteredKey) {
+      sessionStorage.setItem('filter', this.filteredKey);
+    }
 
     this.router.navigate(['/details', index]);
   }
 
-  getProducts() {
+  getProductsRefresh() {
+    this.filteredKey = null;
+    this.getGlobalConfigurations();
     this.loading = true;
+    this.pagedItems = [];
     this.productService.getProducts(this.upStreamPortal, this.downStreamPortal)
       .subscribe(res => {
+        this.selectedUpStreamPortal = this.upStreamPortal;
+        this.selectedDownStreamPortal = this.downStreamPortal;
         this.loading = false;
         console.log(res);
         //res[0].ShopifyStatus = 'Published';
@@ -225,7 +262,30 @@ export class DashboardComponent implements OnInit {
               item.productType = 'other';
             }
           }
+
+          if (item.publishingDate) {
+            if (item.publishingDate.indexOf('T') >= 0) {
+              const date = item.publishingDate.split('T');
+              let returndate = date[0].split('-');
+              item.publishingDate = new NgbDate(Number(returndate[0]), Number(returndate[1]), Number(returndate[2]));
+              //'2021-10-01';//returndate[0] + '-' + returndate[1] + '-' + returndate[2];
+            } else {
+              const returndate = item.publishingDate.split('-');
+              item.publishingDate = new NgbDate(Number(returndate[0]), Number(returndate[1]), Number(returndate[2]));
+            }
+          }
+          item.isReadonly = false;
           res1.push(item);
+        });
+        res1.forEach((obj) => {
+          if (obj.downstreamStatus.toUpperCase().indexOf('CREATED') >= 0
+            || obj.downstreamStatus.toUpperCase().indexOf('PUBLISHED') >= 0) {
+            res1.forEach((obj1, index) => {
+              if (obj1.skuDownstream === obj.skuDownstream) {
+                res1[index].isReadonly = true;
+              }
+            });
+          }
         });
         sessionStorage.setItem('products', JSON.stringify(res1));
         this.productDetails = res1;
@@ -245,6 +305,88 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
         console.log('Err: while getting products');
       });
+
+  }
+
+  getProducts() {
+    if ((this.selectedUpStreamPortal !== this.upStreamPortal) || (this.selectedDownStreamPortal !== this.downStreamPortal)) {
+      this.filteredKey = null;
+      this.getGlobalConfigurations();
+      this.loading = true;
+      this.pagedItems = [];
+      this.productService.getProducts(this.upStreamPortal, this.downStreamPortal)
+        .subscribe(res => {
+          this.selectedUpStreamPortal = this.upStreamPortal;
+          this.selectedDownStreamPortal = this.downStreamPortal;
+          this.loading = false;
+          console.log(res);
+          //res[0].ShopifyStatus = 'Published';
+
+          let res1 = [];
+          res.forEach((item) => {
+            item.markup = item.markup + ' %';
+            item.unitPriceWithShippingFee = '$ ' + item.unitPriceWithShippingFee;
+            if (item.collections) {
+              const checkCollection = this.collections.filter((collection) => collection === item.collections);
+              if (checkCollection.length === 0) {
+                item.collectionOther = item.collections;
+                item.collections = 'other';
+
+              }
+            }
+            if (item.productType) {
+              const checkPtype = this.productTypes.filter((ptype) => ptype === item.productType);
+              if (checkPtype.length === 0) {
+                item.productTypeOther = item.productType;
+                item.productType = 'other';
+              }
+            }
+
+            if (item.publishingDate) {
+              if (item.publishingDate.indexOf('T') >= 0) {
+                const date = item.publishingDate.split('T');
+                let returndate = date[0].split('-');
+                item.publishingDate = new NgbDate(Number(returndate[0]), Number(returndate[1]), Number(returndate[2]));
+                //'2021-10-01';//returndate[0] + '-' + returndate[1] + '-' + returndate[2];
+              } else {
+                const returndate = item.publishingDate.split('-');
+                item.publishingDate = new NgbDate(Number(returndate[0]), Number(returndate[1]), Number(returndate[2]));
+              }
+            }
+            item.isReadonly = false;
+            res1.push(item);
+          });
+          res1.forEach((obj) => {
+            if (obj.downstreamStatus.toUpperCase().indexOf('CREATED') >= 0
+              || obj.downstreamStatus.toUpperCase().indexOf('PUBLISHED') >= 0) {
+              res1.forEach((obj1, index) => {
+                if (obj1.skuDownstream === obj.skuDownstream) {
+                  res1[index].isReadonly = true;
+                }
+              });
+            }
+          });
+          sessionStorage.setItem('products', JSON.stringify(res1));
+          this.productDetails = res1;
+          this.originalList = res1;
+          this.totalProducts = res1.length;
+          let result = this.productDetails.map(a => a.downstreamStatus);
+          this.uniqueStatuses = [...new Set(result)];
+          this.pager.totalPages = undefined;
+          this.setPage(1);
+
+
+
+        }, error => {
+          if (error.status === 403) {
+            this.refreshToken()
+          }
+
+          this.loading = false;
+          console.log('Err: while getting products');
+        });
+    }
+
   }
 
   refreshToken(path?: string) {
@@ -408,13 +550,16 @@ export class DashboardComponent implements OnInit {
 
   filterData(value) {
     if (value) {
+      this.filteredKey = value;
       const items = this.originalList.filter(function (item) {
         return item.downstreamStatus.toUpperCase() === value.toUpperCase()
       });
       this.productDetails = items;
       this.pager = {};
+
       this.setPage(1);
     } else {
+      sessionStorage.removeItem('filter');
       this.productDetails = this.originalList;
       this.pager = {};
       this.setPage(1);
@@ -462,26 +607,60 @@ export class DashboardComponent implements OnInit {
       "skuDownstream": item.skuDownstream,
       "upstreamPortalID": this.upStreamPortal,
       "downstreamPortalId": this.downStreamPortal,
+      "unitPriceWithShippingFee": item.unitPriceWithShippingFee.replace('$', '').trim(),
+      "publishingDate": item.publishingDate['year'] + '-' + ('0' + item.publishingDate['month']).slice(-2) + '-' + ('0' + item.publishingDate['day']).slice(-2),
     }
-
     this.loading = true;
     this.productService.updateProduct(item.productID, request, this.downStreamPortal, this.upStreamPortal)
       .subscribe(res => {
+        const productDetails = JSON.parse(sessionStorage.getItem('products'));
         if (res && res.length > 0) {
-          // res.forEach((item) => {
-          //   let selectedIndex;
-          //   this.productDetails.forEach((prod, index) => {
-          //     if (prod.productID === item.productID) {
-          //       selectedIndex = index;
-          //     }
-          //   });
-          //   if (selectedIndex) {
-          //     this.productDetails[selectedIndex] = item;
-          //   } else {
-          //     this.productDetails.push(item);
-          //   }
-          // });
-          this.getProducts();
+
+          res.forEach((item) => {
+            item.markup = item.markup + ' %';
+            item.unitPriceWithShippingFee = '$ ' + item.unitPriceWithShippingFee;
+            if (item.collections) {
+              const checkCollection = this.collections.filter((collection) => collection === item.collections);
+              if (checkCollection.length === 0) {
+                item.collectionOther = item.collections;
+                item.collections = 'other';
+
+              }
+            }
+            if (item.productType) {
+              const checkPtype = this.productTypes.filter((ptype) => ptype === item.productType);
+              if (checkPtype.length === 0) {
+                item.productTypeOther = item.productType;
+                item.productType = 'other';
+              }
+            }
+
+            if (item.publishingDate) {
+              if (item.publishingDate.indexOf('T') >= 0) {
+                const date = item.publishingDate.split('T');
+                let returndate = date[0].split('-');
+                item.publishingDate = new NgbDate(Number(returndate[0]), Number(returndate[1]), Number(returndate[2]));
+                //'2021-10-01';//returndate[0] + '-' + returndate[1] + '-' + returndate[2];
+              } else {
+                const returndate = item.publishingDate.split('-');
+                item.publishingDate = new NgbDate(Number(returndate[0]), Number(returndate[1]), Number(returndate[2]));
+              }
+            }
+            item.isReadonly = false;
+
+            let selectedIndex;
+            productDetails.forEach((prod, index) => {
+              if (prod.productID === item.productID) {
+                selectedIndex = index;
+              }
+            });
+            if (selectedIndex) {
+              productDetails[selectedIndex] = item;
+            } else {
+              productDetails.push(item);
+            }
+          });
+         // this.getProducts();
           if (item.productType === 'other') {
             if (!this.productTypes) {
               this.productTypes = [];
@@ -497,6 +676,26 @@ export class DashboardComponent implements OnInit {
           item.productType = item.productTypeOther;
           item.collections = item.collectionOther;
         }
+
+
+        productDetails.forEach((obj) => {
+          if (obj.downstreamStatus.toUpperCase().indexOf('CREATED') >= 0
+            || obj.downstreamStatus.toUpperCase().indexOf('PUBLISHED') >= 0) {
+            productDetails.forEach((obj1, index) => {
+              if (obj1.skuDownstream === obj.skuDownstream) {
+                productDetails[index].isReadonly = true;
+              }
+            });
+          }
+        });
+        sessionStorage.setItem('products', JSON.stringify(productDetails));
+        this.productDetails = productDetails;
+        this.originalList = productDetails;
+        this.totalProducts = productDetails.length;
+        let result = this.productDetails.map(a => a.downstreamStatus);
+        this.uniqueStatuses = [...new Set(result)];
+        this.pager.totalPages = undefined;
+        this.setPage(this.pager.currentPage);
         this.loading = false;
         sessionStorage.setItem('products', JSON.stringify(this.productDetails));
         console.log(res);
@@ -742,6 +941,22 @@ export class DashboardComponent implements OnInit {
     }
     this.uploadNotifications = [];
     this.uploadNotifications.push(json);
+    if (json.messageType === 'FAILED' || json.messageType === 'FAILURE') {
+      this.uploadLoadEvent.close();
+      this.uploadLoadEvent.removeEventListener("progress");
+      this.isUploadStarted = false;
+      this.selectedProducts = [];
+      this.toaster.show('error', 'Upload', 'Your upload operation is failed');
+      setTimeout((item) => {
+        this.uploadNotifications = [];
+        if (this.notifications.length === 0) {
+          if (divNot.classList.contains('show')) {
+            document.getElementById("openModalButtonDownload").click();
+          }
+
+        }
+      }, 3000);
+    }
     if (json.percentFinish && json.percentFinish == 100) {
       this.uploadLoadEvent.close();
       this.uploadLoadEvent.removeEventListener("progress");
@@ -771,6 +986,22 @@ export class DashboardComponent implements OnInit {
     }
     this.notifications = [];
     this.notifications.push(json);
+    if (json.messageType === 'FAILED' || json.messageType === 'FAILURE') {
+      this.uploadLoadEvent.close();
+      this.uploadLoadEvent.removeEventListener("progress");
+      this.isUploadStarted = false;
+      this.selectedProducts = [];
+      this.toaster.show('error', 'Upload', 'Your download operation is failed');
+      setTimeout((item) => {
+        this.uploadNotifications = [];
+        if (this.notifications.length === 0) {
+          if (divNot.classList.contains('show')) {
+            document.getElementById("openModalButtonDownload").click();
+          }
+
+        }
+      }, 3000);
+    }
     if (json.percentFinish && json.percentFinish == 100) {
       this.downLoadEvent.close();
       this.downLoadEvent.removeEventListener("progress");
@@ -845,8 +1076,15 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  checkStatus(status) {
-    if (status.toUpperCase().indexOf('CREATED') >= 0) {
+  checkStatus(status, sku) {
+    const productDetails = JSON.parse(sessionStorage.getItem('products'))
+    const selectedItems = productDetails.filter(function (item, index) {
+      return item.skuDownstream === sku &&
+        item.downstreamStatus.toUpperCase().indexOf('CREATED') === -1
+        && item.downstreamStatus.toUpperCase().indexOf('PUBLISHED') === -1
+    });
+    if (status.toUpperCase().indexOf('CREATED') >= 0
+      || status.toUpperCase().indexOf('PUBLISHED') >= 0) {
       return true;
     }
     return false;
@@ -906,8 +1144,20 @@ export class DashboardComponent implements OnInit {
     return 'Downstream';
   }
 
+  getUpPortalName(portalId) {
+    if (this.upStreamPortals) {
+      return this.upStreamPortals.filter((obj) => obj.portalID == portalId)[0].portalName;
+    }
+    return 'Downstream';
+  }
+
   onItemSelect(item: any) {
-    this.selectedDropItems.push(item.item_id);
+    if (this.selectedDropItems.length < 9) {
+      this.selectedDropItems.push(item.item_id);
+    } else {
+      alert('Only 9 columns can be allowed from preferences');
+    }
+
   }
 
   onItemDeselect(item: any) {
@@ -916,10 +1166,18 @@ export class DashboardComponent implements OnInit {
       this.selectedDropItems.splice(index, 1);
     }
   }
-  getOnly3tags(tags){
-   if(tags && tags.length > 3){
-     return tags.splice(0, tags.length-3);
-   }
-   return tags;
+
+  getOnly3tags(tags) {
+    if (tags && tags.length > 3) {
+      return tags.splice(0, tags.length - 3);
+    }
+    return tags;
+  }
+
+  getTitle(title) {
+    if (title.length > 20) {
+      return title.substring(0, 19) + '..';
+    }
+    return title;
   }
 }

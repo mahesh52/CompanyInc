@@ -1,10 +1,12 @@
 <section class="container-fluid mainBackgroundBg">
 
-  <div class="d-block dashboardTabButtons" *ngFor="let upstream of upStreamPortals;">
-    <button (click)="upStreamPortal=upstream?.portalID;getProducts()"
-            [class.active]="upStreamPortal==upstream?.portalID" class="btn tab-btn ">
-      <img [src]="upstream?.portalLogoIconURL" width="20px"/> {{upstream?.portalName}}
-    </button>
+  <div class="d-flex dashboardTabButtons">
+    <div class="d-block " *ngFor="let upstream of upStreamPortals;">
+      <button (click)="upStreamPortal=upstream?.portalID;getProducts()"
+              [class.active]="upStreamPortal==upstream?.portalID" class="btn tab-btn ">
+        <img [src]="upstream?.portalLogoIconURL" width="20px"/> {{upstream?.portalName}}
+      </button>
+    </div>
   </div>
   <section class="workspace-sec">
 
@@ -61,47 +63,50 @@
           <div class="sortby-search">
             <div class="row">
               <div class="col-8">
-                <div class="form-group-item-2">
-                  <label><span class="sort-by-txt">Sort By</span></label>
-                  <select class="select-bg" (change)="sortData($event.target.value)">
-                    <option value="">Select</option>
-                    <option value="collections">Collections</option>
-                    <option value="details">Details</option>
-                    <option value="markup">Markup</option>
-                    <option value="orderNumber">Order Number</option>
-                    <option value="productType">Product Type</option>
-                    <option value="title">Style</option>
-                    <option value="unitPriceWithShippingFee">Unit Price</option>
-                  </select>
-                </div>
-                <div class="form-group-item-2">
-                  <label><span class="status-txt">Status</span></label>
-                  <select class="select-bg" (change)="filterData($event.target.value)">
-                    <option value="">Select</option>
-                    <option *ngFor="let status of uniqueStatuses">{{status}}</option>
-                  </select>
+                <div class="d-flex">
+                  <div class="form-group-item-2">
+                    <label><span class="sort-by-txt">Sort By</span></label>
+                    <select class="select-bg" (change)="sortData($event.target.value)">
+                      <option value="">Select</option>
+                      <option value="collections">Collections</option>
+                      <option value="details">Details</option>
+                      <option value="markup">Markup</option>
+                      <option value="orderNumber">Order Number</option>
+                      <option value="productType">Product Type</option>
+                      <option value="title">Style</option>
+                      <option value="unitPriceWithShippingFee">Unit Price</option>
+                    </select>
+                  </div>
+                  <div class="form-group-item-2">
+                    <label><span class="status-txt">Status</span></label>
+                    <select class="select-bg" [(ngModel)]="filteredKey" (change)="filterData($event.target.value)">
+                      <option value="">Select</option>
+                      <option *ngFor="let status of uniqueStatuses">{{status}}</option>
+                    </select>
+                  </div>
+                  <div class="align-items-center mh90">
+                    <button class="btn refresh-btn" (click)="getProductsRefresh()">Refresh</button>
+                  </div>
                 </div>
               </div>
-              <div class="col-4">
-                <div class="d-flex align-items-center mh90">
-                  <button class="btn refresh-btn" (click)="getProducts()">Refresh</button>
-                </div>
-              </div>
+
             </div>
-            <ng-multiselect-dropdown
-              [placeholder]="'Select Preferences'"
-              [settings]="dropdownSettings"
-              [data]="dropdownList"
-              [(ngModel)]="selectedCols"
-              (onSelect)="onItemSelect($event)"
-              (onDeSelect)="onItemDeselect($event)"
-            >
-            </ng-multiselect-dropdown>
+            <div>
+              <ng-multiselect-dropdown
+                [placeholder]="'Select Preferences'"
+                [settings]="dropdownSettings"
+                [data]="dropdownList"
+                [(ngModel)]="selectedCols"
+                (onSelect)="onItemSelect($event)"
+                (onDeSelect)="onItemDeselect($event)"
+              >
+              </ng-multiselect-dropdown>
+            </div>
           </div>
         </section>
 
         <div class="tableFixHead d-block">
-          <table id = "productsTable">
+          <table id="productsTable">
             <thead>
             <tr>
               <th>S.No</th>
@@ -113,7 +118,10 @@
 
               <th *ngIf="selectedDropItems.indexOf('Collection')>=0">Collection</th>
               <th *ngIf="selectedDropItems.indexOf('Tags')>=0">Tags</th>
-              <th *ngIf="selectedDropItems.indexOf('SKU')>=0">{{getPortalName(downStreamPortal)}} SKU</th>
+              <th *ngIf="selectedDropItems.indexOf('DownStream SKU')>=0">{{getPortalName(downStreamPortal)}} SKU</th>
+              <th *ngIf="selectedDropItems.indexOf('UpStream SKU')>=0">{{getUpPortalName(upStreamPortal)}} SKU</th>
+              <th *ngIf="selectedDropItems.indexOf('Vendor')>=0">Vendor</th>
+              <th *ngIf="selectedDropItems.indexOf('Publishing date')>=0">Publishing date</th>
               <th *ngIf="selectedDropItems.indexOf('Unit Price')>=0">Unit Price
                 <small>(Inc. shipping)</small></th>
               <th *ngIf="selectedDropItems.indexOf('Markup')>=0">Markup</th>
@@ -133,18 +141,17 @@
               </td>
               <td class="styleTd">
                 <div class="styleImg">
-                  <img style="cursor:pointer;" (click)="details(item?.productID)"
+                  <img style="cursor:pointer;" [title]="item?.title" (click)="details(item?.productID)"
                        [src]="getImage(item?.photos)"/></div>
-                <h6 style="cursor:pointer;" (click)="details(item?.productID)" class="styleName">{{item?.title}}</h6>
+                <h6 style="cursor:pointer;" [title]="item?.title" (click)="details(item?.productID)"
+                    class="styleName">{{getTitle(item?.title)}}</h6>
               </td>
               <td class="pdTd" *ngIf="selectedDropItems.indexOf('Product Details')>=0">
-               <textarea style="width:100%;resize: none;font-size: 10px" rows=10 cols=40
+               <textarea style="width:calc(100% - 20px);resize: none; font-size: 10px" rows=6 cols=40
                          [(ngModel)]="item.details">{{item?.details}}</textarea>
-                <span data-toggle="modal" data-target="#myModal1" style="cursor: pointer;
-    bottom: 0;
-    text-align: center;
-    right: 10px;
-    font-weight: bold;" (click)="selectDetIndex(item.productID)">...</span>
+                <span data-toggle="modal" data-target="#myModal1" style="cursor: pointer; bottom: 0; text-align: center;
+    right: -8px; position: relative; bottom: 2px; font-weight: bold;"
+                      (click)="selectDetIndex(item.productID)">...</span>
               </td>
               <td class="ptTd" *ngIf="selectedDropItems.indexOf('Product Type')>=0">
                 <select class="form-control tableInput" [(ngModel)]="item.productType">
@@ -169,14 +176,14 @@
               </td>
               <td class="ptTags" *ngIf="selectedDropItems.indexOf('Tags')>=0">
                 <div *ngFor="let tag of item?.tags;let j =index;">
-                  <div class="ribbonTd"  *ngIf="j<=2">
+                  <div class="ribbonTd" *ngIf="j<=2">
                     <span style="cursor:pointer;position: absolute;
     left: 5px;" class="closeIconSec" (click)="removeFromList(item.id,tag)">X</span>
                     <span>  {{tag}}</span>
                   </div>
 
                 </div>
-                <p *ngIf="getTagsLength(item?.tags) > 2">...</p>
+                <p *ngIf="getTagsLength(item?.tags) > 2" style="float:right;">...</p>
                 <div class="ribbonTd1">
               <span style="cursor:pointer;width: 18px; line-height: 19px;
     height: 18px;" class="closeIconSec" data-toggle="modal" data-target="#myModal"
@@ -184,17 +191,37 @@
 
                 </div>
               </td>
-              <td class="ptTd" *ngIf="selectedDropItems.indexOf('SKU')>=0">
-                <input *ngIf="!checkStatus(item?.downstreamStatus)" [title]="item.skuDownstream" type="text"
+              <td class="ptTd" *ngIf="selectedDropItems.indexOf('DownStream SKU')>=0">
+                <input *ngIf="!item?.isReadonly" [title]="item.skuDownstream" type="text"
                        class="form-control" [(ngModel)]="item.skuDownstream">
-                <span *ngIf="checkStatus(item?.downstreamStatus)">{{item.skuDownstream}}</span>
+                <span *ngIf="item?.isReadonly">{{item.skuDownstream}}</span>
+              </td>
+              <td class="ptTd" *ngIf="selectedDropItems.indexOf('UpStream SKU')>=0">
+                <span>{{item.skuUpstream}}</span>
+              </td>
+              <td class="ptTd" *ngIf="selectedDropItems.indexOf('Vendor')>=0">
+                <span>{{item.vendor}}</span>
+              </td>
+              <td class="ptTd" *ngIf="selectedDropItems.indexOf('Publishing date')>=0">
+<!--                <input *ngIf="!checkStatus(item?.downstreamStatus,item.skuDownstream)"-->
+<!--                       [title]="getDate(item.publishingDate)" type="text"-->
+<!--                       class="form-control" [(ngModel)]="item.publishingDate">-->
+
+                <input *ngIf="!item?.isReadonly" (click)="d11.toggle()"  [minDate]="minDate" id="datepicker11"
+                       width="140" placeholder="yyyy-mm-dd" [(ngModel)]="item.publishingDate"
+                       name="dp" ngbDatepicker
+                       #d11="ngbDatepicker">
+
+                <span *ngIf="item?.isReadonly">{{getDate(item.publishingDate)}}</span>
               </td>
               <td class="unitPrice" *ngIf="selectedDropItems.indexOf('Unit Price')>=0">
-                <input  type="text"
+                <input type="text"
                        class="form-control" [(ngModel)]="item.unitPriceWithShippingFee">
-               </td>
-              <td *ngIf="selectedDropItems.indexOf('Markup')>=0">><input type="text" class="form-control markupInput" [(ngModel)]="item.markup"></td>
-              <td align="center"*ngIf="selectedDropItems.indexOf('Sale Price')>=0"><p>$ {{getSalePrice(item?.unitPriceWithShippingFee, item?.markup)}} </p></td>
+              </td>
+              <td *ngIf="selectedDropItems.indexOf('Markup')>=0">
+                <input type="text" class="form-control markupInput" [(ngModel)]="item.markup"></td>
+              <td align="center" *ngIf="selectedDropItems.indexOf('Sale Price')>=0"><p>
+                $ {{getSalePrice(item?.unitPriceWithShippingFee, item?.markup)}} </p></td>
               <td *ngIf="selectedDropItems.indexOf('Order Number')>=0"><p>{{item?.orderNumber}}</p></td>
               <td><p>{{item?.downstreamStatus || 'N/A'}}</p></td>
               <td>
@@ -209,7 +236,7 @@
           <div class="table-footer-sec">
             <div class="item-1">
               <div class="exported-txt">
-               &nbsp;
+                &nbsp;
               </div>
 
             </div>
@@ -218,7 +245,7 @@
                 <select class="select-bg" style="margin-right:30px;" [(ngModel)]="downStreamPortal"
                         (change)="getProducts()">
                   <option *ngFor="let downStream of downStreamPortals;"
-                           [value]="downStream?.portalID"> {{downStream?.portalName}}</option>
+                          [value]="downStream?.portalID"> {{downStream?.portalName}}</option>
                 </select>
               </div>
               <button (click)="uploadProducts()" class="btn exportDestination">
@@ -240,15 +267,15 @@
     <div class="progressToggle">
       <div class="collapse" id="collapseExample"
            style="background-color:#0a2052; border-radius:10px; width:400px; padding:20px 15px 0px;">
-<!--        <a data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"-->
-<!--           aria-controls="collapseExample">-->
-<!--          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#fff" class="bi bi-x-circle-fill"-->
-<!--               viewBox="0 0 16 16" class="collapseCloseIcon">-->
-<!--            <path-->
-<!--              d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>-->
-<!--          </svg>-->
-<!--        </a>-->
-        <div *ngIf="checkNotifications()" >
+        <!--        <a data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"-->
+        <!--           aria-controls="collapseExample">-->
+        <!--          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#fff" class="bi bi-x-circle-fill"-->
+        <!--               viewBox="0 0 16 16" class="collapseCloseIcon">-->
+        <!--            <path-->
+        <!--              d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>-->
+        <!--          </svg>-->
+        <!--        </a>-->
+        <div *ngIf="checkNotifications()">
           <div class="progressSection" *ngFor="let notification of notifications">
             <div class="progress" *ngIf="notification?.messageType==='PROGRESS'">
               <div class="progress-bar"
@@ -281,21 +308,24 @@
                    aria-valuemin="0"
               ></div>
             </div>
-            <svg (click)="stopNotificationsUpload()" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#fff" class="bi bi-x-circle-fill" viewBox="0 0 16 16" class="crossIcon">
-              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+            <svg (click)="stopNotificationsUpload()" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                 fill="#fff" class="bi bi-x-circle-fill" viewBox="0 0 16 16" class="crossIcon">
+              <path
+                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
             </svg>
             <div class="progressMessage">
-              <img [src]="getPortalUrl(upnotify?.upstreamPortalId,'up')"   alt="search"/>
-              <img style="background-color: #fff;" src="assets/images/right-arrow1.png" width="20px" />
-              <img  [src]="getPortalUrl(upnotify?.downstreamPortalId,'down')"  alt="search"/>
+              <img [src]="getPortalUrl(upnotify?.upstreamPortalId,'up')" alt="search"/>
+              <img style="background-color: #fff;" src="assets/images/right-arrow1.png" width="20px"/>
+              <img [src]="getPortalUrl(upnotify?.downstreamPortalId,'down')" alt="search"/>
 
               {{upnotify?.message}}
             </div>
           </div>
 
         </div>
-        <div *ngIf="notifications.length===0 && uploadNotifications.length===0" class="progressMessage" style="margin-bottom: 30px;" >
-         <span *ngIf="isUploadStarted || isDownloadedStarted">Your download/upload is in process you will be notified here with updates</span>
+        <div *ngIf="notifications.length===0 && uploadNotifications.length===0" class="progressMessage"
+             style="margin-bottom: 30px;">
+          <span *ngIf="isUploadStarted || isDownloadedStarted">Your download/upload is in process you will be notified here with updates</span>
           <span *ngIf="!isUploadStarted && !isDownloadedStarted">
             Looks like you haven't started any Download/Upload
           </span>

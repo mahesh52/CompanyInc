@@ -1,15 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 import {UsersService} from "../../services/users.service";
+import {UtilsService} from "../../services/utils.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FormBuilder} from "@angular/forms";
-import {UtilsService} from "../../services/utils.service";
 
 @Component({
-  selector: 'app-portals',
-  templateUrl: './portals.component.html',
-  styleUrls: ['./portals.component.scss']
+  selector: 'app-portals-update',
+  templateUrl: './portals-update.component.html',
+  styleUrls: ['./portals-update.component.sass']
 })
-export class PortalsComponent implements OnInit {
+export class PortalsUpdateComponent implements OnInit {
+
   currentstep = 1;
   upStreamPortals: any;
   downStreamPortals: any;
@@ -17,31 +18,74 @@ export class PortalsComponent implements OnInit {
   selectedDownStreamPortals: any[];
   userDetails: any;
   loading = false;
-
+  isDataLoaded = false;
   constructor(private user: UsersService, private utilService: UtilsService, private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
   }
 
   ngOnInit() {
+
     this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
-    if (this.userDetails.isCustomerSubscriptionActive) {
-      this.router.navigateByUrl('/dashboard');
-    } else {
+    this.getUpStreamPortals();
+    //this.getDownStreamPortals();
+
+    console.log('Error while getting the upstream portals');
+
+  }
+
+  checkIspOrtalSelected(upPortal) {
+    const isCheck = this.selectedUpStreamPortals.filter(obj => obj.portalID === upPortal.portalID);
+    if (isCheck.length > 0) {
+      return true;
+    }
+    return false;
+  }
+  checkIspOrtalSelected1(downPortal) {
+    const isCheck = this.selectedDownStreamPortals.filter(obj => obj.portalID === downPortal.portalID);
+    if (isCheck.length > 0) {
+      return true;
+    }
+    return false;
+  }
+  gotoStep2() {
+    this.currentstep = 2;
+  }
+
+  gotoStep3() {
+    this.currentstep = 3;
+  }
+
+  gotoSubscription() {
+    this.router.navigateByUrl('/dashboard');
+  }
+
+  getUpStreamPortals() {
+    this.utilService.getUpStreamPortals().subscribe(res => {
+      this.upStreamPortals = res;
+      this.getDownStreamPortals();
+    }, error => {
+      console.log('Error while getting the upstream portals');
+      console.log(error);
+    });
+  }
+
+  getDownStreamPortals() {
+    this.utilService.getDownStreamPortals().subscribe(res => {
+      this.downStreamPortals = res;
       this.utilService.getUserUpStreamPortals().subscribe(res => {
         if (res.length > 0) {
-          this.utilService.getUserDownStreamPortals().subscribe(res => {
-            if (res.length > 0) {
-              this.router.navigateByUrl('/subscription/0');
+          this.utilService.getUserDownStreamPortals().subscribe(res1 => {
+            this.isDataLoaded = true;
+            if (res1.length > 0) {
+              this.selectedUpStreamPortals = res;
+              this.selectedDownStreamPortals = res1;
             } else {
               this.selectedUpStreamPortals = [];
               this.selectedDownStreamPortals = [];
-              this.getUpStreamPortals();
-              this.getDownStreamPortals();
             }
           }, error => {
+            this.isDataLoaded = true;
             this.selectedUpStreamPortals = [];
             this.selectedDownStreamPortals = [];
-            this.getUpStreamPortals();
-            this.getDownStreamPortals();
             console.log('Error while getting the upstream portals');
             //console.log(error);
           });
@@ -54,6 +98,7 @@ export class PortalsComponent implements OnInit {
         }
 
       }, error => {
+        this.isDataLoaded = true;
         this.selectedUpStreamPortals = [];
         this.selectedDownStreamPortals = [];
         this.getUpStreamPortals();
@@ -61,35 +106,6 @@ export class PortalsComponent implements OnInit {
         console.log('Error while getting the upstream portals');
         //console.log(error);
       });
-      console.log('Error while getting the upstream portals');
-    }
-
-  }
-
-  gotoStep2() {
-    this.currentstep = 2;
-  }
-
-  gotoStep3() {
-    this.currentstep = 3;
-  }
-
-  gotoSubscription() {
-    this.router.navigateByUrl('/subscription/0');
-  }
-
-  getUpStreamPortals() {
-    this.utilService.getUpStreamPortals().subscribe(res => {
-      this.upStreamPortals = res;
-    }, error => {
-      console.log('Error while getting the upstream portals');
-      console.log(error);
-    });
-  }
-
-  getDownStreamPortals() {
-    this.utilService.getDownStreamPortals().subscribe(res => {
-      this.downStreamPortals = res;
     }, error => {
       console.log('Error while getting the downstream portals');
       console.log(error);
@@ -160,7 +176,7 @@ export class PortalsComponent implements OnInit {
     });
   }
 
-  verifyDownStreamPortal(downPortal,index) {
+  verifyDownStreamPortal(downPortal, index) {
     const payload = {
       "customerID": this.userDetails.customerID,
       "portalType": "Downstream",
@@ -190,7 +206,7 @@ export class PortalsComponent implements OnInit {
         setTimeout(() => {
           this.selectedDownStreamPortals[index].succesMessage = null;
         }, 8000)
-      }else {
+      } else {
         this.selectedDownStreamPortals[index].errorMessage = 'Failed to verify downstream portal please review your credentials';
         setTimeout(() => {
           this.selectedDownStreamPortals[index].errorMessage = null;

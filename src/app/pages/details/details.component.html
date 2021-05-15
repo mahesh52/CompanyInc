@@ -2,8 +2,14 @@
 
 
   <div class="dpTopStrip mb-3" style="margin-top: 45px;">
-    <div class="container">
+    <div class="container-fluid">
       <div class="dpTopStripFlex">
+        <div class="dtsText">
+          <h5>
+            <span>Order Number</span> {{selectedProduct?.orderNumber}}
+          </h5>
+
+        </div>
         <div class="">
           <h3>{{selectedProduct?.skuUpstream}}</h3>
         </div>
@@ -35,9 +41,15 @@
         </div>
 
         <div class="dtsText">
-          <h5>
-            <span>Publishing Date </span> {{getDate(selectedProduct?.publishingDate)}}
+          <h5 >
+            <span>Publishing Date </span>
+            <span *ngIf="selectedProduct?.isReadonly">{{getDate(selectedProduct?.publishingDate)}}</span>
+            <input *ngIf="!selectedProduct?.isReadonly" (click)="d11.toggle()"  [minDate]="minDate" id="datepicker11"
+                   width="140" placeholder="yyyy-mm-dd" [(ngModel)]="selectedProduct.publishingDate"
+                   name="dp" ngbDatepicker
+                   #d11="ngbDatepicker">
           </h5>
+
         </div>
 
 
@@ -61,7 +73,7 @@
 <!--            <ngb-carousel #carousel [interval]="false" [keyboard]="false" [wrap]="false" [showNavigationArrows]="false"-->
 <!--                          [activeId]="activeSliderId"  [pauseOnHover]="pauseOnHover" (slide)="onSlide($event)">-->
 <!--            *ngFor="let image of getImages(selectedProduct?.photos)"-->
-             <div >
+             <div class="productDetailsImgSec">
 <!--               <ng-template  >-->
 
                  <img  [src]="selectedProduct?.photos[primaryImageSrc]" alt="Los Angeles">
@@ -69,7 +81,8 @@
              </div>
 
 <!--            </ngb-carousel>-->
-            <button (click)="previousImages()">Prev</button>
+             <div class="carouselThumbnail">
+            <button (click)="previousImages()" class="carousel-control-prev prevBtnCarousel"><span class="carousel-control-prev-icon">Prev</span></button>
             <ul class="carousel-thumbnail">
 
               <li class="carousel-thumbnail__item list-inline-item" *ngFor="let photo of copyData;let i = index" (click)="cycleToSlide(photo)">
@@ -79,7 +92,8 @@
               </li>
 
             </ul>
-            <button (click)="nextImages()">Next</button>
+            <button (click)="nextImages()" class="carousel-control-next nextBtnCarousel"><span class="carousel-control-next-icon">Next</span></button>
+            </div>
           </div>
 
           <!-- Left and right controls -->
@@ -140,15 +154,11 @@
             <div class="ribbonTd" *ngFor="let tag of selectedProduct?.tags">
               <span style="cursor:pointer;position: absolute;
     left: 5px;" (click)="removeFromList(tag)">X</span>
-              <span>{{tag}}</span>
+              <span class="ribbonTdTag">{{tag}}</span>
             </div>
             <div class="ribbonTd1 ribbonTdRight" style="margin-right: 0px !important;" data-toggle="modal" data-target="#myModal">
-              <span style="cursor: pointer;
-    width: 18px;
-    height: 18px;
-    display: inline-block;
-    position: relative;
-    top: -4px;">+</span></div>
+              <span style="cursor: pointer; width: 18px; height: 18px; display: inline-block; position: relative;
+    top:1px; left:1px;">+</span></div>
           </div>
         </div>
         <div class="row mt-3">
@@ -157,8 +167,8 @@
             <h5 class="detailsTitleH5 mt-2">SKU</h5>
           </div>
           <div class="col-md-3">
-            <input *ngIf="!checkStatus(selectedProduct?.downstreamStatus)" [title]="selectedProduct.skuDownstream" type="text" class="form-control" [(ngModel)]="selectedProduct.skuDownstream">
-            <span *ngIf="checkStatus(selectedProduct?.downstreamStatus)" >{{selectedProduct.skuDownstream}}</span>
+            <input *ngIf="!selectedProduct?.isReadonly" [title]="selectedProduct.skuDownstream" type="text" class="form-control" [(ngModel)]="selectedProduct.skuDownstream">
+            <span *ngIf="selectedProduct?.isReadonly" >{{selectedProduct.skuDownstream}}</span>
           </div>
         </div>
         <div class="row mt-3">
@@ -243,7 +253,7 @@
           </div>
         </div>
 
-        <div class="text-center" style="margin-left: 110px;">
+        <div class="text-center" style="margin-left: 110px; margin-top:60px;">
           <button class="btn btn-primary loadSource" (click)="saveData()">Save Changes</button>
         </div>
       </div>

@@ -13,6 +13,7 @@ import {ForgotpasswordComponent} from "./pages/forgotpassword/forgotpassword.com
 import {SubscriptionComponent} from "./pages/subscription/subscription.component";
 import {PaymentConfirmComponent} from './pages/payment-confirm/payment-confirm.component';
 import {ProfileComponent} from './pages/profile/profile.component';
+import {PortalsUpdateComponent} from "./pages/portals-update/portals-update.component";
 
 const routes: Routes = [
   {
@@ -27,9 +28,10 @@ const routes: Routes = [
       {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
       {path: 'details/:id', component: DetailsComponent, canActivate: [AuthGuard]},
       {path: 'forgotpwd', component: ForgotpasswordComponent},
-      {path: 'subscription', component: SubscriptionComponent, canActivate: [AuthGuard]},
+      {path: 'subscription/:type', component: SubscriptionComponent, canActivate: [AuthGuard]},
       {path: 'payment', component: PaymentConfirmComponent, canActivate: [AuthGuard]},
-      {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]}
+      {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
+      {path: 'portal-update', component: PortalsUpdateComponent, canActivate: [AuthGuard]}
     ]
   },
 ];

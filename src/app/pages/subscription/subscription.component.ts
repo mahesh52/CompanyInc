@@ -53,7 +53,8 @@ export class SubscriptionComponent implements OnInit {
 
   ngOnInit() {
     this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
-    if (this.userDetails.isCustomerSubscriptionActive) {
+    const type = this.route.snapshot.paramMap.get('id');
+    if (this.userDetails.isCustomerSubscriptionActive && type === '0') {
       this.router.navigateByUrl('/dashboard');
     }
     this.getSubscriptions();

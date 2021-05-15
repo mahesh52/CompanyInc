@@ -1,0 +1,242 @@
+<section class="container" *ngIf="isDataLoaded">
+  <section class="step-1" *ngIf="currentstep===1">
+    <h4 class="Select-Upstream-and-Downstream-portals">
+      Select Upstream and Downstream portals
+    </h4>
+    <div class="Progress-bar">
+      <h3 class="Upstream-Portals text-center">Upstream Portals</h3>
+      <div class="text-center">
+        <div class="selectblock text-center" *ngFor="let upPortal of upStreamPortals">
+          <img
+            [src]="upPortal?.portalLogoURL"
+            class="d-block mx-auto"
+            alt="image"
+            style="width:100px;height:30px;"
+          />
+          <label class="chkbox">
+            <!--            <span class="d-block Fashion-Go">{{upPortal?.portalName}}</span>-->
+            <input type="checkbox" *ngIf="checkIspOrtalSelected(upPortal)" checked (click)="onClick($event,upPortal)"/>
+            <input type="checkbox" *ngIf="!checkIspOrtalSelected(upPortal)"  (click)="onClick($event,upPortal)"/>
+            <span class="checkmark home" style="    border: 1px solid;"></span>
+          </label>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center align-items-center">
+        <div class="circle active">
+          <span>&#10003;</span>
+        </div>
+        <div class="Rectangle-1639 mx-3"></div>
+        <div class="circle"></div>
+        <div class="Rectangle-1639 mx-3"></div>
+        <div class="circle"></div>
+      </div>
+      <div class="text-center">
+        <button class="btn next-btn" [disabled]="selectedUpStreamPortals?.length===0" (click)="gotoStep2()">Next</button>
+      </div>
+    </div>
+  </section>
+  <section class="step-2" *ngIf="currentstep===2">
+    <h4 class="Select-Upstream-and-Downstream-portals">
+      Select Upstream and Downstream portals
+    </h4>
+    <div class="Progress-bar">
+      <h3 class="Upstream-Portals text-center">Downstream Portals</h3>
+      <div class="text-center">
+        <div class="selectblock text-center" *ngFor="let downPortal of downStreamPortals">
+          <img
+            [src]="downPortal?.portalLogoURL"
+            class="d-block mx-auto"
+            alt="image"
+            style="width:100px;height:30px;"
+          />
+          <label class="chkbox">
+            <!--            <span class="d-block Fashion-Go">{{downPortal?.portalName}}</span>-->
+            <input type="checkbox" [checked]="checkIspOrtalSelected1(downPortal)" (click)="onClickDownPortal($event,downPortal)"/>
+            <span class="checkmark home" style="    border: 1px solid;"></span>
+          </label>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center align-items-center">
+        <div class="circle active">
+          <span>&#10003;</span>
+        </div>
+        <div class="Rectangle-1639 fill mx-3"></div>
+        <div class="circle active">
+          <span>&#10003;</span>
+        </div>
+        <div class="Rectangle-1639 mx-3"></div>
+        <div class="circle"></div>
+      </div>
+      <div class="text-center">
+        <button class="btn next-btn" [disabled]="selectedDownStreamPortals?.length===0" (click)="gotoStep3()">Next</button>
+      </div>
+    </div>
+  </section>
+  <section class="step-3" *ngIf="currentstep===3">
+    <div class="Progress-bar">
+      <h3 class="Setup-your-accounts text-center">Setup your accounts</h3>
+      <div class="container-fluid">
+        <div class="row mx-0">
+          <div class="col-md-6">
+            <div
+              class="home-login-sec d-flex align-items-center justify-content-center"
+              *ngFor="let selectedUp of selectedUpStreamPortals;let i=index">
+
+              <div
+                class="d-flex align-items-center justify-content-center">
+
+                <div class="px-3">
+                  <img
+                    [src]="selectedUp?.portalLogoURL"
+                    style="width:100px;height:30px;"
+                    alt="fashion-go"
+                  />
+                </div>
+                <div >
+                  <form method="post" class="login-form-sec px-3">
+                    <div style="color: red;margin-left: -125px;" class="d-flex align-items-center justify-content-center" *ngIf="selectedUp?.errorMessage">{{selectedUp?.errorMessage}}</div>
+                    <div style="color: green;margin-left: -125px;" class="d-flex align-items-center justify-content-center" *ngIf="selectedUp?.succesMessage">{{selectedUp?.succesMessage}}</div>
+                    <div class="form-group">
+                            <span class="form-icon"
+                            ><img
+                              src="assets/images/ic_person_24px@3x.png"
+                              height="13"
+                            /></span>
+                      <input
+                        class="form-control"
+                        type="input"
+                        name="Username"
+                        [disabled]="selectedUp.isVerified"
+                        [(ngModel)]="selectedUp.username"
+                        placeholder="Username"
+                      />
+                    </div>
+                    <div class="form-group">
+                            <span class="form-icon"
+                            ><img
+                              src="assets/images/ic_lock_24px@3x.png"
+                              height="13"
+                            /></span>
+                      <input
+                        class="form-control"
+                        type="password"
+                        name="password"
+                        [disabled]="selectedUp.isVerified"
+                        [(ngModel)]="selectedUp.password"
+                        placeholder="Password"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <button class="btn verify-btn" *ngIf="!selectedUp?.isVerified" [disabled]="!selectedUp.username || !selectedUp.password" (click)="verifyPortal(selectedUp,i)">Verify</button>
+                      <button class="btn verify-btn" *ngIf="selectedUp?.isVerified" >Verified</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="col-md-6">
+            <div
+              class="home-login-sec d-flex align-items-center justify-content-center"
+              *ngFor="let selectedDown of selectedDownStreamPortals;let i=index"
+            >
+              <div
+                class="d-flex align-items-center justify-content-center"
+              >
+                <div class="px-3">
+                  <img
+                    [src]="selectedDown?.portalLogoURL"
+                    style="width:100px;height:30px;"
+                    alt="fashion-go"
+                  />
+                </div>
+                <div>
+                  <form method="post" class="login-form-sec px-3">
+                    <div style="color: red;margin-left: -125px;" class="d-flex align-items-center justify-content-center" *ngIf="selectedDown?.errorMessage">{{selectedDown?.errorMessage}}</div>
+                    <div style="color: green;margin-left: -125px;" class="d-flex align-items-center justify-content-center" *ngIf="selectedDown?.succesMessage">{{selectedDown?.succesMessage}}</div>
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <span class="form-icon"
+                            ><img
+                              src="assets/images/ic_vpn_key_24px@3x.png"
+                              width="13"
+                            /></span>
+                      <input
+                        class="form-control"
+                        type="input"
+                        name="Username"
+                        [disabled]="selectedDown.isVerified"
+                        [(ngModel)]="selectedDown.apikey"
+                        placeholder="API Key"
+                      />
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <span class="form-icon"
+                            ><img
+                              src="assets/images/ic_lock_24px@3x.png"
+                              height="13"
+                            /></span>
+                      <input
+                        class="form-control"
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+
+                        [disabled]="selectedDown.isVerified"
+                        [(ngModel)]="selectedDown.password"
+                      />
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <span class="form-icon"
+                            ><img
+                              src="assets/images/ic_store_24px@3x.png"
+                              height="13"
+                            /></span>
+                      <input
+                        class="form-control"
+                        type="input"
+                        name="Username"
+                        placeholder="Store Name"
+                        [disabled]="selectedDown.isVerified"
+                        [(ngModel)]="selectedDown.storeName"
+                      />
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                      <button class="btn verify-btn"  [disabled]="!selectedDown.apikey || !selectedDown.password || !selectedDown.storeName"  *ngIf="!selectedDown?.isVerified" (click)="verifyDownStreamPortal(selectedDown,i)" >Verify</button>
+                      <button class="btn verify-btn" *ngIf="selectedDown?.isVerified" >Verified</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-center imp-txt">
+          <strong>IMPORTANT:</strong> Merchant account once setup CANNOT
+          be changed later
+        </h4>
+      </div>
+      <div class="d-flex justify-content-center align-items-center">
+        <div class="circle active">
+          <span>&#10003;</span>
+        </div>
+        <div class="Rectangle-1639 fill mx-3"></div>
+        <div class="circle active">
+          <span>&#10003;</span>
+        </div>
+        <div class="Rectangle-1639 fill mx-3"></div>
+        <div class="circle active">
+          <span>&#10003;</span>
+        </div>
+      </div>
+      <div class="text-center">
+        <button class="btn finish-btn" [disabled]="!isPortalSetupDone()" (click)="gotoSubscription()">Finish Setting Up</button>
+      </div>
+    </div>
+  </section>
+</section>
+<app-loading *ngIf="loading"></app-loading>
