@@ -66,7 +66,7 @@
                 <div class="d-flex">
                   <div class="form-group-item-2">
                     <label><span class="sort-by-txt">Sort By</span></label>
-                    <select class="select-bg" (change)="sortData($event.target.value)">
+                    <select class="select-bg" [(ngModel)]="sorKey" (change)="sortData($event.target.value)">
                       <option value="">Select</option>
                       <option value="collections">Collections</option>
                       <option value="details">Details</option>
@@ -254,7 +254,7 @@
             </div>
             <ngb-pagination style="position: absolute;right: 0" [collectionSize]="pager.totalItems"
                             [pageSize]="pager.pageSize" [(page)]="pager.currentPage"
-                            [maxSize]="3" [rotate]="false" (pageChange)="setPage(pager.currentPage)"
+                            [maxSize]="8" [rotate]="false" (pageChange)="setPage(pager.currentPage)"
                             [boundaryLinks]="false"></ngb-pagination>
 
           </div>
@@ -402,11 +402,11 @@
       </div>
       <div class="modal-footer">
         <div style="float: left">
-          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="updateProductDetails()">Add
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="updateProductDetails()">Save
           </button>
         </div>
         <div style="float: right">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
         </div>
       </div>
     </div>

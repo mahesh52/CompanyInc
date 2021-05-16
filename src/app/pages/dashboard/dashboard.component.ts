@@ -66,6 +66,7 @@ export class DashboardComponent implements OnInit {
   dropdownSettings = {};
   filteredKey: any;
   minDate: any;
+  sorKey: any;
 
   constructor(private user: UsersService, private notificationService: NotificationsService, private toaster: ToasterService, private utilService: UtilsService, private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
@@ -113,14 +114,35 @@ export class DashboardComponent implements OnInit {
       {item_id: 'Vendor', item_text: 'Vendor'},
       {item_id: 'Publishing date', item_text: 'Publishing date'}
     ];
+    this.selectedCols = [
+      {item_id: 'Product Details', item_text: 'Product Details'},
+      {item_id: 'Product Type', item_text: 'Product Type'},
+      {item_id: 'Collection', item_text: 'Collection'},
+      {item_id: 'Tags', item_text: 'Tags'},
+      {item_id: 'DownStream SKU', item_text: 'DownStream SKU'},
+      {item_id: 'Unit Price', item_text: 'Unit Price'},
+      {item_id: 'Markup', item_text: 'Markup'},
+      {item_id: 'Sale Price', item_text: 'Sale Price'}
+    ];
+    this.selectedDropItems = [
+      'Product Details',
+      'Product Type',
+      'Collection',
+      'Tags',
+      'DownStream SKU',
+      'Unit Price',
+      'Markup',
+      'Sale Price'
+    ];
 
     this.dropdownSettings = {
       singleSelection: false,
+      // limitSelection:9,
       idField: 'item_id',
       textField: 'item_text',
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
-      itemsShowLimit: 3,
+      itemsShowLimit: 1,
       allowSearchFilter: false,
       enableCheckAll: false
     };
@@ -143,6 +165,9 @@ export class DashboardComponent implements OnInit {
       }
 
     }, error => {
+      if (error.status === 403) {
+        this.refreshToken()
+      }
       console.log('Error while getting getGlobalConfigurations');
       console.log(error);
     });
@@ -168,6 +193,15 @@ export class DashboardComponent implements OnInit {
       this.downStreamPortal = res[0].portalID;
       //  this.getProducts();
       this.getGlobalConfigurations();
+      if (sessionStorage.getItem('selectedDropItems') !== '' && sessionStorage.getItem('selectedDropItems') !== null && sessionStorage.getItem('selectedDropItems') !== undefined) {
+        this.selectedDropItems = JSON.parse(sessionStorage.getItem('selectedDropItems'));
+      }
+      if (sessionStorage.getItem('selectedCols') !== '' && sessionStorage.getItem('selectedCols') !== null && sessionStorage.getItem('selectedCols') !== undefined) {
+        this.selectedCols = JSON.parse(sessionStorage.getItem('selectedCols'));
+      }
+      if (sessionStorage.getItem('products') !== '' && sessionStorage.getItem('products') !== null && sessionStorage.getItem('products') !== undefined) {
+
+      }
       if (sessionStorage.getItem('products') !== '' && sessionStorage.getItem('products') !== null && sessionStorage.getItem('products') !== undefined) {
         const res1 = JSON.parse(sessionStorage.getItem('products'));
         this.productDetails = res1;
@@ -178,6 +212,9 @@ export class DashboardComponent implements OnInit {
         if (sessionStorage.getItem('filter') && sessionStorage.getItem('filter') !== '') {
           this.filterData(sessionStorage.getItem('filter'));
           sessionStorage.removeItem('filter');
+        } else if (sessionStorage.getItem('sortKey') && sessionStorage.getItem('sortKey') !== '') {
+          this.sorKey = sessionStorage.getItem('sortKey');
+          this.sortData(this.sorKey);
         } else {
           if (sessionStorage.getItem('currentPage') && sessionStorage.getItem('currentPage') !== '') {
             this.setPage(Number(sessionStorage.getItem('currentPage')));
@@ -192,6 +229,9 @@ export class DashboardComponent implements OnInit {
         this.getProducts();
       }
     }, error => {
+      if (error.status === 403) {
+        this.refreshToken()
+      }
       console.log('Error while getting the downstream portals');
       console.log(error);
     });
@@ -223,6 +263,9 @@ export class DashboardComponent implements OnInit {
     this.downStreamPortal = sessionStorage.setItem('downStream', this.downStreamPortal);
     this.upStreamPortal = sessionStorage.setItem('upStream', this.upStreamPortal);
     sessionStorage.setItem('currentPage', this.pager.currentPage);
+    sessionStorage.setItem('selectedCols', JSON.stringify(this.selectedCols));
+    sessionStorage.setItem('selectedDropItems', JSON.stringify(this.selectedDropItems));
+    sessionStorage.setItem('sortKey', this.sorKey);
     if (this.filteredKey) {
       sessionStorage.setItem('filter', this.filteredKey);
     }
@@ -310,7 +353,7 @@ export class DashboardComponent implements OnInit {
 
   getProducts() {
     if ((this.selectedUpStreamPortal !== this.upStreamPortal) || (this.selectedDownStreamPortal !== this.downStreamPortal)) {
-      this.filteredKey = null;
+      this.filteredKey = '';
       this.getGlobalConfigurations();
       this.loading = true;
       this.pagedItems = [];
@@ -373,7 +416,11 @@ export class DashboardComponent implements OnInit {
           let result = this.productDetails.map(a => a.downstreamStatus);
           this.uniqueStatuses = [...new Set(result)];
           this.pager.totalPages = undefined;
-          this.setPage(1);
+          if (this.sorKey) {
+            this.sortData(this.sorKey);
+          } else {
+            this.setPage(1);
+          }
 
 
 
@@ -660,7 +707,7 @@ export class DashboardComponent implements OnInit {
               productDetails.push(item);
             }
           });
-         // this.getProducts();
+          // this.getProducts();
           if (item.productType === 'other') {
             if (!this.productTypes) {
               this.productTypes = [];
@@ -1031,6 +1078,7 @@ export class DashboardComponent implements OnInit {
     // this.setState({ newNotifications: newNotifications });
   };
 
+
   getSalePrice(price, markup) {
     if (price && markup) {
       markup = markup.replace('%', '').trim();
@@ -1155,7 +1203,7 @@ export class DashboardComponent implements OnInit {
     if (this.selectedDropItems.length < 9) {
       this.selectedDropItems.push(item.item_id);
     } else {
-      alert('Only 9 columns can be allowed from preferences');
+      alert('Max 9 columns can be added using Preference');
     }
 
   }
