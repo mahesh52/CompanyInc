@@ -195,13 +195,13 @@ export class DashboardComponent implements OnInit {
       this.getGlobalConfigurations();
       if (sessionStorage.getItem('selectedDropItems') !== '' && sessionStorage.getItem('selectedDropItems') !== null && sessionStorage.getItem('selectedDropItems') !== undefined) {
         this.selectedDropItems = JSON.parse(sessionStorage.getItem('selectedDropItems'));
+        sessionStorage.removeItem('selectedDropItems');
       }
       if (sessionStorage.getItem('selectedCols') !== '' && sessionStorage.getItem('selectedCols') !== null && sessionStorage.getItem('selectedCols') !== undefined) {
         this.selectedCols = JSON.parse(sessionStorage.getItem('selectedCols'));
+        sessionStorage.removeItem('selectedCols');
       }
-      if (sessionStorage.getItem('products') !== '' && sessionStorage.getItem('products') !== null && sessionStorage.getItem('products') !== undefined) {
 
-      }
       if (sessionStorage.getItem('products') !== '' && sessionStorage.getItem('products') !== null && sessionStorage.getItem('products') !== undefined) {
         const res1 = JSON.parse(sessionStorage.getItem('products'));
         this.productDetails = res1;
@@ -215,6 +215,7 @@ export class DashboardComponent implements OnInit {
         } else if (sessionStorage.getItem('sortKey') && sessionStorage.getItem('sortKey') !== '') {
           this.sorKey = sessionStorage.getItem('sortKey');
           this.sortData(this.sorKey);
+          sessionStorage.removeItem('sortKey');
         } else {
           if (sessionStorage.getItem('currentPage') && sessionStorage.getItem('currentPage') !== '') {
             this.setPage(Number(sessionStorage.getItem('currentPage')));

@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {NgbCarousel, NgbSlideEvent, NgbSlideEventSource} from "@ng-bootstrap/ng-bootstrap";
+import {NgbCarousel, NgbDate, NgbSlideEvent, NgbSlideEventSource} from "@ng-bootstrap/ng-bootstrap";
 import {UtilsService} from "../../services/utils.service";
 import {ProductService} from "../../services/product.service";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -290,6 +290,7 @@ export class DetailsComponent implements OnInit {
     }
 
     this.loading = true;
+    const productDetails = JSON.parse(sessionStorage.getItem('products'));
     this.productService.updateProduct(this.selectedProduct.id, request, this.downStreamPortal, this.upStreamPortal)
       .subscribe(res => {
         if (this.selectedProduct.productType === 'other') {
@@ -302,20 +303,66 @@ export class DetailsComponent implements OnInit {
         this.selectedProduct.collections = this.selectedProduct.collectionOther;
         if (res && res.length > 0) {
           res.forEach((item) => {
+            item.markup = item.markup + ' %';
+            item.unitPriceWithShippingFee = '$ ' + item.unitPriceWithShippingFee;
+            if (item.collections) {
+              const checkCollection = this.collections.filter((collection) => collection === item.collections);
+              if (checkCollection.length === 0) {
+                item.collectionOther = item.collections;
+                item.collections = 'other';
+
+              }
+            }
+            if (item.productType) {
+              const checkPtype = this.productTypes.filter((ptype) => ptype === item.productType);
+              if (checkPtype.length === 0) {
+                item.productTypeOther = item.productType;
+                item.productType = 'other';
+              }
+            }
+
+            if (item.publishingDate) {
+              if (item.publishingDate.indexOf('T') >= 0) {
+                const date = item.publishingDate.split('T');
+                let returndate = date[0].split('-');
+                item.publishingDate = new NgbDate(Number(returndate[0]), Number(returndate[1]), Number(returndate[2]));
+                //'2021-10-01';//returndate[0] + '-' + returndate[1] + '-' + returndate[2];
+              } else {
+                const returndate = item.publishingDate.split('-');
+                item.publishingDate = new NgbDate(Number(returndate[0]), Number(returndate[1]), Number(returndate[2]));
+              }
+            }
+            item.isReadonly = false;
+
             let selectedIndex;
-            this.productDetails.forEach((prod, index) => {
+            productDetails.forEach((prod, index) => {
               if (prod.productID === item.productID) {
                 selectedIndex = index;
               }
             });
             if (selectedIndex) {
-              this.productDetails[selectedIndex] = item;
+              productDetails[selectedIndex] = item;
             } else {
-              this.productDetails.push(item);
+              productDetails.push(item);
             }
           });
         }
-
+        productDetails.forEach((obj) => {
+          if (obj.downstreamStatus.toUpperCase().indexOf('CREATED') >= 0
+            || obj.downstreamStatus.toUpperCase().indexOf('PUBLISHED') >= 0) {
+            productDetails.forEach((obj1, index) => {
+              if (obj1.skuDownstream === obj.skuDownstream) {
+                productDetails[index].isReadonly = true;
+              }
+            });
+          }
+        });
+        this.productDetails = productDetails;
+        productDetails.forEach((item, i) => {
+          if (item.productID === request.productID) {
+            this.selectedId = i;
+          }
+        });
         this.loading = false;
         this.productDetails[this.selectedId] = this.selectedProduct;
         sessionStorage.setItem('products', JSON.stringify(this.productDetails));
