@@ -51,8 +51,14 @@
           />
           <label class="chkbox">
             <!--            <span class="d-block Fashion-Go">{{downPortal?.portalName}}</span>-->
-            <input type="checkbox" [checked]="checkIspOrtalSelected1(downPortal)" (click)="onClickDownPortal($event,downPortal)"/>
+<!--            <input type="checkbox" *ngIf="checkIspOrtalSelected1(downPortal)" checked  (click)="onClickDownPortal($event,downPortal)"/>-->
+<!--            <input type="checkbox" *ngIf="!checkIspOrtalSelected1(downPortal)"  (click)="onClickDownPortal($event,downPortal)"/>-->
+<!--            <span class="checkmark home" style="    border: 1px solid;"></span>-->
+
+            <input type="checkbox" *ngIf="checkIspOrtalSelected1(downPortal)" checked (click)="onClickDownPortal($event,downPortal)"/>
+            <input type="checkbox" *ngIf="!checkIspOrtalSelected1(downPortal)"  (click)="onClickDownPortal($event,downPortal)"/>
             <span class="checkmark home" style="    border: 1px solid;"></span>
+
           </label>
         </div>
       </div>
@@ -73,6 +79,7 @@
     </div>
   </section>
   <section class="step-3" *ngIf="currentstep===3">
+
     <div class="Progress-bar">
       <h3 class="Setup-your-accounts text-center">Setup your accounts</h3>
       <div class="container-fluid">
@@ -81,10 +88,8 @@
             <div
               class="home-login-sec d-flex align-items-center justify-content-center"
               *ngFor="let selectedUp of selectedUpStreamPortals;let i=index">
-
               <div
                 class="d-flex align-items-center justify-content-center">
-
                 <div class="px-3">
                   <img
                     [src]="selectedUp?.portalLogoURL"
@@ -104,10 +109,10 @@
                             /></span>
                       <input
                         class="form-control"
-                        type="input"
+                        type="text"
                         name="Username"
-                        [disabled]="selectedUp.isVerified"
-                        [(ngModel)]="selectedUp.username"
+                        [disabled]="selectedUp?.isSetUpAlready"
+                        [(ngModel)]="selectedUp.Username"
                         placeholder="Username"
                       />
                     </div>
@@ -121,13 +126,12 @@
                         class="form-control"
                         type="password"
                         name="password"
-                        [disabled]="selectedUp.isVerified"
                         [(ngModel)]="selectedUp.password"
                         placeholder="Password"
                       />
                     </div>
                     <div class="form-group">
-                      <button class="btn verify-btn" *ngIf="!selectedUp?.isVerified" [disabled]="!selectedUp.username || !selectedUp.password" (click)="verifyPortal(selectedUp,i)">Verify</button>
+                      <button class="btn verify-btn" *ngIf="!selectedUp?.isVerified" [disabled]="!selectedUp.password" (click)="verifyPortal(selectedUp,i)">Verify</button>
                       <button class="btn verify-btn" *ngIf="selectedUp?.isVerified" >Verified</button>
                     </div>
                   </form>
@@ -144,6 +148,7 @@
               <div
                 class="d-flex align-items-center justify-content-center"
               >
+
                 <div class="px-3">
                   <img
                     [src]="selectedDown?.portalLogoURL"
@@ -163,12 +168,14 @@
                             /></span>
                       <input
                         class="form-control"
-                        type="input"
-                        name="Username"
-                        [disabled]="selectedDown.isVerified"
-                        [(ngModel)]="selectedDown.apikey"
+                        type="text"
+                        [title]="selectedDown.apiKey"
+                        name="apiKey"
+                        [disabled]="selectedDown?.isSetUpAlready"
+                        [(ngModel)]="selectedDown.apiKey"
                         placeholder="API Key"
                       />
+
                     </div>
 
                     <div class="form-group" style="margin-bottom: 0.5rem;">
@@ -197,14 +204,15 @@
                       <input
                         class="form-control"
                         type="input"
-                        name="Username"
+                        name="storeName"
                         placeholder="Store Name"
-                        [disabled]="selectedDown.isVerified"
+                        [disabled]="selectedDown?.isSetUpAlready"
+                        [title]="selectedDown.storeName"
                         [(ngModel)]="selectedDown.storeName"
                       />
                     </div>
                     <div class="form-group" style="margin-bottom: 0.5rem;">
-                      <button class="btn verify-btn"  [disabled]="!selectedDown.apikey || !selectedDown.password || !selectedDown.storeName"  *ngIf="!selectedDown?.isVerified" (click)="verifyDownStreamPortal(selectedDown,i)" >Verify</button>
+                      <button class="btn verify-btn"  [disabled]="!selectedDown.password"  *ngIf="!selectedDown?.isVerified" (click)="verifyDownStreamPortal(selectedDown,i)" >Verify</button>
                       <button class="btn verify-btn" *ngIf="selectedDown?.isVerified" >Verified</button>
                     </div>
                   </form>
@@ -214,12 +222,12 @@
           </div>
         </div>
       </div>
-      <div>
-        <h4 class="text-center imp-txt">
-          <strong>IMPORTANT:</strong> Merchant account once setup CANNOT
-          be changed later
-        </h4>
-      </div>
+<!--      <div>-->
+<!--        <h4 class="text-center imp-txt">-->
+<!--          <strong>IMPORTANT:</strong> Merchant account once setup CANNOT-->
+<!--          be changed later-->
+<!--        </h4>-->
+<!--      </div>-->
       <div class="d-flex justify-content-center align-items-center">
         <div class="circle active">
           <span>&#10003;</span>
@@ -234,7 +242,7 @@
         </div>
       </div>
       <div class="text-center">
-        <button class="btn finish-btn" [disabled]="!isPortalSetupDone()" (click)="gotoSubscription()">Finish Setting Up</button>
+        <button class="btn finish-btn" (click)="gotoSubscription()">Goto Dashboard</button>
       </div>
     </div>
   </section>

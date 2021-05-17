@@ -51,7 +51,8 @@ export class UtilsService {
     {item_id: "diaper set", item_text: "diaper set"},
     {item_id: "Dresses", item_text: "Dresses"},
   ];
-
+  notifications = [];
+  uploadNotifications = [];
   constructor(private api: ApiService) {
   }
 
@@ -60,7 +61,7 @@ export class UtilsService {
   }
 
   getGlobalConfigurations(downStreamPortalId) {
-    return this.api.Get(environment.baseUrl + APICONFIG.getGlobalConfigs+'/'+downStreamPortalId);
+    return this.api.Get(environment.baseUrl + APICONFIG.getGlobalConfigs + '/' + downStreamPortalId);
   }
 
   getUpStreamPortals() {
@@ -74,9 +75,19 @@ export class UtilsService {
   getDownStreamPortals() {
     return this.api.Get(environment.baseUrl + APICONFIG.getDownStreamPortals);
   }
+
   getUserDownStreamPortals() {
     return this.api.Get(environment.baseUrl + APICONFIG.userDownStreamPortals);
   }
+
+  disableUserPortal(portalId, type) {
+    return this.api.PutOthers(environment.baseUrl + APICONFIG.disablePortals + type + '/' + portalId,{});
+  }
+
+  getUserPortalsConfigurations(id) {
+    return this.api.Get(environment.baseUrl + APICONFIG.getPortalConfiguration + id);
+  }
+
   postVerifyUpStreamPortal(payload) {
     return this.api.Post(environment.baseUrl + APICONFIG.verifyPortals, payload);
   }

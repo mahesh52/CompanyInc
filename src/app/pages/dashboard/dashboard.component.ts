@@ -56,8 +56,7 @@ export class DashboardComponent implements OnInit {
   uploadLoadEvent: any;
   isDownloadedStarted = false;
   isUploadStarted = false;
-  notifications = [];
-  uploadNotifications = [];
+
   stopNotificationDownload = false;
   stopNotificationUpload = false;
   dropdownList = [];
@@ -67,6 +66,7 @@ export class DashboardComponent implements OnInit {
   filteredKey: any;
   minDate: any;
   sorKey: any;
+  selectedPage: any;
 
   constructor(private user: UsersService, private notificationService: NotificationsService, private toaster: ToasterService, private utilService: UtilsService, private router: Router, private paginationService: PaginationService,
               private productService: ProductService,
@@ -100,6 +100,8 @@ export class DashboardComponent implements OnInit {
     } else {
       this.getUpStreamPortals();
     }
+
+
     this.dropdownList = [
       {item_id: 'Product Details', item_text: 'Product Details'},
       {item_id: 'Product Type', item_text: 'Product Type'},
@@ -176,7 +178,17 @@ export class DashboardComponent implements OnInit {
   getUpStreamPortals() {
     this.utilService.getUserUpStreamPortals().subscribe(res => {
       this.upStreamPortals = res;
-      this.upStreamPortal = res[0].portalID;
+      if (sessionStorage.getItem('upStream') !== '' &&
+        sessionStorage.getItem('upStream') !== null
+        && sessionStorage.getItem('upStream') !== undefined
+       && sessionStorage.getItem('upStream') !== 'null'
+        && sessionStorage.getItem('upStream') !== 'undefined'
+      ) {
+        this.upStreamPortal = sessionStorage.getItem('upStream');
+        sessionStorage.removeItem('upStream');
+      } else {
+        this.upStreamPortal = res[0].portalID;
+      }
       this.getDownStreamPortals();
     }, error => {
       if (error.status === 403) {
@@ -190,35 +202,71 @@ export class DashboardComponent implements OnInit {
   getDownStreamPortals() {
     this.utilService.getUserDownStreamPortals().subscribe(res => {
       this.downStreamPortals = res;
-      this.downStreamPortal = res[0].portalID;
+      if (sessionStorage.getItem('downStream') !== '' &&
+        sessionStorage.getItem('downStream') !== null &&
+        sessionStorage.getItem('downStream') !== undefined
+        && sessionStorage.getItem('downStream') !== 'null'
+        && sessionStorage.getItem('downStream') !== 'undefined') {
+        this.downStreamPortal = sessionStorage.getItem('downStream');
+        sessionStorage.removeItem('downStream');
+      } else {
+        this.downStreamPortal = res[0].portalID;
+      }
       //  this.getProducts();
       this.getGlobalConfigurations();
-      if (sessionStorage.getItem('selectedDropItems') !== '' && sessionStorage.getItem('selectedDropItems') !== null && sessionStorage.getItem('selectedDropItems') !== undefined) {
+      if (sessionStorage.getItem('selectedDropItems') !== '' &&
+        sessionStorage.getItem('selectedDropItems') !== null &&
+        sessionStorage.getItem('selectedDropItems') !== undefined
+        && sessionStorage.getItem('selectedDropItems') !== 'null'
+        && sessionStorage.getItem('selectedDropItems') !== 'undefined'
+      ) {
         this.selectedDropItems = JSON.parse(sessionStorage.getItem('selectedDropItems'));
         sessionStorage.removeItem('selectedDropItems');
       }
-      if (sessionStorage.getItem('selectedCols') !== '' && sessionStorage.getItem('selectedCols') !== null && sessionStorage.getItem('selectedCols') !== undefined) {
+      if (sessionStorage.getItem('selectedCols') !== '' &&
+        sessionStorage.getItem('selectedCols') !== null &&
+        sessionStorage.getItem('selectedCols') !== undefined
+        && sessionStorage.getItem('selectedCols') !== 'null'
+        && sessionStorage.getItem('selectedCols') !== 'undefined'
+      ) {
         this.selectedCols = JSON.parse(sessionStorage.getItem('selectedCols'));
         sessionStorage.removeItem('selectedCols');
       }
 
-      if (sessionStorage.getItem('products') !== '' && sessionStorage.getItem('products') !== null && sessionStorage.getItem('products') !== undefined) {
+      if (sessionStorage.getItem('products') !== '' &&
+        sessionStorage.getItem('products') !== null &&
+        sessionStorage.getItem('products') !== undefined
+        && sessionStorage.getItem('products') !== 'null'
+        && sessionStorage.getItem('products') !== 'undefined') {
         const res1 = JSON.parse(sessionStorage.getItem('products'));
         this.productDetails = res1;
         this.originalList = res1;
         this.totalProducts = res1.length;
         let result = this.productDetails.map(a => a.downstreamStatus);
         this.uniqueStatuses = [...new Set(result)];
-        if (sessionStorage.getItem('filter') && sessionStorage.getItem('filter') !== '') {
-          this.filterData(sessionStorage.getItem('filter'));
+        if (sessionStorage.getItem('filter') &&
+          sessionStorage.getItem('filter') !== ''
+          && sessionStorage.getItem('filter') !== 'null'
+          && sessionStorage.getItem('filter') !== 'undefined'
+        ) {
+          this.filterData(sessionStorage.getItem('filter')
+          );
           sessionStorage.removeItem('filter');
-        } else if (sessionStorage.getItem('sortKey') && sessionStorage.getItem('sortKey') !== '') {
+        } else if (sessionStorage.getItem('sortKey') &&
+          sessionStorage.getItem('sortKey') !== ''
+          && sessionStorage.getItem('sortKey') !== 'null'
+          && sessionStorage.getItem('sortKey') !== 'undefined'
+        ) {
           this.sorKey = sessionStorage.getItem('sortKey');
           this.sortData(this.sorKey);
           sessionStorage.removeItem('sortKey');
         } else {
-          if (sessionStorage.getItem('currentPage') && sessionStorage.getItem('currentPage') !== '') {
+          if (sessionStorage.getItem('currentPage') &&
+            sessionStorage.getItem('currentPage') !== ''
+            && sessionStorage.getItem('currentPage') !== 'null'
+            && sessionStorage.getItem('currentPage') !== 'undefined') {
             this.setPage(Number(sessionStorage.getItem('currentPage')));
+            this.selectedPage = Number(sessionStorage.getItem('currentPage'));
             sessionStorage.removeItem('currentPage');
           } else {
             this.setPage(1);
@@ -424,7 +472,6 @@ export class DashboardComponent implements OnInit {
           }
 
 
-
         }, error => {
           if (error.status === 403) {
             this.refreshToken()
@@ -604,13 +651,50 @@ export class DashboardComponent implements OnInit {
       });
       this.productDetails = items;
       this.pager = {};
+      if (sessionStorage.getItem('sortKey') && sessionStorage.getItem('sortKey') !== ''
+        && sessionStorage.getItem('sortKey') !== 'null'
+        && sessionStorage.getItem('sortKey') !== 'undefined'
+      ) {
+        this.sorKey = sessionStorage.getItem('sortKey');
+        this.sortData(this.sorKey);
+        sessionStorage.removeItem('sortKey');
+      } else {
+        if (sessionStorage.getItem('currentPage') &&
+          sessionStorage.getItem('currentPage') !== ''
+          && sessionStorage.getItem('currentPage') !== 'null'
+          && sessionStorage.getItem('currentPage') !== 'undefined') {
+          this.setPage(Number(sessionStorage.getItem('currentPage')));
+          this.selectedPage = Number(sessionStorage.getItem('currentPage'));
+          sessionStorage.removeItem('currentPage');
+        } else {
+          this.setPage(1);
+        }
+      }
 
-      this.setPage(1);
+
     } else {
       sessionStorage.removeItem('filter');
       this.productDetails = this.originalList;
       this.pager = {};
-      this.setPage(1);
+      if (sessionStorage.getItem('sortKey') && sessionStorage.getItem('sortKey') !== ''
+        && sessionStorage.getItem('sortKey') !== 'null'
+        && sessionStorage.getItem('sortKey') !== 'undefined') {
+        this.sorKey = sessionStorage.getItem('sortKey');
+        this.sortData(this.sorKey);
+        sessionStorage.removeItem('sortKey');
+      }
+
+      if (sessionStorage.getItem('currentPage') &&
+        sessionStorage.getItem('currentPage') !== ''
+        && sessionStorage.getItem('currentPage') !== 'null'
+        && sessionStorage.getItem('currentPage') !== 'undefined') {
+        this.setPage(Number(sessionStorage.getItem('currentPage')));
+        this.selectedPage = Number(sessionStorage.getItem('currentPage'));
+        sessionStorage.removeItem('currentPage');
+      } else {
+        this.setPage(1);
+      }
+      // this.setPage(1);
     }
 
   }
@@ -987,8 +1071,8 @@ export class DashboardComponent implements OnInit {
     if (!divNot.classList.contains('show')) {
       document.getElementById("openModalButtonDownload").click();
     }
-    this.uploadNotifications = [];
-    this.uploadNotifications.push(json);
+    this.utils.uploadNotifications = [];
+    this.utils.uploadNotifications.push(json);
     if (json.messageType === 'FAILED' || json.messageType === 'FAILURE') {
       this.uploadLoadEvent.close();
       this.uploadLoadEvent.removeEventListener("progress");
@@ -996,8 +1080,8 @@ export class DashboardComponent implements OnInit {
       this.selectedProducts = [];
       this.toaster.show('error', 'Upload', 'Your upload operation is failed');
       setTimeout((item) => {
-        this.uploadNotifications = [];
-        if (this.notifications.length === 0) {
+        this.utils.uploadNotifications = [];
+        if (this.utils.notifications.length === 0) {
           if (divNot.classList.contains('show')) {
             document.getElementById("openModalButtonDownload").click();
           }
@@ -1012,8 +1096,8 @@ export class DashboardComponent implements OnInit {
       this.selectedProducts = [];
       this.toaster.show('success', 'Upload', 'Your upload is completed please refresh the table to see updated products');
       setTimeout((item) => {
-        this.uploadNotifications = [];
-        if (this.notifications.length === 0) {
+        this.utils.uploadNotifications = [];
+        if (this.utils.notifications.length === 0) {
           if (divNot.classList.contains('show')) {
             document.getElementById("openModalButtonDownload").click();
           }
@@ -1032,8 +1116,8 @@ export class DashboardComponent implements OnInit {
     if (!divNot.classList.contains('show')) {
       document.getElementById("openModalButtonDownload").click();
     }
-    this.notifications = [];
-    this.notifications.push(json);
+    this.utils.notifications = [];
+    this.utils.notifications.push(json);
     if (json.messageType === 'FAILED' || json.messageType === 'FAILURE') {
       this.uploadLoadEvent.close();
       this.uploadLoadEvent.removeEventListener("progress");
@@ -1041,8 +1125,8 @@ export class DashboardComponent implements OnInit {
       this.selectedProducts = [];
       this.toaster.show('error', 'Upload', 'Your download operation is failed');
       setTimeout((item) => {
-        this.uploadNotifications = [];
-        if (this.notifications.length === 0) {
+        this.utils.uploadNotifications = [];
+        if (this.utils.notifications.length === 0) {
           if (divNot.classList.contains('show')) {
             document.getElementById("openModalButtonDownload").click();
           }
@@ -1056,8 +1140,8 @@ export class DashboardComponent implements OnInit {
       this.isDownloadedStarted = false;
       this.toaster.show('success', 'Download', 'Your download is completed please refresh the table to see updated products');
       setTimeout((item) => {
-        this.notifications = [];
-        if (this.uploadNotifications.length === 0) {
+        this.utils.notifications = [];
+        if (this.utils.uploadNotifications.length === 0) {
           if (divNot.classList.contains('show')) {
             document.getElementById("openModalButtonDownload").click();
           }
@@ -1091,13 +1175,31 @@ export class DashboardComponent implements OnInit {
 
   sortData(key) {
     if (key) {
+      this.sorKey = key;
       this.productDetails = this.sortUtilsService.sortByKey(this.productDetails, key, false);
       this.pager = {};
-      this.setPage(1);
+      if (sessionStorage.getItem('currentPage') && sessionStorage.getItem('currentPage') !== ''
+        && sessionStorage.getItem('currentPage') !== 'null'
+        && sessionStorage.getItem('currentPage') !== 'undefined'
+      ) {
+        this.setPage(Number(sessionStorage.getItem('currentPage')));
+        this.selectedPage = Number(sessionStorage.getItem('currentPage'));
+        sessionStorage.removeItem('currentPage');
+      } else {
+        this.setPage(1);
+      }
     } else {
-      this.productDetails = this.originalList;
-      this.pager = {};
-      this.setPage(1);
+      // this.productDetails = this.productDetails;
+      //  this.productDetails = this.sortUtilsService.sortByKey(this.productDetails, this.sorKey, true);
+      //  this.sorKey = '';
+      //  this.pager = {};
+      //  if (sessionStorage.getItem('currentPage') && sessionStorage.getItem('currentPage') !== '') {
+      //    this.setPage(Number(sessionStorage.getItem('currentPage')));
+      //    this.selectedPage = Number(sessionStorage.getItem('currentPage'));
+      //    sessionStorage.removeItem('currentPage');
+      //  } else {
+      //    this.setPage(1);
+      //  }
     }
   }
 
@@ -1153,7 +1255,7 @@ export class DashboardComponent implements OnInit {
 
   stopNotifications() {
     this.stopNotificationDownload = true;
-    this.notifications = [];
+    this.utils.notifications = [];
     // this.notificationService.emitStopNotificationChanges(true);
     this.downLoadEvent.close();
     this.isDownloadedStarted = false;
@@ -1161,14 +1263,19 @@ export class DashboardComponent implements OnInit {
     const divNot = document.getElementById("collapseExample");
 
     if (divNot.classList.contains('show')) {
-      if (this.notifications.length === 0 && this.uploadNotifications.length === 0) {
+      if (this.utils.notifications.length === 0 && this.utils.uploadNotifications.length === 0) {
         document.getElementById("openModalButtonDownload").click();
       }
     }
   }
 
   checkNotifications() {
-    if (this.notifications.length > 0 || this.uploadNotifications.length > 0) {
+    if (this.utils.notifications.length > 0 || this.utils.uploadNotifications.length > 0) {
+      const divNot = document.getElementById("collapseExample");
+
+      if (!divNot.classList.contains('show')) {
+        document.getElementById("openModalButtonDownload").click();
+      }
       return true;
     }
     return false;
@@ -1176,25 +1283,25 @@ export class DashboardComponent implements OnInit {
 
   stopNotificationsUpload() {
     this.stopNotificationUpload = true;
-    this.uploadNotifications = [];
+    this.utils.uploadNotifications = [];
     const divNot = document.getElementById("collapseExample");
 
     if (divNot.classList.contains('show')) {
-      if (this.notifications.length === 0 && this.uploadNotifications.length === 0) {
+      if (this.utils.notifications.length === 0 && this.utils.uploadNotifications.length === 0) {
         document.getElementById("openModalButtonDownload").click();
       }
     }
   }
 
   getPortalName(portalId) {
-    if (this.downStreamPortals) {
+    if (this.downStreamPortals && portalId) {
       return this.downStreamPortals.filter((obj) => obj.portalID == portalId)[0].portalName;
     }
     return 'Downstream';
   }
 
   getUpPortalName(portalId) {
-    if (this.upStreamPortals) {
+    if (this.upStreamPortals && portalId) {
       return this.upStreamPortals.filter((obj) => obj.portalID == portalId)[0].portalName;
     }
     return 'Downstream';

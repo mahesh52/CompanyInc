@@ -13,5 +13,7 @@ export enum APICONFIG {
   getGlobalConfigs = "GetDWGlobalValues",
   downLoadProducts = "DownloadProduct/",
   upLoadProducts = "UploadProduct/",
-  updateProduct = "Product/"
+  updateProduct = "Product/",
+  getPortalConfiguration = "PortalConfiguration/",
+  disablePortals = 'DisablePortal/'
 }

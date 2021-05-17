@@ -276,7 +276,7 @@
         <!--          </svg>-->
         <!--        </a>-->
         <div *ngIf="checkNotifications()">
-          <div class="progressSection" *ngFor="let notification of notifications">
+          <div class="progressSection" *ngFor="let notification of utils?.notifications">
             <div class="progress" *ngIf="notification?.messageType==='PROGRESS'">
               <div class="progress-bar"
                    role="progressbar"
@@ -297,7 +297,7 @@
               {{notification?.message}}</div>
           </div>
 
-          <div class="progressSection" *ngFor="let upnotify of uploadNotifications">
+          <div class="progressSection" *ngFor="let upnotify of utils?.uploadNotifications">
             <div class="progress" *ngIf="upnotify?.messageType==='PROGRESS'">
               <div class="progress-bar"
                    class="progress-bar"
@@ -323,7 +323,7 @@
           </div>
 
         </div>
-        <div *ngIf="notifications.length===0 && uploadNotifications.length===0" class="progressMessage"
+        <div *ngIf="utils?.notifications.length===0 && utils?.uploadNotifications.length===0" class="progressMessage"
              style="margin-bottom: 30px;">
           <span *ngIf="isUploadStarted || isDownloadedStarted">Your download/upload is in process you will be notified here with updates</span>
           <span *ngIf="!isUploadStarted && !isDownloadedStarted">

@@ -19,6 +19,7 @@ export class PortalsUpdateComponent implements OnInit {
   userDetails: any;
   loading = false;
   isDataLoaded = false;
+
   constructor(private user: UsersService, private utilService: UtilsService, private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
   }
 
@@ -28,24 +29,26 @@ export class PortalsUpdateComponent implements OnInit {
     this.getUpStreamPortals();
     //this.getDownStreamPortals();
 
-    console.log('Error while getting the upstream portals');
+    //  console.log('Error while getting the upstream portals');
 
   }
 
   checkIspOrtalSelected(upPortal) {
-    const isCheck = this.selectedUpStreamPortals.filter(obj => obj.portalID === upPortal.portalID);
+    const isCheck = this.selectedUpStreamPortals.filter(obj => obj.portalID == upPortal.portalID);
     if (isCheck.length > 0) {
       return true;
     }
     return false;
   }
+
   checkIspOrtalSelected1(downPortal) {
-    const isCheck = this.selectedDownStreamPortals.filter(obj => obj.portalID === downPortal.portalID);
+    const isCheck = this.selectedDownStreamPortals.filter(obj => obj.portalID == downPortal.portalID);
     if (isCheck.length > 0) {
       return true;
     }
     return false;
   }
+
   gotoStep2() {
     this.currentstep = 2;
   }
@@ -59,54 +62,88 @@ export class PortalsUpdateComponent implements OnInit {
   }
 
   getUpStreamPortals() {
+    this.loading = true;
     this.utilService.getUpStreamPortals().subscribe(res => {
       this.upStreamPortals = res;
       this.getDownStreamPortals();
     }, error => {
+      this.loading = false;
       console.log('Error while getting the upstream portals');
       console.log(error);
+    });
+  }
+
+  processExistingPortals() {
+    if (this.selectedUpStreamPortals && this.selectedUpStreamPortals.length > 0) {
+      this.selectedUpStreamPortals.forEach((item, index) => {
+        this.utilService.getUserPortalsConfigurations(item.portalID).subscribe(res2 => {
+          this.selectedUpStreamPortals[index] = {...item, ...res2[0].configuration};
+          this.selectedUpStreamPortals[index]['isVerified'] = false;
+          this.selectedUpStreamPortals[index]['isSetUpAlready'] = true;
+        });
+      });
+    }
+
+    if (this.selectedDownStreamPortals && this.selectedDownStreamPortals.length > 0) {
+      this.selectedDownStreamPortals.forEach((item, index) => {
+        this.utilService.getUserPortalsConfigurations(item.portalID).subscribe(res3 => {
+          this.selectedDownStreamPortals[index] = {...item, ...res3[0].configuration};
+          this.selectedDownStreamPortals[index]['isVerified'] = false;
+          this.selectedDownStreamPortals[index]['isSetUpAlready'] = true;
+        });
+      });
+    }
+
+    this.isDataLoaded = true;
+    this.loading = false;
+  }
+
+  getUserDownStreamPortals() {
+    this.utilService.getUserDownStreamPortals().subscribe(res1 => {
+      this.isDataLoaded = true;
+      if (res1.length > 0) {
+        this.selectedDownStreamPortals = res1;
+        this.processExistingPortals();
+      } else {
+        this.processExistingPortals();
+        this.loading = false;
+        this.isDataLoaded = true;
+        this.selectedDownStreamPortals = [];
+      }
+    }, error => {
+      this.processExistingPortals();
+      this.loading = false;
+      this.isDataLoaded = true;
+      this.selectedDownStreamPortals = [];
+      console.log('Error while getting the upstream portals');
+      //console.log(error);
+    });
+  }
+
+  getUserPortals() {
+    this.utilService.getUserUpStreamPortals().subscribe(res => {
+      if (res.length > 0) {
+        this.selectedUpStreamPortals = res;
+      } else {
+        this.selectedUpStreamPortals = [];
+      }
+      this.getUserDownStreamPortals();
+    }, error => {
+      this.loading = false;
+      this.isDataLoaded = true;
+      this.selectedUpStreamPortals = [];
+      this.selectedDownStreamPortals = [];
+      console.log('Error while getting the upstream portals');
+      //console.log(error);
     });
   }
 
   getDownStreamPortals() {
     this.utilService.getDownStreamPortals().subscribe(res => {
       this.downStreamPortals = res;
-      this.utilService.getUserUpStreamPortals().subscribe(res => {
-        if (res.length > 0) {
-          this.utilService.getUserDownStreamPortals().subscribe(res1 => {
-            this.isDataLoaded = true;
-            if (res1.length > 0) {
-              this.selectedUpStreamPortals = res;
-              this.selectedDownStreamPortals = res1;
-            } else {
-              this.selectedUpStreamPortals = [];
-              this.selectedDownStreamPortals = [];
-            }
-          }, error => {
-            this.isDataLoaded = true;
-            this.selectedUpStreamPortals = [];
-            this.selectedDownStreamPortals = [];
-            console.log('Error while getting the upstream portals');
-            //console.log(error);
-          });
-
-        } else {
-          this.selectedUpStreamPortals = [];
-          this.selectedDownStreamPortals = [];
-          this.getUpStreamPortals();
-          this.getDownStreamPortals();
-        }
-
-      }, error => {
-        this.isDataLoaded = true;
-        this.selectedUpStreamPortals = [];
-        this.selectedDownStreamPortals = [];
-        this.getUpStreamPortals();
-        this.getDownStreamPortals();
-        console.log('Error while getting the upstream portals');
-        //console.log(error);
-      });
+      this.getUserPortals();
     }, error => {
+      this.loading = false;
       console.log('Error while getting the downstream portals');
       console.log(error);
     });
@@ -117,7 +154,26 @@ export class PortalsUpdateComponent implements OnInit {
     if ($event.target['checked']) {
       this.selectedUpStreamPortals.push(data);
     } else {
-      this.selectedUpStreamPortals = this.selectedUpStreamPortals.filter(obj => obj.portalID !== data.portalID);
+      const selectedUpStreamPortals = this.selectedUpStreamPortals.filter(obj => obj.portalID == data.portalID);
+      if (selectedUpStreamPortals && selectedUpStreamPortals.length > 0) {
+        if (selectedUpStreamPortals[0].isSetUpAlready) {
+          this.utilService.disableUserPortal(data.portalID, 'Upstream').subscribe(res => {
+            this.getUserPortals();
+          }, error => {
+            if (error.status === 200) {
+              this.getUserPortals();
+            }
+            this.loading = false;
+            console.log('Error while getting the upstream portals');
+            console.log(error);
+          });
+        } else {
+          this.selectedUpStreamPortals = this.selectedUpStreamPortals.filter(obj => obj.portalID !== data.portalID);
+        }
+      } else {
+        this.selectedUpStreamPortals = this.selectedUpStreamPortals.filter(obj => obj.portalID !== data.portalID);
+      }
+
     }
     console.log(this.selectedUpStreamPortals);
 
@@ -128,7 +184,26 @@ export class PortalsUpdateComponent implements OnInit {
     if ($event.target['checked']) {
       this.selectedDownStreamPortals.push(data);
     } else {
-      this.selectedDownStreamPortals = this.selectedDownStreamPortals.filter(obj => obj.portalID !== data.portalID);
+      const selectedDownStreamPortals = this.selectedDownStreamPortals.filter(obj => obj.portalID == data.portalID);
+      if (selectedDownStreamPortals && selectedDownStreamPortals.length > 0) {
+        if (selectedDownStreamPortals[0].isSetUpAlready) {
+          this.utilService.disableUserPortal(data.portalID, 'Downstream').subscribe(res => {
+            this.getUserPortals();
+          }, error => {
+            if (error.status === 200) {
+              this.getUserPortals();
+            }
+            this.loading = false;
+            console.log('Error while getting the upstream portals');
+            console.log(error);
+          });
+        } else {
+          this.selectedDownStreamPortals = this.selectedDownStreamPortals.filter(obj => obj.portalID !== data.portalID);
+        }
+      } else {
+        this.selectedDownStreamPortals = this.selectedDownStreamPortals.filter(obj => obj.portalID !== data.portalID);
+      }
+
     }
     console.log(this.selectedDownStreamPortals);
   }
@@ -141,7 +216,7 @@ export class PortalsUpdateComponent implements OnInit {
       "portalID": upPortal.portalID,
       "portalName": upPortal.portalName,
       "configuration": {
-        "Username": upPortal.username,
+        "Username": upPortal.Username,
         "Password": upPortal.password
       },
       "isVerified": true
@@ -151,6 +226,7 @@ export class PortalsUpdateComponent implements OnInit {
     this.utilService.postVerifyUpStreamPortal(payload).subscribe(res => {
       this.loading = false;
       upPortal.isVerified = true;
+      upPortal.isSetUpAlready = true;
       this.selectedUpStreamPortals[index].succesMessage = 'Congrats, Your upstream portal verified';
       setTimeout(() => {
         this.selectedUpStreamPortals[index].succesMessage = null;
@@ -161,6 +237,7 @@ export class PortalsUpdateComponent implements OnInit {
       //  upPortal.isVerified = true;
       if (error && error.status === 200) {
         upPortal.isVerified = true;
+        upPortal.isSetUpAlready = true;
         this.selectedUpStreamPortals[index].succesMessage = 'Congrats, Your upstream portal verified';
         setTimeout(() => {
           this.selectedUpStreamPortals[index].succesMessage = null;
@@ -183,7 +260,7 @@ export class PortalsUpdateComponent implements OnInit {
       "portalID": downPortal.portalID,
       "portalName": downPortal.portalName,
       "configuration": {
-        "apiKey": downPortal.apikey,
+        "apiKey": downPortal.apiKey,
         "Password": downPortal.password,
         "storeName": downPortal.storeName
       },
@@ -193,6 +270,7 @@ export class PortalsUpdateComponent implements OnInit {
     this.utilService.postVerifyUpStreamPortal(payload).subscribe(res => {
       this.loading = false;
       downPortal.isVerified = true;
+      downPortal.isSetUpAlready = true;
       console.log(res);
       this.selectedDownStreamPortals[index].succesMessage = 'Congrats, Your downstream portal is verified';
       setTimeout(() => {
@@ -202,6 +280,7 @@ export class PortalsUpdateComponent implements OnInit {
       this.loading = false;
       if (error && error.status === 200) {
         downPortal.isVerified = true;
+        downPortal.isSetUpAlready = true;
         this.selectedDownStreamPortals[index].succesMessage = 'Congrats, Your downstream portal is verified';
         setTimeout(() => {
           this.selectedDownStreamPortals[index].succesMessage = null;
