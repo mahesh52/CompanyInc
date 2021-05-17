@@ -139,7 +139,7 @@ export class DashboardComponent implements OnInit {
 
     this.dropdownSettings = {
       singleSelection: false,
-      // limitSelection:9,
+     // limitSelection:9,
       idField: 'item_id',
       textField: 'item_text',
       selectAllText: 'Select All',
@@ -1243,9 +1243,9 @@ export class DashboardComponent implements OnInit {
 
   getPortalUrl(portalId, type) {
     if (portalId && portalId !== 'null') {
-      if (type === 'up') {
+      if (type === 'up' && this.upStreamPortals) {
         return this.upStreamPortals.filter((portal) => portal.portalID == portalId)[0].portalLogoIconURL;
-      } else if (type === 'down') {
+      } else if (type === 'down' && this.downStreamPortals) {
         return this.downStreamPortals.filter((portal) => portal.portalID == portalId)[0].portalLogoIconURL;
 
       }
@@ -1311,6 +1311,7 @@ export class DashboardComponent implements OnInit {
     if (this.selectedDropItems.length < 9) {
       this.selectedDropItems.push(item.item_id);
     } else {
+      this.selectedCols = this.selectedCols.filter(obj => obj.item_id !== item.item_id);
       alert('Max 9 columns can be added using Preference');
     }
 
