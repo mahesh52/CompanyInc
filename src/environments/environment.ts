@@ -5,10 +5,10 @@
 export const environment = {
   production: false,
 //  baseUrl: 'https://hapeservices.azurewebsites.net/',
-  baseUrl: 'https://ec2-18-188-70-182.us-east-2.compute.amazonaws.com:9192/',
-  baseUrl2:'https://ec2-18-188-70-182.us-east-2.compute.amazonaws.com:9192/',
+  baseUrl: 'https://hapeloadbalance2-63664689.us-east-2.elb.amazonaws.com/',
+  baseUrl2:'https://hapeloadbalance2-63664689.us-east-2.elb.amazonaws.com/',
   cognitoUrl: 'https://invoiceupload.auth.us-east-2.amazoncognito.com',
-  redirectUri: 'http://localhost:4200/register',
+  redirectUri: 'https://hapepublisher.com/register',
   amplify: {
     Auth: {
       identityPoolId: 'us-east-2:67cf00d5-e600-44f2-915b-54c424a4b826',
