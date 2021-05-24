@@ -135,6 +135,7 @@
             </thead>
             <tbody>
             <tr *ngFor="let item of pagedItems;let i =index;">
+<!--              {{item?.productID}}&ndash;&gt;-->
               <td align="center" class="snoTd">{{getProductIndx(item?.productID)}}</td>
               <td align="center">
                 <input type="checkbox" (click)="selectProduct($event,item)">
@@ -154,6 +155,7 @@
                       (click)="selectDetIndex(item.productID)">...</span>
               </td>
               <td class="ptTd" *ngIf="selectedDropItems.indexOf('Product Type')>=0">
+
                 <select class="form-control tableInput" [(ngModel)]="item.productType">
                   <option>Select</option>
                   <option *ngFor="let ptype of productTypes" [selected]="ptype === item?.productType">{{ptype}}</option>

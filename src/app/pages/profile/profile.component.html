@@ -58,9 +58,6 @@
                   formControlName="mobile"
                   class="form-control input-box"
                 />
-                <div class="error-text" *ngIf="registerForm.get('mobile').touched && registerForm.get('mobile').hasError('required')">
-                  Mobile number can't be blank
-                </div>
                 <div class="error-text" *ngIf="registerForm.get('mobile').touched && registerForm.get('mobile').hasError('NumericError')">
                   Enter valid mobile number
                 </div>

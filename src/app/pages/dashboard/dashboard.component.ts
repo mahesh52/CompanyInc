@@ -139,7 +139,7 @@ export class DashboardComponent implements OnInit {
 
     this.dropdownSettings = {
       singleSelection: false,
-     // limitSelection:9,
+      // limitSelection:9,
       idField: 'item_id',
       textField: 'item_text',
       selectAllText: 'Select All',
@@ -181,7 +181,7 @@ export class DashboardComponent implements OnInit {
       if (sessionStorage.getItem('upStream') !== '' &&
         sessionStorage.getItem('upStream') !== null
         && sessionStorage.getItem('upStream') !== undefined
-       && sessionStorage.getItem('upStream') !== 'null'
+        && sessionStorage.getItem('upStream') !== 'null'
         && sessionStorage.getItem('upStream') !== 'undefined'
       ) {
         this.upStreamPortal = sessionStorage.getItem('upStream');
@@ -781,35 +781,43 @@ export class DashboardComponent implements OnInit {
             item.isReadonly = false;
 
             let selectedIndex;
+            let isprodFound = false;
             productDetails.forEach((prod, index) => {
               if (prod.productID === item.productID) {
                 selectedIndex = index;
+                isprodFound = true;
               }
             });
-            if (selectedIndex) {
+            if (item.productType === 'other') {
+              if (!this.productTypes) {
+                this.productTypes = [];
+              }
+              this.productTypes.push(item.productTypeOther);
+              item.productType = item.productTypeOther;
+              item.productTypeOther = '';
+
+            }
+            if (item.collections === 'other') {
+              if (!this.collections) {
+                this.collections = [];
+              }
+              this.collections.push(item.collectionOther);
+              item.collections = item.collectionOther;
+              item.collectionOther = '';
+
+            }
+            // item.productType = item.productTypeOther;
+            // item.collections = item.collectionOther;
+            if (isprodFound) {
               productDetails[selectedIndex] = item;
             } else {
               productDetails.push(item);
             }
           });
           // this.getProducts();
-          if (item.productType === 'other') {
-            if (!this.productTypes) {
-              this.productTypes = [];
-            }
-            this.productTypes.push(item.productTypeOther);
-          }
-          if (item.collections === 'other') {
-            if (!this.collections) {
-              this.collections = [];
-            }
-            this.collections.push(item.collectionOther);
-          }
-          item.productType = item.productTypeOther;
-          item.collections = item.collectionOther;
         }
 
-
+        console.log(productDetails);
         productDetails.forEach((obj) => {
           if (obj.downstreamStatus.toUpperCase().indexOf('CREATED') >= 0
             || obj.downstreamStatus.toUpperCase().indexOf('PUBLISHED') >= 0) {
@@ -827,7 +835,15 @@ export class DashboardComponent implements OnInit {
         let result = this.productDetails.map(a => a.downstreamStatus);
         this.uniqueStatuses = [...new Set(result)];
         this.pager.totalPages = undefined;
-        this.setPage(this.pager.currentPage);
+        if (this.filteredKey) {
+          this.filterData(this.filteredKey);
+        } else if (this.sorKey) {
+          this.sortData(this.sorKey);
+        } else {
+          this.setPage(this.pager.currentPage);
+       }
+
+
         this.loading = false;
         sessionStorage.setItem('products', JSON.stringify(this.productDetails));
         console.log(res);
@@ -1177,29 +1193,23 @@ export class DashboardComponent implements OnInit {
     if (key) {
       this.sorKey = key;
       this.productDetails = this.sortUtilsService.sortByKey(this.productDetails, key, false);
-      this.pager = {};
-      if (sessionStorage.getItem('currentPage') && sessionStorage.getItem('currentPage') !== ''
-        && sessionStorage.getItem('currentPage') !== 'null'
-        && sessionStorage.getItem('currentPage') !== 'undefined'
-      ) {
-        this.setPage(Number(sessionStorage.getItem('currentPage')));
-        this.selectedPage = Number(sessionStorage.getItem('currentPage'));
-        sessionStorage.removeItem('currentPage');
+      if (this.pager.currentPage) {
+        this.setPage(this.pager.currentPage);
       } else {
-        this.setPage(1);
+        this.pager = {};
+
+        if (sessionStorage.getItem('currentPage') && sessionStorage.getItem('currentPage') !== ''
+          && sessionStorage.getItem('currentPage') !== 'null'
+          && sessionStorage.getItem('currentPage') !== 'undefined'
+        ) {
+          this.setPage(Number(sessionStorage.getItem('currentPage')));
+          this.selectedPage = Number(sessionStorage.getItem('currentPage'));
+          sessionStorage.removeItem('currentPage');
+        } else {
+          this.setPage(1);
+        }
       }
-    } else {
-      // this.productDetails = this.productDetails;
-      //  this.productDetails = this.sortUtilsService.sortByKey(this.productDetails, this.sorKey, true);
-      //  this.sorKey = '';
-      //  this.pager = {};
-      //  if (sessionStorage.getItem('currentPage') && sessionStorage.getItem('currentPage') !== '') {
-      //    this.setPage(Number(sessionStorage.getItem('currentPage')));
-      //    this.selectedPage = Number(sessionStorage.getItem('currentPage'));
-      //    sessionStorage.removeItem('currentPage');
-      //  } else {
-      //    this.setPage(1);
-      //  }
+
     }
   }
 

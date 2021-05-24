@@ -39,7 +39,7 @@ export class HeaderComponent implements OnInit {
     this.user.userInfo.subscribe((value) => {
       this.userDetails = JSON.parse(sessionStorage.getItem('userDetails'))[0];
     });
-    this.getDownStreamPortals();
+   // this.getDownStreamPortals();
     // this.notificationService.notifications.subscribe((value) => {
     //   console.log(value);
     //   if (value) {

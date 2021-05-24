@@ -182,6 +182,7 @@
 
                 <select style="font-size: 13px;" class="form-control"
                         [(ngModel)]="selectedProduct.productType">
+                  <option>Select</option>
                   <option *ngFor="let ptype of productTypes"
                           [selected]="ptype === selectedProduct?.productType">{{ptype}}</option>
                   <option value="other">Other</option>
@@ -198,6 +199,7 @@
                   <div class="col-md-7">
                     <select style="font-size: 13px;" class="form-control"
                             [(ngModel)]="selectedProduct.collections">
+                      <option>Select</option>
                       <option *ngFor="let collection of collections"
                               [selected]="collection === selectedProduct?.collections">{{collection}}</option>
                       <option value="other">Other</option>

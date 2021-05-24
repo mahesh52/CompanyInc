@@ -241,18 +241,28 @@ export class DetailsComponent implements OnInit {
       "skuDownstream": this.selectedProduct.skuDownstream,
       "upstreamPortalID": this.upStreamPortal,
       "downstreamPortalId": this.downStreamPortal,
+      "publishingDate": this.selectedProduct.publishingDate['year'] + '-' + ('0' + this.selectedProduct.publishingDate['month']).slice(-2) + '-' + ('0' + this.selectedProduct.publishingDate['day']).slice(-2)
     }
     const keys1 = Object.keys(request);
     for (let key of keys1) {
-      if (Array.isArray(object1[key])) {
-        if (object1[key].join(',') !== object2[key].join(',')) {
+      if (key === 'publishingDate') {
+        if (object1[key]['year'] + '-' + ('0' + object1[key]['month']).slice(-2) + '-' + ('0' + object1[key]['day']).slice(-2)
+        !== object2[key]['year'] + '-' + ('0' + object2[key]['month']).slice(-2) + '-' + ('0' + object2[key]['day']).slice(-2)
+        ) {
           return false;
         }
       } else {
-        if (object1[key] !== object2[key]) {
-          return false;
+        if (Array.isArray(object1[key])) {
+          if (object1[key].join(',') !== object2[key].join(',')) {
+            return false;
+          }
+        } else {
+          if (object1[key] !== object2[key]) {
+            return false;
+          }
         }
       }
+
 
     }
 
@@ -286,7 +296,7 @@ export class DetailsComponent implements OnInit {
       "upstreamPortalID": this.upStreamPortal,
       "downstreamPortalId": this.downStreamPortal,
       "unitPriceWithShippingFee": this.selectedProduct.unitPriceWithShippingFee.replace('$', '').trim(),
-      "publishingDate": this.selectedProduct.publishingDate['year'] + '-' + ('0'+this.selectedProduct.publishingDate['month']).slice(-2) + '-' + ('0'+this.selectedProduct.publishingDate['day']).slice(-2),
+      "publishingDate": this.selectedProduct.publishingDate['year'] + '-' + ('0' + this.selectedProduct.publishingDate['month']).slice(-2) + '-' + ('0' + this.selectedProduct.publishingDate['day']).slice(-2),
     }
 
     this.loading = true;
@@ -335,12 +345,32 @@ export class DetailsComponent implements OnInit {
             item.isReadonly = false;
 
             let selectedIndex;
+            let isprodFound = false;
             productDetails.forEach((prod, index) => {
               if (prod.productID === item.productID) {
                 selectedIndex = index;
+                isprodFound = true;
               }
             });
-            if (selectedIndex) {
+            if (item.productType === 'other') {
+              if (!this.productTypes) {
+                this.productTypes = [];
+              }
+              this.productTypes.push(item.productTypeOther);
+              item.productType = item.productTypeOther;
+              item.productTypeOther = '';
+
+            }
+            if (item.collections === 'other') {
+              if (!this.collections) {
+                this.collections = [];
+              }
+              this.collections.push(item.collectionOther);
+              item.collections = item.collectionOther;
+              item.collectionOther = '';
+
+            }
+            if (isprodFound) {
               productDetails[selectedIndex] = item;
             } else {
               productDetails.push(item);
